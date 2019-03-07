@@ -11,7 +11,7 @@ matrix:
         - brew install vapor/tap/vapor
       script:
         - swift test
-    - language: node.js
+    - language: node_js
       node_js:
         - '11.10'
       before_install:
