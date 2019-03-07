@@ -1,28 +1,22 @@
-os:
-  - linux
-  - osx
+sudo: required
 matrix:
   include:
-    -language: node.js
-     node_js:
-     - '11.10'
-     cache:
-     - npm
-     - yarn
-     before_install:
-     - cd faucet-ui
-     install:
-     - travis_retry yarn install
-     script:
-     - yarn build
-     - yarn test
-
-     -language: swift
-     before_install:
-     - cd faucet-service 
-     - brew update
-     - brew install vapor
-     script:
-     - swift run
-     - swift test
-     
+    - language: swift
+      os: osx
+      before_install:
+        - cd faucet-service 
+        - brew update
+        - brew tap vapor/tap
+        - brew install vapor/tap/vapor
+      script:
+        - swift test
+    - language: node.js
+      node_js:
+        - "node"
+      before_script:
+        - cd faucet-ui
+        - yarn install
+      script:
+        - yarn build
+        - yarn test
+        
