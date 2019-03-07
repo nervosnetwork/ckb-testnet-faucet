@@ -1,8 +1,8 @@
 sudo: required
+os: osx
 matrix:
   include:
     - language: swift
-      os: osx
       before_install:
         - cd faucet-service 
         - brew update
