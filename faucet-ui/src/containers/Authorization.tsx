@@ -24,7 +24,7 @@ export default () => {
       <Box align="center" pad="small">
         <CheckBox onClick={onClickCheckButton} checked={enable} label="I understand this is for getting test tokens instead of official CKB" />
       </Box>
-      <Button onClick={onLoginWithGithub} label="Login with Github" />
+      <Button primary={true} onClick={onLoginWithGithub} label="Login with Github" />
     </Box>
   )
 }
