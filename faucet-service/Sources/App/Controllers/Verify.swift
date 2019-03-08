@@ -14,7 +14,7 @@ func verify(_ req: Request) -> Response {
     let status = VerifyAccessToken.shared.verify(accessToken: accessToken)
 
     let result = ["status": status.rawValue]
-    let callback = req.http.url.absoluteString.urlParameters["callback"] ?? "callback"
+    let callback = req.http.url.absoluteString.urlParametersDecode["callback"] ?? "callback"
     let body = HTTPBody(string: "\(callback)(\(result.toJson))")
 
     return Response(http: HTTPResponse(body: body), using: req.sharedContainer)

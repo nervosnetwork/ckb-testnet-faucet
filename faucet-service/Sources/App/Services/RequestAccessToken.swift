@@ -18,14 +18,14 @@ func requestAccessToken(code: String) -> String? {
         "client_id": GithubOAuthClientId,
         "client_secret": GithubOAuthClientSecret,
         "code": code
-    ].urlParameters.data(using: .utf8)
+    ].urlParametersEncode.data(using: .utf8)
 
     let group = DispatchGroup()
     group.enter()
     globalURLSession.dataTask(with: request) { (data, response, error) in
         defer { group.leave() }
         guard let data = data else { return }
-        accessToken = String(data: data, encoding: .utf8)?.urlParameters["access_token"]
+        accessToken = String(data: data, encoding: .utf8)?.urlParametersDecode["access_token"]
         }.resume()
     group.wait()
     return accessToken
