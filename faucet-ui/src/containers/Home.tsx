@@ -1,4 +1,4 @@
-import * as fetchJsonp from 'fetch-jsonp';
+import fetchJsonp from 'fetch-jsonp';
 import { Box, Button, Text, TextInput } from 'grommet';
 import * as React from 'react';
 import { APIHost, Routes } from '../utils/const';
