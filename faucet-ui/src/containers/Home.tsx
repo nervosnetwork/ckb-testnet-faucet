@@ -1,6 +1,7 @@
+import * as fetchJsonp from 'fetch-jsonp';
 import { Box, Button, Text, TextInput } from 'grommet';
 import * as React from 'react';
-import { Routes } from '../utils/const';
+import { APIHost, Routes } from '../utils/const';
 
 export default (props: any) => {
   const inputKey = React.useRef(null)
@@ -10,16 +11,33 @@ export default (props: any) => {
     if (element.value.length > 0) {
       setErrorMessage(null)
       // TODO: Send a transaction request to the server
-      props.history.push({pathname: Routes.Success, query: {txhash: element.value}})
+      props.history.push({ pathname: Routes.Success, query: { txhash: element.value } })
     } else {
       setErrorMessage("Wrong lock hash. Please check here for the lock hash format of Nervos CKB")
     }
   }
 
-  // TODO: Determine whether need to enter the authentication or failure page
-  // props.history.push({pathname: Routes.Auth})
-  // props.history.push({pathname: Routes.Failure})
-  
+  // Determine whether need to enter the authentication or failure page
+  React.useEffect(() => {
+    // tslint:disable
+    fetchJsonp(`${APIHost}/verify`).then((response: any) => {
+      return response.json()
+    }).then((json: any) => {
+      switch (json.status) {
+        case -1:
+          props.history.push({ pathname: Routes.Auth })
+          break
+        case -2:
+          props.history.push({ pathname: Routes.Failure })
+          break
+      }
+    }).catch((ex: any) => {
+      // TODO: Enter the network error page 
+      props.history.push({ pathname: Routes.Failure })
+    })
+    // tslint:enable
+  }, [])
+
   return (
     <Box width="100%" align="center" gap="small">
       <Text size="16px">Please note that each GitHub account can only request test tokens once every 24 hours.</Text>
