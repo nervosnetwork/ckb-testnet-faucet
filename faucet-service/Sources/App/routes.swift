@@ -12,4 +12,8 @@ public func routes(_ router: Router) throws {
     router.get("hello") { req in
         return "Hello, world!"
     }
+
+    router.get("verify", use: verify)
+    router.get("auth/callback", use: authCallback)
+    router.get("getTestToken", use: getTestToken)
 }
