@@ -1,4 +1,4 @@
-import * as fetchJsonp from 'fetch-jsonp';
+import fetchJsonp from 'fetch-jsonp';
 import { Box, Button, Text, TextInput } from 'grommet';
 import * as React from 'react';
 import { APIHost, Routes } from '../utils/const';
@@ -48,7 +48,7 @@ export default (props: any) => {
         <TextInput width="100%" ref={inputKey} placeholder="Please enter the lock hash here." />
         {errorMessage ? <Text color="red" size="16px">Wrong lock hash. Please check here for the lock hash format of Nervos CKB</Text> : <div />}
       </Box>
-      <Button label="Get Test Token" onClick={onClickGetTestToken} />
+      <Button primary label="Get Test Token" onClick={onClickGetTestToken} />
     </Box>
   )
 }
