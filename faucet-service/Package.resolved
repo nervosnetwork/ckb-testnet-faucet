@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/vapor/core.git",
         "state": {
           "branch": null,
-          "revision": "1794ff138bd669175a2528d27695028d7cb30471",
-          "version": "3.5.0"
+          "revision": "439d6dcd6c520451ae30d39b2ca9f2aba96c22f4",
+          "version": "3.7.0"
         }
       },
       {
@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/vapor/routing.git",
         "state": {
           "branch": null,
-          "revision": "3219e328491b0853b8554c5a694add344d2c6cfb",
-          "version": "3.0.1"
+          "revision": "626190ddd2bd9f967743b60ba6adaf90bbd2651c",
+          "version": "3.0.2"
         }
       },
       {
@@ -75,11 +75,11 @@
       },
       {
         "package": "SQLite.swift",
-        "repositoryURL": "https://github.com/stephencelis/SQLite.swift.git",
+        "repositoryURL": "https://github.com/cezres/SQLite.swift.git",
         "state": {
           "branch": null,
-          "revision": "210098546d59678f720e4ef67f8b562acfebbdb0",
-          "version": "0.11.5"
+          "revision": "9683f29694166c7d7d2f58fd51e2164d3603c0dc",
+          "version": "0.11.6"
         }
       },
       {
@@ -87,8 +87,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "98434c1f1d687ff5a24d2cabfbd19b5c7d2d7a2f",
-          "version": "1.13.0"
+          "revision": "87dbd0216c47ea2e7ddb1b545271b716e03b943e",
+          "version": "1.13.1"
         }
       },
       {
@@ -150,8 +150,8 @@
         "repositoryURL": "https://github.com/vapor/vapor.git",
         "state": {
           "branch": null,
-          "revision": "6c7284681c3432fee29c268babf954be6816cbfb",
-          "version": "3.2.2"
+          "revision": "c86ada59b31c69f08a6abd4f776537cba48d5df6",
+          "version": "3.3.0"
         }
       },
       {
