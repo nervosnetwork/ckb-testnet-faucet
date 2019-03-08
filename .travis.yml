@@ -1,16 +1,22 @@
 language: generic
 sudo: required
 os: osx
-matrix:
+cache:
+  timeout: 600
+  directories:
+    - faucet-service/.build
+jobs:
   include:
-    - language: swift
+    - language: object-c
+      osx_image: xcode10.1
       before_install:
         - cd faucet-service 
-        - brew update
+      install:
         - brew tap vapor/tap
         - brew install vapor/tap/vapor
       script:
         - swift test
+
     - language: node_js
       node_js:
         - '11.10'
