@@ -15,7 +15,7 @@ export default (props: any) => {
             <Text>Transaction Hash</Text> 
           </Box>
           <Box width="100%" align="end">
-            <Button primary={true} label="Copy" />
+            <Button primary label="Copy" />
           </Box>
         </Box>
         <TextInput width="100%" value={txhash} />
