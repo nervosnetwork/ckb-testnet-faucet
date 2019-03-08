@@ -13,7 +13,7 @@ extension Dictionary {
         return String(data: jsonData, encoding: .utf8) ?? ""
     }
 
-    var urlParameters: String {
+    var urlParametersEncode: String {
         var string = ""
         for (_, element) in self.enumerated() {
             string += "\(element.key)=\(element.value)&"

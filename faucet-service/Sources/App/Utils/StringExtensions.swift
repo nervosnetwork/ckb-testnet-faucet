@@ -8,7 +8,7 @@
 import Foundation
 
 extension String {
-    var urlParameters: [String: String] {
+    var urlParametersDecode: [String: String] {
         guard let string = self.components(separatedBy: "?").last else { return [:] }
         var parameters = [String: String]()
         string.components(separatedBy: "&").forEach { (keyValue) in

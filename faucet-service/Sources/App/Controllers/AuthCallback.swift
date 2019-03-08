@@ -10,7 +10,7 @@ import Vapor
 import SQLite
 
 func authCallback(_ req: Request) -> Response {
-    let parameters = req.http.url.absoluteString.urlParameters
+    let parameters = req.http.url.absoluteString.urlParametersDecode
     guard let code = parameters["code"], let state = parameters["state"] else {
         return Response(http: HTTPResponse(status: HTTPResponseStatus(statusCode: 404)), using: req)
     }
