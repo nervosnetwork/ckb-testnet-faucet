@@ -8,19 +8,6 @@ const customTheme = {
     },
     color: "white",
   },
-  checkBox: {
-    border: {
-      color: {
-        light: "#999999"
-      }
-    },
-    color: {
-      light: "brand"
-    },
-    check: {
-      radius: "2px"
-    }
-  },
   global: {
     colors: {
       brand: "#4ec995"
