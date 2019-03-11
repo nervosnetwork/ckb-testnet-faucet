@@ -32,8 +32,7 @@ export default (props: any) => {
           break
       }
     }).catch((ex: any) => {
-      // TODO: Enter the network error page 
-      props.history.push({ pathname: Routes.Failure })
+      props.history.push({ pathname: Routes.ServiceError })
     })
     // tslint:enable
   }, [])

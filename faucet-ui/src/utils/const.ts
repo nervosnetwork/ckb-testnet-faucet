@@ -3,6 +3,7 @@ export enum Routes {
   Auth = "/auth",
   Success = "/success",
   Failure = "/failure",
+  ServiceError = "/serviceerror",
 }
 
 export const ClientId = "58c63aeed6e97fd4929e"
