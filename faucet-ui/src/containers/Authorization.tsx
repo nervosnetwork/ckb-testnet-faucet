@@ -10,9 +10,6 @@ export default () => {
   }
 
   const onLoginWithGithub = () => {
-    if (!enable) {
-      return
-    }
     window.location.href=`https://github.com/login/oauth/authorize?client_id=${ClientId}&state=${window.location.origin}`;
   }
 
@@ -24,7 +21,7 @@ export default () => {
       <Box align="center" pad="small">
         <CheckBox checked={enable} onChange={onChangeEnable} label="I understand this is for getting test tokens instead of official CKB" />
       </Box>
-      <Button primary onClick={onLoginWithGithub} label="Login with Github" />
+      <Button disabled={!enable} primary onClick={onLoginWithGithub} label="Login with Github" />
     </Box>
   )
 }
