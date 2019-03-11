@@ -1,2 +1,2 @@
 # ckb-testnet-faucet
-The CKB test net faucet 
+The CKB testnet faucet 
