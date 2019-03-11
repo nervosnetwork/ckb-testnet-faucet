@@ -15,7 +15,7 @@ const customTheme = {
       }
     },
     color: {
-      light: themeColor
+      light: "brand"
     },
     check: {
       radius: "2px"
