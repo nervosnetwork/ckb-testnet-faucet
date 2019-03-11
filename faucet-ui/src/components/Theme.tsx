@@ -14,6 +14,19 @@ const customTheme = {
       color: themeColor
     }
   },
+  checkBox: {
+    border: {
+      color: {
+        light: "#999999"
+      }
+    },
+    color: {
+      light: themeColor
+    },
+    check: {
+      radius: "2px"
+    }
+  },
   global: {
     focus: {
       border: {
