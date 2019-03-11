@@ -4,6 +4,7 @@ import * as React from 'react';
 import { APIHost, Routes } from '../utils/const';
 
 export default (props: any) => {
+  const [enable, setEnable] = React.useState(false)
   const inputKey = React.useRef(null)
   const [errorMessage, setErrorMessage] = React.useState(null as string | null)
   const onClickGetTestToken = () => {
@@ -19,7 +20,6 @@ export default (props: any) => {
 
   // Determine whether need to enter the authentication or failure page
   React.useEffect(() => {
-    // tslint:disable
     fetchJsonp(`${APIHost}/verify`).then((response: any) => {
       return response.json()
     }).then((json: any) => {
@@ -33,8 +33,9 @@ export default (props: any) => {
       }
     }).catch((ex: any) => {
       props.history.push({ pathname: Routes.ServiceError })
+    }).finally(() => {
+      setEnable(true)
     })
-    // tslint:enable
   }, [])
 
   return (
@@ -47,7 +48,7 @@ export default (props: any) => {
         <TextInput width="100%" ref={inputKey} placeholder="Please enter the lock hash here." />
         {errorMessage ? <Text color="red" size="16px">Wrong lock hash. Please check here for the lock hash format of Nervos CKB</Text> : <div />}
       </Box>
-      <Button primary label="Get Test Token" onClick={onClickGetTestToken} />
+      <Button disabled={!enable} primary label="Get Test Token" onClick={onClickGetTestToken} />
     </Box>
   )
 }
