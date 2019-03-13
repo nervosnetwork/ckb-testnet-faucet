@@ -37,7 +37,6 @@ extension User {
                 ))
             }
         } catch {
-            print(error)
         }
     }
 
@@ -50,7 +49,6 @@ extension User {
             let collectionDate = userRow[collectionDateExpression]
             return User(accessToken: accessToken, authorizationDate: authorizationDate, collectionDate: collectionDate)
         } catch {
-            print(error)
             return nil
         }
     }
