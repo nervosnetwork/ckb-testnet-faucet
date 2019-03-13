@@ -20,7 +20,7 @@ export default (props: any) => {
 
   // Determine whether need to enter the authentication or failure page
   React.useEffect(() => {
-    fetchJsonp(`${APIHost}/verify`).then((response: any) => {
+    fetchJsonp(`${APIHost}/auth/verify`).then((response: any) => {
       return response.json()
     }).then((json: any) => {
       switch (json.status) {
