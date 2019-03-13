@@ -10,10 +10,11 @@ import Foundation
 extension Dictionary {
     var toJson: String {
         guard let jsonData = try? JSONSerialization.data(withJSONObject: self, options: .prettyPrinted) else { return "" }
-        return String(data: jsonData, encoding: .utf8) ?? ""
+        let jsonText = String(data: jsonData, encoding: .utf8)!
+        return jsonText.replacingOccurrences(of: "\n", with: "").replacingOccurrences(of: " ", with: "")
     }
 
-    var urlParametersEncode: String {
+    public var urlParametersEncode: String {
         var string = ""
         for (_, element) in self.enumerated() {
             string += "\(element.key)=\(element.value)&"
