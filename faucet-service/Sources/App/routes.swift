@@ -13,7 +13,6 @@ public func routes(_ router: Router) throws {
         return "Hello, world!"
     }
 
-    router.get("verify", use: verify)
-    router.get("auth/callback", use: authCallback)
-    router.get("getTestToken", use: getTestToken)
+    try router.register(collection: Authorization())
+    try router.register(collection: CKB())
 }
