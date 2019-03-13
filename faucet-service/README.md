@@ -2,13 +2,13 @@
 
 ## API
 
-Request:
+#### Request:
 
 `GET /auth/verify` 
 
 Support jsonp (Using JSON requests can cause cross-domain problems in the local test environment)
 
-Response:
+#### Response:
 
 | Name   |      Type      |  Description |
 |----------|:-------------:|:------|
@@ -20,17 +20,18 @@ Response:
 }
 ```
 
-Request:
+
+#### Request:
 
 `POST /ckb/faucet`
 
-Parameters:
+#### Parameters:
 
 | Name   |      Type      |  Description |
 |----------|:-------------:|:------|
 | `address` | `string` | wallet address  |
 
-Response:
+#### Response:
 
 | Name   |      Type      |  Description |
 |----------|:-------------:|:------|
