@@ -8,14 +8,14 @@
 import Foundation
 import Vapor
 
-struct CKB: RouteCollection {
+struct CKBController: RouteCollection {
     func boot(router: Router) throws {
-        router.get("ckb/getToken", use: getTestToken)
+        router.post("ckb/faucet", use: faucet)
     }
 
-    func getTestToken(_ req: Request) -> Response {
+    func faucet(_ req: Request) -> Response {
         let accessToken = req.http.cookies.all[AccessTokenCookieName]?.string
-        let status = VerifyAccessToken.shared.verify(accessToken: accessToken)
+        let status = Authorization().verify(accessToken: accessToken)
         var result: [String: Any] = ["status": status.rawValue]
 
         if status == .tokenIsVailable {

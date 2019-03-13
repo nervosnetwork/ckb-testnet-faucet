@@ -13,6 +13,6 @@ public func routes(_ router: Router) throws {
         return "Hello, world!"
     }
 
-    try router.register(collection: Authorization())
-    try router.register(collection: CKB())
+    try router.register(collection: AuthorizationController())
+    try router.register(collection: CKBController())
 }
