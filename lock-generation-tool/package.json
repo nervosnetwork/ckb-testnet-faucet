@@ -2,13 +2,18 @@
   "name": "lock-generation-tool",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "dependencies": {
-    "react": "^16.8.4",
-    "react-dom": "^16.8.4",
-    "react-scripts-ts": "3.1.0"
+    "@nervosnetwork/ckb-sdk-core": "^0.0.1-alpha.3",
+    "react": "^16.8.3",
+    "react-dom": "^16.8.3",
+    "react-router-dom": "^4.3.1",
+    "react-scripts-ts": "^3.1.0",
+    "sha3": "^2.0.0",
+    "grommet": "^2.5.5"
   },
   "scripts": {
-    "start": "react-scripts-ts start",
+    "start": "PORT=3001 react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"
