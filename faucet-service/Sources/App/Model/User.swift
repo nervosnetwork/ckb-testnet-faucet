@@ -12,6 +12,12 @@ public struct User {
     public let accessToken: String
     public var authorizationDate: Date
     public var collectionDate: Date?
+
+    public init(accessToken: String, authorizationDate: Date, collectionDate: Date?) {
+        self.accessToken = accessToken
+        self.authorizationDate = authorizationDate
+        self.collectionDate = collectionDate
+    }
 }
 
 extension User {
