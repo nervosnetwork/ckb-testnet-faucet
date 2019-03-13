@@ -16,6 +16,7 @@ class UserTests: XCTestCase {
         XCTAssertEqual(user, User.query(accessToken: accessToken))
 
         user.collectionDate = Date()
+        user.save()
         XCTAssert(User.query(accessToken: accessToken)?.collectionDate != nil)
     }
 }
