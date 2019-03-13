@@ -7,7 +7,7 @@ export default () => {
   return(
     <BrowserRouter>
       <Switch>
-        <Route path={Routes.Home} comment={Home}/>
+        <Route path={Routes.Home} component={Home}/>
       </Switch>
     </BrowserRouter>
   )
