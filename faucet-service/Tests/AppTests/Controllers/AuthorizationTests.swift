@@ -10,7 +10,6 @@ import XCTest
 import Vapor
 
 class AuthorizationTests: XCTestCase {
-
     override func setUp() {
         super.setUp()
         DispatchQueue.global().async {
