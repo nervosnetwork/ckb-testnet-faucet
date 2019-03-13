@@ -8,7 +8,6 @@ export default () => {
     <BrowserRouter>
       <Switch>
         <Route path={Routes.Home} comment={Home}/>
-        <Route path={"aaa"} comment={Home}/>
       </Switch>
     </BrowserRouter>
   )

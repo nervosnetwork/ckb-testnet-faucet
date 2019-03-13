@@ -11,7 +11,6 @@ const App = () => {
           <Heading>Nervos Key and Lock Generation Tool</Heading>
         </Box>
         <Router />
-        11
       </Box>
     </Theme>
   )
