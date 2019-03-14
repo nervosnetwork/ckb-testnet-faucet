@@ -44,4 +44,11 @@ class Authorization {
         user.save()
         return accessToken
     }
+
+    func recordCollectionDate(accessToken: String) {
+        if var user = User.query(accessToken: accessToken) {
+            user.collectionDate = Date()
+            user.save()
+        }
+    }
 }

@@ -8,5 +8,7 @@
 import Foundation
 
 class CKB {
-    
+    func faucet(address: String) -> String? {
+        return nil
+    }
 }

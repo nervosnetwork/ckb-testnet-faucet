@@ -20,6 +20,7 @@ public func sendSyncRequest(request: URLRequest) throws -> Data {
         group.leave()
     }.resume()
     group.wait()
+
     if data != nil {
         return data!
     } else {
