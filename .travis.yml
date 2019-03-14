@@ -4,13 +4,13 @@ os: osx
 cache:
   timeout: 600
   directories:
-    - faucet-service/.build
+    - faucet-server/.build
 jobs:
   include:
     - language: object-c
       osx_image: xcode10.1
       before_install:
-        - cd faucet-service 
+        - cd faucet-server
       install:
         - brew tap vapor/tap
         - brew install vapor/tap/vapor

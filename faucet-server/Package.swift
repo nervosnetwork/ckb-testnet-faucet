@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "faucet-service",
+    name: "faucet-server",
     dependencies: [
         .package(url: "https://github.com/vapor/vapor.git", from: "3.0.0"),        
         .package(url: "https://github.com/cezres/SQLite.swift.git", from: "0.11.6"),
