@@ -2,6 +2,12 @@ import { Grommet } from 'grommet'
 import * as React from 'react'
 
 const customTheme = {
+  button: {
+    border: {
+      radius: "4px"
+    },
+    color: "white",
+  },
   global: {
     colors: {
       brand: "#4ec995"
