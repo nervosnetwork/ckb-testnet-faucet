@@ -14,7 +14,7 @@ export default () => {
     signedArgs: [hexToBytes(bitcoin_unlock_hash), pair.publicKey]
   }
 
-  const address = jsonScriptToTypeHash(script) as String
+  const address = jsonScriptToTypeHash(script)
 
   return(
     <Box width="100%" align="center" gap="small" pad="medium">
@@ -22,7 +22,7 @@ export default () => {
         <Text size="18px">Check here for info about how to use them.</Text>
         <Box width="600px" align="center" pad="medium">
           <Text size="20px" alignSelf="start" weight="bold">Lock Hash</Text>
-          <TextInput readOnly width="100%" value={address as string}/>
+          <TextInput readOnly width="100%" value={address}/>
         </Box>
         <Box width="600px" align="center" pad="medium">
           <Text size="20px" alignSelf="start" weight="bold">Private Key</Text>
