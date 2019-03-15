@@ -14,13 +14,10 @@ export default (props: any) => {
   const onClickGenerateLock = () => {
     const element = inputKey.current! as HTMLInputElement
     const value = element.value
-    console.log(element.value)
     if (value.length > 0) {
       try {
-        console.log("23333")
         const bytesKey = hexToBytes(value)
         const ecpair = new ECPair.default(new Buffer(bytesKey))
-        console.log(bytesToHex(ecpair.privateKey))
         props.history.push({pathname: Routes.NewLock, query: { lockHash: bytesToHex(ecpair.privateKey)}})
         setErrorMsg(null)
       } catch  {
