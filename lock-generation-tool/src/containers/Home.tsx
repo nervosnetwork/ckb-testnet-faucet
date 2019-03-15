@@ -8,7 +8,7 @@ export default (props: any) => {
   const inputKey = React.useRef(null)
   const [errorMsg, setErrorMsg] = React.useState(null as String | null)
   const onClickGenerateLockAndKey = () => {
-
+    props.history.push({pathname: Routes.NewKeyLock})
   }
 
   const onClickGenerateLock = () => {
