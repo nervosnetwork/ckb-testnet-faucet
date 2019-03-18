@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Text, TextInput } from 'grommet'
 import * as ECPair from '@nervosnetwork/ckb-sdk-utils/lib/ecpair'
-import { bytesToHex, hexToBytes, jsonScriptToTypeHash } from '@nervosnetwork/ckb-sdk-utils'
+import { bytesToHex, hexToBytes, jsonScriptToTypeHash } from '../utils/utils'
 import bitcoin_unlock_hash from '../utils/bitcoin_unlock_hash'
 
 export default () => {
@@ -14,7 +14,7 @@ export default () => {
     signedArgs: [hexToBytes(bitcoin_unlock_hash), pair.publicKey]
   }
 
-  const address = jsonScriptToTypeHash(script)
+  const address = jsonScriptToTypeHash(script) as string
 
   return(
     <Box width="100%" align="center" gap="small" pad="medium">

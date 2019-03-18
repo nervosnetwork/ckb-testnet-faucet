@@ -18,7 +18,7 @@ export default (props: any) => {
       try {
         const bytesKey = hexToBytes(value)
         const ecpair = new ECPair.default(new Buffer(bytesKey))
-        props.history.push({pathname: Routes.NewLock, query: { lockHash: bytesToHex(ecpair.privateKey)}})
+        props.history.push({pathname: Routes.NewLock, query: { privateKey: bytesToHex(ecpair.privateKey)}})
         setErrorMsg(null)
       } catch  {
         setErrorMsg("Wrong private key. Please check here for the correct format of private key of CKB")
