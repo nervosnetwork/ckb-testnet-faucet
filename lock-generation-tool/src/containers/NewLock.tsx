@@ -3,7 +3,7 @@ import * as React from 'react'
 import copy from 'copy-to-clipboard'
 import bitcoin_unlock_hash from '../utils/bitcoin_unlock_hash'
 import ECPair from '@nervosnetwork/ckb-sdk-utils/lib/ecpair';
-import { hexToBytes, jsonScriptToTypeHash, bytesToHex } from '@nervosnetwork/ckb-sdk-utils';
+import { hexToBytes, jsonScriptToTypeHash } from '../utils/utils'
 
 export default (props: any) => {
   const [copyMsg, setCopyMsg] = React.useState(String)
@@ -11,17 +11,13 @@ export default (props: any) => {
   if (props.location.query) {
     privateKey = props.location.query.privateKey
   }
-  console.log(privateKey)
   const pair = new ECPair(new Buffer(hexToBytes(privateKey)))
-  console.log(bytesToHex(pair.privateKey))
   const script = {
     reference: "0x2165b10c4f6c55302158a17049b9dad4fef0acaf1065c63c02ddeccbce97ac47",
     binary: undefined,
     signedArgs: [hexToBytes(bitcoin_unlock_hash), pair.publicKey]
   }
-  console.log(bytesToHex(pair.publicKey))
   const address = jsonScriptToTypeHash(script)
-  console.log(address)
 
   const onClickCopy = () => {
     if (copy(address as string)) {
