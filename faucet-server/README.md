@@ -44,3 +44,29 @@ Support jsonp (Using JSON requests can cause cross-domain problems in the local 
     "txhash" : "xxxxxx"
 }
 ```
+
+#### Request:
+
+`GET /ckb/address`
+
+#### Parameters:
+
+| Name   |      Type      |  Description |
+|----------|:-------------:|:------|
+| `privateKey` | `string` | Only one of the private key or public key is required. |
+| `publicKey` | `string` | Only one of the private key or public key is required. |
+
+#### Response:
+
+| Name   |      Type      |  Description |
+|----------|:-------------:|:------|
+| `status` | `int` | 0: Ok; -1: No public or private key; -2: Invalid public or private key  |
+| `address` | `string` | Wallet address |
+| `error` | `string` | Error message |
+
+```
+{
+    "status" : 0,
+    "address" : "0xbc374983430db3686ab181138bb510cb8f83aa136d833ac18fc3e73a3ad54b8b"
+}
+```
