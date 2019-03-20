@@ -12,6 +12,7 @@ jobs:
       before_install:
         - cd faucet-server
       install:
+        - brew install libsodium
         - brew tap vapor/tap
         - brew install vapor/tap/vapor
       script:
