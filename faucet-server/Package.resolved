@@ -2,6 +2,24 @@
   "object": {
     "pins": [
       {
+        "package": "CKB",
+        "repositoryURL": "https://github.com/cezres/ckb-sdk-swift.git",
+        "state": {
+          "branch": "Support-Swift-Package-Manager",
+          "revision": "7497fac6d26f5d57cf89aded4382664b5f0c3f4f",
+          "version": null
+        }
+      },
+      {
+        "package": "Clibsodium",
+        "repositoryURL": "https://github.com/tiwoc/Clibsodium.git",
+        "state": {
+          "branch": null,
+          "revision": "2ac72772aae26b2da0b15c253d9bb79ba452f66a",
+          "version": "1.0.0"
+        }
+      },
+      {
         "package": "Console",
         "repositoryURL": "https://github.com/vapor/console.git",
         "state": {
@@ -26,6 +44,15 @@
           "branch": null,
           "revision": "45bb12d13cdec80dbd1cc0685ea002e51ab83439",
           "version": "3.3.2"
+        }
+      },
+      {
+        "package": "CryptoSwift",
+        "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift.git",
+        "state": {
+          "branch": null,
+          "revision": "8b3435bd3236819318cde87c8d9315fb89906df3",
+          "version": "0.14.0"
         }
       },
       {
@@ -62,6 +89,15 @@
           "branch": null,
           "revision": "3219e328491b0853b8554c5a694add344d2c6cfb",
           "version": "3.0.1"
+        }
+      },
+      {
+        "package": "secp256k1",
+        "repositoryURL": "https://github.com/Boilertalk/secp256k1.swift.git",
+        "state": {
+          "branch": null,
+          "revision": "823281fe9def21b384099b72a9a53ca988317b20",
+          "version": "0.1.4"
         }
       },
       {
@@ -116,6 +152,15 @@
           "branch": null,
           "revision": "37760e9a52030bb9011972c5213c3350fa9d41fd",
           "version": "1.0.0"
+        }
+      },
+      {
+        "package": "Sodium",
+        "repositoryURL": "https://github.com/jedisct1/swift-sodium.git",
+        "state": {
+          "branch": null,
+          "revision": "8d2e6302f9589f0e9ad5c5920afa0fc0e943dd8a",
+          "version": "0.7.0"
         }
       },
       {
