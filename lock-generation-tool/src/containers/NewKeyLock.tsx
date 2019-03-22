@@ -16,18 +16,18 @@ export default () => {
 
   const address = jsonScriptToTypeHash(script) as string
 
-  return(
+  return (
     <Box width="100%" align="center" gap="small" pad="medium">
-        <Text color="text" size="18px">Please remember the information below, you will not see them again.</Text>
-        <Text color="text" size="18px">Check here for info about how to use them.</Text>
-        <Box width="600px" align="center" pad="medium">
-          <Text color="text" size="20px" alignSelf="start" weight="bold">Lock Hash</Text>
-          <TextInput style={{color:"white"}} readOnly width="100%" value={address}/>
-        </Box>
-        <Box width="600px" align="center" pad="medium">
-          <Text color="text" size="20px" alignSelf="start" weight="bold">Private Key</Text>
-          <TextInput style={{color:"white"}} readOnly width="100%" value={privateKey}/>
-        </Box>
+      <Text color="text" size="18px">Please remember the information below, you will not see them again.</Text>
+      <Text color="text" size="18px">Check here for info about how to use them.</Text>
+      <Box width="600px" align="center" pad="medium">
+        <Text color="text" size="20px" alignSelf="start" weight="bold">Lock Hash</Text>
+        <TextInput style={{ color: "white" }} readOnly width="100%" value={address} />
+      </Box>
+      <Box width="600px" align="center" pad="medium">
+        <Text color="text" size="20px" alignSelf="start" weight="bold">Private Key</Text>
+        <TextInput style={{ color: "white" }} readOnly width="100%" value={privateKey} />
+      </Box>
     </Box>
   )
 }

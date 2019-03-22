@@ -17,7 +17,7 @@ const customTheme = {
   }
 }
 
-export default ({children} : {children?: React.ReactNode}) => {
+export default ({ children }: { children?: React.ReactNode }) => {
   return (
     <Grommet theme={customTheme}>{children}</Grommet>
   )

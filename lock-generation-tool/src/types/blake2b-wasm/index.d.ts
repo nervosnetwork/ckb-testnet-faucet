@@ -5,7 +5,7 @@
 
 declare module 'blake2b-wasm' {
   export interface Blake2bConstructor {
-    new (
+    new(
       digestLength: number | Uint8Array,
       key: Uint8Array | Buffer | null,
       salt: Uint8Array | Buffer | null,
