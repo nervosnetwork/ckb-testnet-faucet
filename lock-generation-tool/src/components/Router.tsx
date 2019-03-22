@@ -6,12 +6,12 @@ import NewLock from '../containers/NewLock';
 import NewKeyLock from '../containers/NewKeyLock';
 
 export default () => {
-  return(
+  return (
     <BrowserRouter>
       <Switch>
-        <Route path={Routes.NewLock} component={NewLock}/>
-        <Route path={Routes.NewKeyLock} component={NewKeyLock}/>
-        <Route path={Routes.Home} component={Home}/>
+        <Route path={Routes.NewLock} component={NewLock} />
+        <Route path={Routes.NewKeyLock} component={NewKeyLock} />
+        <Route path={Routes.Home} component={Home} />
       </Switch>
     </BrowserRouter>
   )
