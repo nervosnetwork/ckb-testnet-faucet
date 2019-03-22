@@ -29,10 +29,10 @@ export default (props: any) => {
 
   return(
     <Box width="100%" align="center" gap="small">
-      <Text size="18px">Check here for more info about how to use this lock hash.</Text>
+      <Text color="text" size="18px">Check here for more info about how to use this lock hash.</Text>
       <Box width="600px" pad="large" gap="large">
-        <TextInput readOnly width="100%" value={address as string}/>
-        <Text alignSelf="center" color="brand">{copyMsg}</Text>
+        <TextInput style={{color:"white"}} readOnly width="100%" value={address as string}/>
+        <Text  alignSelf="center" color="brand">{copyMsg}</Text>
         <Button primary alignSelf="center" label="Copy" onClick={onClickCopy}/>
       </Box>
     </Box>

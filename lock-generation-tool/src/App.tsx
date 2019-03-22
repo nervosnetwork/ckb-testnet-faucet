@@ -1,4 +1,4 @@
-import { Box, Heading } from 'grommet';
+import { Box, Stack, Heading } from 'grommet';
 import * as React from 'react';
 import Router from './components/Router';
 import Theme from './components/Theme';
@@ -6,12 +6,18 @@ import Theme from './components/Theme';
 const App = () => {
   return (
     <Theme>
-      <Box>
-        <Box align="center" pad={{top: "large", bottom: "medium"}}>
-          <Heading>Nervos Key and Lock Generation Tool</Heading>
+      <Stack>
+        <img src="//cdn.cryptape.com/videos/nervos_poster.png" width="100%"></img>
+        <video autoPlay loop>
+          <source src="//cdn.cryptape.com/videos/nervos_org_bg.mp4" type="video/mp4"/>
+        </video>
+        <Box>
+          <Box align="center" pad={{top: "large", bottom: "medium"}}>
+            <Heading color="white">Nervos Key and Lock Generation Tool</Heading>
+          </Box>
+          <Router />
         </Box>
-        <Router />
-      </Box>
+      </Stack>
     </Theme>
   )
 }

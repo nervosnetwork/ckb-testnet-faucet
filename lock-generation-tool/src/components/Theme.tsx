@@ -10,7 +10,9 @@ const customTheme = {
   },
   global: {
     colors: {
-      brand: "#4ec995"
+      brand: "#4ec995",
+      text: "white",
+      border: "white"
     }
   }
 }

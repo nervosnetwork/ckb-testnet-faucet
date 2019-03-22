@@ -30,14 +30,14 @@ export default (props: any) => {
 
   return (
     <Box width="100%" align="center" gap="small">
-      <Text size="18px">This is a tool for generate the Key and Lock for Nervos CKB.</Text>
-      <Text size="18px">Please refer here for more information about devloping on CKB.</Text>
-      <Text size="18px">For safety reasons, please cut off your internet connection before using this webpage.</Text>
+      <Text color="text" size="18px">This is a tool for generate the Key and Lock for Nervos CKB.</Text>
+      <Text color="text" size="18px">Please refer here for more information about devloping on CKB.</Text>
+      <Text color="text" size="18px">For safety reasons, please cut off your internet connection before using this webpage.</Text>
       <Box pad={{top: "medium"}}>
         <Button  primary label="Generate New Key&Lock" onClick={onClickGenerateLockAndKey} />
       </Box>
       <Box width="600px" pad={{top: "large"}}>
-        <TextInput width="100%" placeholder="Please enter your private key" ref={inputKey} />
+        <TextInput style={{color:"white"}} width="100%" placeholder="Please enter your private key" ref={inputKey} />
         {errorMsg ? <Text color="red" size="16px">Please enter your private key</Text> : <div/>}
       </Box>
       <div />
