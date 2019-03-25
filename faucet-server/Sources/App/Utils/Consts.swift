@@ -7,7 +7,16 @@
 
 import Foundation
 
-let GithubOAuthClientId = "58c63aeed6e97fd4929e"
-let GithubOAuthClientSecret = "fb5e67e23ab6c2ca417c2a7872f483d0215ad884"
+let accessTokenCookieName = "github_access_token"
 
-let AccessTokenCookieName = "github_access_token"
+struct GithubOAuth {
+    static private(set) var clientId = ""
+    static private(set) var clientSecret = ""
+}
+
+extension GithubOAuth {
+    static func config(clientId: String, clientSecret: String) {
+        GithubOAuth.clientId = clientId
+        GithubOAuth.clientSecret = clientSecret
+    }
+}

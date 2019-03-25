@@ -15,7 +15,7 @@ struct AuthorizationController: RouteCollection {
     }
 
     func verify(_ req: Request) -> Response {
-        let accessToken = req.http.cookies.all[AccessTokenCookieName]?.string
+        let accessToken = req.http.cookies.all[accessTokenCookieName]?.string
 
         let status = Authorization().verify(accessToken: accessToken)
 
@@ -57,7 +57,7 @@ extension AuthorizationController.Github: RouteCollection {
         if let accessToken = accessToken {
             let domain = URL(string: state)?.host
             http.cookies = HTTPCookies(
-                dictionaryLiteral: (AccessTokenCookieName, HTTPCookieValue(string: accessToken, domain: domain))
+                dictionaryLiteral: (accessTokenCookieName, HTTPCookieValue(string: accessToken, domain: domain))
             )
         }
 
