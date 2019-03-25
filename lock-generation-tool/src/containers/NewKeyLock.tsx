@@ -1,20 +1,21 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Text, TextInput } from 'grommet'
-import * as ECPair from '@nervosnetwork/ckb-sdk-utils/lib/ecpair'
-import { bytesToHex, hexToBytes, jsonScriptToTypeHash } from '../utils/utils'
-import bitcoin_unlock_hash from '../utils/bitcoin_unlock_hash'
+import { APIHost } from '../utils/const';
 
 export default () => {
-  const pair = ECPair.makeRandom()
-  const privateKey = bytesToHex(pair.privateKey)
+  const [privateKey, setPrivateKey] = useState("")
+  const [address, setAddress] = useState("")
 
-  const script = {
-    reference: "0x2165b10c4f6c55302158a17049b9dad4fef0acaf1065c63c02ddeccbce97ac47",
-    binary: undefined,
-    signedArgs: [hexToBytes(bitcoin_unlock_hash), pair.publicKey]
-  }
-
-  const address = jsonScriptToTypeHash(script) as string
+  useEffect(() => {
+    fetch(`${APIHost}/ckb/address/random`).then((response) => {
+      return response.json()
+    }).then((json) => {
+      setPrivateKey(json.privateKey)
+      setAddress(json.address)
+    }).catch((error) => {
+      // error
+    })
+  }, [])
 
   return (
     <Box width="100%" align="center" gap="small" pad="medium">

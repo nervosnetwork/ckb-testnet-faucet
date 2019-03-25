@@ -3,3 +3,5 @@ export enum Routes {
   NewKeyLock = "/newkeylock",
   NewLock = "/newlock",
 }
+
+export const APIHost = "http://localhost:8080"

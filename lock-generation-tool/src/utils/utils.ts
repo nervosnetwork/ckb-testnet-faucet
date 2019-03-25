@@ -50,5 +50,5 @@ export const jsonScriptToTypeHash = ({
   }
 
   const digest = s.digest('hex')
-  return digest
+  return digest as string
 }

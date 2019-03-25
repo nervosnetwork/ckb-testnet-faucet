@@ -20,7 +20,7 @@ export default (props: any) => {
   const address = jsonScriptToTypeHash(script)
 
   const onClickCopy = () => {
-    if (copy(address as string)) {
+    if (copy(address)) {
       setCopyMsg("Copy success")
     } else {
       setCopyMsg("Copy failed")
@@ -31,7 +31,7 @@ export default (props: any) => {
     <Box width="100%" align="center" gap="small">
       <Text color="text" size="18px">Check here for more info about how to use this lock hash.</Text>
       <Box width="600px" pad="large" gap="large">
-        <TextInput style={{ color: "white" }} readOnly width="100%" value={address as string} />
+        <TextInput style={{ color: "white" }} readOnly width="100%" value={address} />
         <Text alignSelf="center" color="brand">{copyMsg}</Text>
         <Button primary alignSelf="center" label="Copy" onClick={onClickCopy} />
       </Box>
