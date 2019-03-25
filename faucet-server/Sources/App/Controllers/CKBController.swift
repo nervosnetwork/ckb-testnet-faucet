@@ -16,7 +16,7 @@ struct CKBController: RouteCollection {
     }
 
     func faucet(_ req: Request) -> Response {
-        let accessToken = req.http.cookies.all[AccessTokenCookieName]?.string
+        let accessToken = req.http.cookies.all[accessTokenCookieName]?.string
         let status = Authorization().verify(accessToken: accessToken)
         var result: [String: Any] = ["status": status.rawValue]
 

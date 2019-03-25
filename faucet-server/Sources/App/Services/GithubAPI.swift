@@ -12,8 +12,8 @@ struct GithubAPI {
         var request = URLRequest(url: URL(string: "https://github.com/login/oauth/access_token")!)
         request.httpMethod = "POST"
         request.httpBody = [
-            "client_id": GithubOAuthClientId,
-            "client_secret": GithubOAuthClientSecret,
+            "client_id": GithubOAuth.clientId,
+            "client_secret": GithubOAuth.clientSecret,
             "code": code
         ].urlParametersEncode.data(using: .utf8)
 
