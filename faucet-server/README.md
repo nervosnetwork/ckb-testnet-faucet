@@ -1,4 +1,4 @@
-## faucet-service
+# CKB Testnet Faucet Server
 
 ## Build dependencies
 
