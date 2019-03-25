@@ -14,7 +14,7 @@ class CKBControllerTests: XCTestCase {
         super.setUp()
         DispatchQueue.global().async {
             do {
-                try app(.detect(arguments: ["", "--env", "test"])).run()
+                try app(.detect(arguments: ["", "--env", "dev", "--port", "22333"])).run()
             } catch {
                 XCTAssert(false, error.localizedDescription)
             }
@@ -23,7 +23,7 @@ class CKBControllerTests: XCTestCase {
     }
 
     func testVerify() throws {
-        let request = URLRequest(url: URL(string: "http://localhost:8080/ckb/address/random")!)
+        let request = URLRequest(url: URL(string: "http://localhost:22333/ckb/address/random")!)
         let result = try sendSyncRequest(request: request)
         do {
             let dict = try JSONSerialization.jsonObject(with: result, options: .allowFragments) as! [String: Any]

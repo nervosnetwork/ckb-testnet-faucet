@@ -54,6 +54,7 @@ struct CKBController: RouteCollection {
             "publicKey": try! CKB.privateToPublic(privateKey),
             "address": try! CKB.privateToAddress(privateKey)
         ]
-        return Response(http: HTTPResponse(body: HTTPBody(string: result.toJson)), using: req.sharedContainer)
+        let headers = HTTPHeaders([("Access-Control-Allow-Origin", "*")])
+        return Response(http: HTTPResponse(headers: headers, body: HTTPBody(string: result.toJson)), using: req.sharedContainer)
     }
 }
