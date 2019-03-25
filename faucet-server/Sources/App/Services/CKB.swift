@@ -32,6 +32,24 @@ class CKB {
             throw Error.invalidPrivateKey
         }
     }
+
+    static func privateToPublic(_ privateKey: String) throws -> String {
+        if privateKey.hasPrefix("0x") && privateKey.lengthOfBytes(using: .utf8) == 66 {
+            return Utils.privateToPublic(String(privateKey.dropFirst(2)))
+        } else if privateKey.lengthOfBytes(using: .utf8) == 64 {
+            return Utils.privateToPublic(privateKey)
+        } else {
+            throw Error.invalidPrivateKey
+        }
+    }
+
+    static func makeRandomPrivateKey() -> String {
+        var bytes = [UInt8]()
+        for _ in 0..<32 {
+            bytes.append(UInt8.random(in: 0...UInt8.max))
+        }
+        return Data(bytes: bytes).toHexString()
+    }
 }
 
 extension CKB {
