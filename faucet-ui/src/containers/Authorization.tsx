@@ -15,9 +15,9 @@ export default () => {
 
   return (
     <Box align="center" gap="small">
-      <Text size="16px">This faucet is for developers who wanna try developing on Nervos CKB but don't really feel like running a node themselves.</Text>
-      <Text size="16px">To get some test token, please click the button below to login with your GitHub ID.</Text>
-      <Text size="16px">Each account can only request test token once ever 24 hours.</Text>
+      <Text color="text" size="16px">This faucet is for developers who wanna try developing on Nervos CKB but don't really feel like running a node themselves.</Text>
+      <Text color="text" size="16px">To get some test token, please click the button below to login with your GitHub ID.</Text>
+      <Text color="text" size="16px">Each account can only request test token once ever 24 hours.</Text>
       <Box align="center" pad="small">
         <CheckBox checked={enable} onChange={onChangeEnable} label="I understand this is for getting test tokens instead of official CKB" />
       </Box>
