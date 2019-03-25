@@ -44,7 +44,8 @@ struct CKBController: RouteCollection {
         } catch {
             result = ["status": -2, "error": error.localizedDescription]
         }
-        return Response(http: HTTPResponse(body: HTTPBody(string: result.toJson)), using: req.sharedContainer)
+        let headers = HTTPHeaders([("Access-Control-Allow-Origin", "*")])
+        return Response(http: HTTPResponse(headers: headers, body: HTTPBody(string: result.toJson)), using: req.sharedContainer)
     }
 
     func makeRandomAddress(_ req: Request) -> Response {
