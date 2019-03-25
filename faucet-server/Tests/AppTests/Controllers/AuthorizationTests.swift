@@ -16,7 +16,7 @@ class AuthorizationTests: XCTestCase {
             do {
                 try app(.detect(arguments: ["", "--env", "test"])).run()
             } catch {
-                print(error)
+                XCTAssert(false, error.localizedDescription)
             }
         }
         Thread.sleep(forTimeInterval: 2)

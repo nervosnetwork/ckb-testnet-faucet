@@ -12,6 +12,7 @@ struct CKBController: RouteCollection {
     func boot(router: Router) throws {
         router.post("ckb/faucet", use: faucet)
         router.get("ckb/address", use: address)
+        router.get("ckb/address/random", use: makeRandomAddress)
     }
 
     func faucet(_ req: Request) -> Response {
@@ -43,6 +44,16 @@ struct CKBController: RouteCollection {
         } catch {
             result = ["status": -2, "error": error.localizedDescription]
         }
+        return Response(http: HTTPResponse(body: HTTPBody(string: result.toJson)), using: req.sharedContainer)
+    }
+
+    func makeRandomAddress(_ req: Request) -> Response {
+        let privateKey = CKB.makeRandomPrivateKey()
+        let result: [String: Any] = [
+            "privateKey": privateKey,
+            "publicKey": try! CKB.privateToPublic(privateKey),
+            "address": try! CKB.privateToAddress(privateKey)
+        ]
         return Response(http: HTTPResponse(body: HTTPBody(string: result.toJson)), using: req.sharedContainer)
     }
 }
