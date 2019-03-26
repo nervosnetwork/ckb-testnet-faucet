@@ -6,6 +6,6 @@ export enum Routes {
   ServiceError = "/serviceerror",
 }
 
-export const ClientId = "58c63aeed6e97fd4929e"
+export const ClientId = "152ba78865288838d5df"
 
 export const APIHost = "http://localhost:8080"
