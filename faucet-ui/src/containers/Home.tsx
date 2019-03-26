@@ -1,7 +1,8 @@
 import fetchJsonp from 'fetch-jsonp';
 import { Box, Button, Text, TextInput } from 'grommet';
 import * as React from 'react';
-import { APIHost, Routes } from '../utils/const';
+import { Routes } from '../utils/const';
+import { APIHost } from '../environment'
 
 export default (props: any) => {
   const [enable, setEnable] = React.useState(false)
