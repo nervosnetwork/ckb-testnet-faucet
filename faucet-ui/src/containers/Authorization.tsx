@@ -1,6 +1,5 @@
 import { Box, Button, CheckBox, Text } from 'grommet';
 import * as React from 'react';
-import { ClientId } from '../utils/const'
 
 export default () => {
   const [enable, setEnbale] = React.useState(false)
@@ -10,7 +9,7 @@ export default () => {
   }
 
   const onLoginWithGithub = () => {
-    window.location.href=`https://github.com/login/oauth/authorize?client_id=${ClientId}&state=${window.location.origin}`;
+    window.location.href=`https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GITHUB_OAUTH_CLIENT_ID}&state=${window.location.origin}`;
   }
 
   return (
