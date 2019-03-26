@@ -2,7 +2,6 @@ import fetchJsonp from 'fetch-jsonp';
 import { Box, Button, Text, TextInput } from 'grommet';
 import * as React from 'react';
 import { Routes } from '../utils/const';
-import { APIHost } from '../environment'
 
 export default (props: any) => {
   const [enable, setEnable] = React.useState(false)
@@ -21,7 +20,7 @@ export default (props: any) => {
 
   // Determine whether need to enter the authentication or failure page
   React.useEffect(() => {
-    fetchJsonp(`${APIHost}/auth/verify`).then((response: any) => {
+    fetchJsonp(`${process.env.REACT_APP_API_HOST}/auth/verify`).then((response: any) => {
       return response.json()
     }).then((json: any) => {
       switch (json.status) {
