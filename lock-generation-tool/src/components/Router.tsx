@@ -4,6 +4,7 @@ import Home from '../containers/Home';
 import { Routes } from '../utils/const';
 import NewLock from '../containers/NewLock';
 import NewKeyLock from '../containers/NewKeyLock';
+import Error from '../containers/Error'
 
 export default () => {
   return (
@@ -11,6 +12,7 @@ export default () => {
       <Switch>
         <Route path={Routes.NewLock} component={NewLock} />
         <Route path={Routes.NewKeyLock} component={NewKeyLock} />
+        <Route path={Routes.Error} component={Error} />
         <Route path={Routes.Home} component={Home} />
       </Switch>
     </BrowserRouter>
