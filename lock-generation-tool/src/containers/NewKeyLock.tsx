@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Text, TextInput } from 'grommet'
-import { APIHost } from '../utils/const';
+import { APIHost, Routes } from '../utils/const';
 
-export default () => {
+export default (props: any) => {
   const [privateKey, setPrivateKey] = useState("")
   const [address, setAddress] = useState("")
 
@@ -12,8 +12,8 @@ export default () => {
     }).then((json) => {
       setPrivateKey(json.privateKey)
       setAddress(json.address)
-    }).catch((error) => {
-      // error
+    }).catch(() => {
+      props.history.replace({ pathname: Routes.Error })
     })
   }, [])
 
