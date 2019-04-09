@@ -48,7 +48,7 @@ class CKB {
         for _ in 0..<32 {
             bytes.append(UInt8.random(in: 0...UInt8.max))
         }
-        return Data(bytes: bytes).toHexString()
+        return Data(bytes).toHexString()
     }
 }
 
