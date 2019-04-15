@@ -9,18 +9,18 @@
 import Foundation
 
 
-struct Bech32 {
+public struct Bech32 {
     private static let GENERATOR = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3]
     private static let CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
 
-    static func encode(hrp: String, data: Data) -> String {
+    public static func encode(hrp: String, data: Data) -> String {
         let checksum = createChecksum(hrp: hrp.data(using: .utf8)!, data: data)
         var ret = hrp + "1"
         ret += String((data + checksum).map { CHARSET[CHARSET.index(CHARSET.startIndex, offsetBy: Int($0))] })
         return ret
     }
 
-    static func decode(_ string: String) -> (String, Data)? {
+    public static func decode(_ string: String) -> (String, Data)? {
         var hasLower = false
         var hasUpper = false
         for char in string.utf8 {

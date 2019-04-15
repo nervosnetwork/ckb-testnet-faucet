@@ -8,7 +8,7 @@
 
 import Foundation
 
-func convertbits(data: Data, frombits: Int, tobits: Int, pad: Bool) -> Data? {
+public func convertbits(data: Data, frombits: Int, tobits: Int, pad: Bool) -> Data? {
     var ret = Data()
     var acc = 0
     var bits = 0
