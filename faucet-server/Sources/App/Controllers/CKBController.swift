@@ -49,7 +49,7 @@ struct CKBController: RouteCollection {
     }
 
     func makeRandomAddress(_ req: Request) -> Response {
-        let privateKey = CKB.makeRandomPrivateKey()
+        let privateKey = CKB.generatePrivateKey()
         let result: [String: Any] = [
             "privateKey": privateKey,
             "publicKey": try! CKB.privateToPublic(privateKey),

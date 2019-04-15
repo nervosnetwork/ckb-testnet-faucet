@@ -43,12 +43,10 @@ class CKB {
         }
     }
 
-    static func makeRandomPrivateKey() -> String {
-        var bytes = [UInt8]()
-        for _ in 0..<32 {
-            bytes.append(UInt8.random(in: 0...UInt8.max))
-        }
-        return Data(bytes).toHexString()
+    static func generatePrivateKey() -> String {
+        var data = Data(repeating: 0, count: 32)
+        data.withUnsafeMutableBytes({ _ = SecRandomCopyBytes(kSecRandomDefault, 32, $0.baseAddress! ) })
+        return data.toHexString()
     }
 }
 
