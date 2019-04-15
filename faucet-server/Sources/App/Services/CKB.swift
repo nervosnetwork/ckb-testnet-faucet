@@ -9,8 +9,17 @@ import Foundation
 import CKB
 
 class CKB {
-    func faucet(address: String) -> String? {
-        return nil
+    let api: APIClient
+
+    static var shared = CKB()
+
+    init() {
+        api = APIClient()
+    }
+    
+    func faucet(lock: Script) throws -> H256? {
+        let asw = try AlwaysSuccessAccount(api: api)
+        return try asw.sendCapacity(targetLock: lock, capacity: 10000)
     }
 
     static func privateToAddress(_ privateKey: String) throws -> String {
