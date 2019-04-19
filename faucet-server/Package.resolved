@@ -2,12 +2,12 @@
   "object": {
     "pins": [
       {
-        "package": "Base32",
-        "repositoryURL": "https://github.com/norio-nomura/Base32",
+        "package": "CKB",
+        "repositoryURL": "https://github.com/cezres/ckb-sdk-swift",
         "state": {
           "branch": null,
-          "revision": "f235579fee2633320047dc12caed7ebd738fa77f",
-          "version": "0.7.0"
+          "revision": "218b1d6bc77aae5679a3ebf88a780d175e03aeac",
+          "version": null
         }
       },
       {
