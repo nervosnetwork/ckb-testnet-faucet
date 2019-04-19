@@ -25,7 +25,8 @@ struct CKBController: RouteCollection {
             do {
                 if let address = urlParameters["address"] {
                     let txhash = try CKBService.shared.faucet(address: address)
-                    result = ["txhash": txhash, "status": 0]
+                    Authorization().recordCollectionDate(accessToken: accessToken!)
+                    result = ["status": 0, "txhash": txhash]
                 } else {
                      result = ["status": -2, "error": "No public or private key"]
                 }
@@ -33,7 +34,7 @@ struct CKBController: RouteCollection {
                 result = ["status": -3, "error": error.localizedDescription]
             }
         } else {
-            result = ["status": -1, "error": "No public or private key", "token_status": status.rawValue]
+            result = ["status": -1, "error": "Invalid access_token", "verify_status": status.rawValue]
         }
 
         return Response(http: HTTPResponse(body: HTTPBody(string: result.toJson)), using: req.sharedContainer)
