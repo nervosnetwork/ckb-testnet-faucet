@@ -17,10 +17,10 @@ struct CKBController: RouteCollection {
 
     func faucet(_ req: Request) -> Response {
         let accessToken = req.http.cookies.all[accessTokenCookieName]?.string
-        let status = Authorization().verify(accessToken: accessToken)
+        let verifyStatus = Authorization().verify(accessToken: accessToken)
         let result: [String: Any]
 
-        if status == .tokenIsVailable {
+        if verifyStatus == .tokenIsVailable {
             let urlParameters = req.http.urlString.urlParametersDecode
             do {
                 if let address = urlParameters["address"] {
@@ -28,13 +28,13 @@ struct CKBController: RouteCollection {
                     Authorization().recordCollectionDate(accessToken: accessToken!)
                     result = ["status": 0, "txhash": txhash]
                 } else {
-                     result = ["status": -2, "error": "No public or private key"]
+                     result = ["status": -3, "error": "No address"]
                 }
             } catch {
-                result = ["status": -3, "error": error.localizedDescription]
+                result = ["status": -4, "error": error.localizedDescription]
             }
         } else {
-            result = ["status": -1, "error": "Invalid access_token", "verify_status": status.rawValue]
+            result = ["status": verifyStatus.rawValue, "error": "Verify failed"]
         }
 
         return Response(http: HTTPResponse(body: HTTPBody(string: result.toJson)), using: req.sharedContainer)

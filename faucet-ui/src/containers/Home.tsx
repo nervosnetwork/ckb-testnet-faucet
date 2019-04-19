@@ -21,18 +21,13 @@ export default (props: any) => {
             props.history.push({ pathname: Routes.Success, query: { txhash: json.txhash } })
             break
           case -1:
-          case -2:
-            setErrorMessage(json.error)
+            props.history.push({ pathname: Routes.Auth })
             break
-          case -3:
-            switch (json.verify_status) {
-              case -1:
-                props.history.push({ pathname: Routes.Auth })
-                break
-              case -2:
-                props.history.push({ pathname: Routes.Failure })
-                break
-            }
+          case -2:
+            props.history.push({ pathname: Routes.Failure })
+            break
+          default:
+            setErrorMessage(json.error)
             break
         }
       })
