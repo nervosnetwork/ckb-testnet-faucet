@@ -11,15 +11,6 @@
         }
       },
       {
-        "package": "CKB",
-        "repositoryURL": "https://github.com/cezres/ckb-sdk-swift",
-        "state": {
-          "branch": null,
-          "revision": "d91e2c5484770e0fef7344e24b731b08a97c7e10",
-          "version": null
-        }
-      },
-      {
         "package": "Clibsodium",
         "repositoryURL": "https://github.com/tiwoc/Clibsodium.git",
         "state": {
