@@ -3,10 +3,10 @@
     "pins": [
       {
         "package": "CKB",
-        "repositoryURL": "https://github.com/nervosnetwork/ckb-sdk-swift",
+        "repositoryURL": "https://github.com/cezres/ckb-sdk-swift",
         "state": {
           "branch": null,
-          "revision": "e2b280f7d6215dc84094f4486457e160dc8774d0",
+          "revision": "218b1d6bc77aae5679a3ebf88a780d175e03aeac",
           "version": null
         }
       },
@@ -159,8 +159,8 @@
         "repositoryURL": "https://github.com/jedisct1/swift-sodium.git",
         "state": {
           "branch": null,
-          "revision": "adc2c117bedf186cb4cdcd64c5b93b7f1f55e185",
-          "version": null
+          "revision": "5900a54dea817befa18f3148889fe922a38afe7f",
+          "version": "0.8.0"
         }
       },
       {

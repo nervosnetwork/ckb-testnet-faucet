@@ -9,10 +9,28 @@ export default (props: any) => {
   const [errorMessage, setErrorMessage] = React.useState(null as string | null)
   const onClickGetTestToken = () => {
     const element = inputKey.current! as HTMLInputElement
-    if (element.value.length > 0) {
+    const address = element.value
+    if (address.length > 0) {
       setErrorMessage(null)
-      // TODO: Send a transaction request to the server
-      props.history.push({ pathname: Routes.Success, query: { txhash: element.value } })
+      
+      fetchJsonp(`${process.env.REACT_APP_API_HOST}/ckb/faucet?address=${address}`).then((response: any) => {
+        return response.json()
+      }).then((json: any) => {
+        switch (json.status) {
+          case 0: 
+            props.history.push({ pathname: Routes.Success, query: { txhash: json.txhash } })
+            break
+          case -1:
+            props.history.push({ pathname: Routes.Auth })
+            break
+          case -2:
+            props.history.push({ pathname: Routes.Failure })
+            break
+          default:
+            setErrorMessage(json.error)
+            break
+        }
+      })
     } else {
       setErrorMessage("Wrong lock hash. Please check here for the lock hash format of Nervos CKB")
     }
@@ -31,7 +49,7 @@ export default (props: any) => {
           props.history.push({ pathname: Routes.Failure })
           break
       }
-    }).catch((ex: any) => {
+    }).catch((_ex: any) => {
       props.history.push({ pathname: Routes.ServiceError })
     }).finally(() => {
       setEnable(true)
