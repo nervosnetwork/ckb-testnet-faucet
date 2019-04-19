@@ -10,7 +10,7 @@ import CKB
 
 let minCellCapacity: Capacity = 40
 
-class Account {
+class Wallet {
     let api: APIClient
     let privateKey: String
 
@@ -18,7 +18,7 @@ class Account {
         return [systemScriptOutPoint]
     }
     var publicKey: H256 {
-        return Utils.privateToPublic(privateKey)
+        return "0x" + Utils.privateToPublic(privateKey)
     }
     var lock: Script {
         return Script.verifyScript(for: publicKey, binaryHash: systemScriptCellHash)
@@ -86,7 +86,7 @@ class Account {
     }
 }
 
-extension Account {
+extension Wallet {
     typealias Element = CellOutputWithOutPoint
 
     public struct UnspentCellsIterator: IteratorProtocol {
@@ -112,7 +112,6 @@ extension Account {
                 defer {
                     fromBlockNumber = toBlockNumber + 1
                 }
-                print("\(fromBlockNumber) ~ \(toBlockNumber)")
                 if var cells = try? api.getCellsByLockHash(lockHash: lockHash, from: fromBlockNumber, to: toBlockNumber), cells.count > 0 {
                     defer {
                         self.cells = cells

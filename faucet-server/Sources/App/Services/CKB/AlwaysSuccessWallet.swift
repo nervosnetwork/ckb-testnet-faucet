@@ -8,7 +8,7 @@
 import Foundation
 import CKB
 
-class AlwaysSuccessAccount: Account {
+class AlwaysSuccessWallet: Wallet {
     override var lock: Script {
         return Script.alwaysSuccess
     }
