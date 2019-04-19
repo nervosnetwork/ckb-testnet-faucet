@@ -18,11 +18,22 @@ struct CKBController: RouteCollection {
     func faucet(_ req: Request) -> Response {
         let accessToken = req.http.cookies.all[accessTokenCookieName]?.string
         let status = Authorization().verify(accessToken: accessToken)
-        var result: [String: Any] = ["status": status.rawValue]
+        let result: [String: Any]
 
         if status == .tokenIsVailable {
-            // TODO: Send transaction
-            result["txhash"] = "xxxxxxxxx"
+            let urlParameters = req.http.urlString.urlParametersDecode
+            do {
+                if let address = urlParameters["address"] {
+                    let txhash = try CKBService.shared.faucet(address: address)
+                    result = ["txhash": txhash, "status": 0]
+                } else {
+                     result = ["status": -2, "error": "No public or private key"]
+                }
+            } catch {
+                result = ["status": -3, "error": error.localizedDescription]
+            }
+        } else {
+            result = ["status": -1, "error": "No public or private key", "token_status": status.rawValue]
         }
 
         return Response(http: HTTPResponse(body: HTTPBody(string: result.toJson)), using: req.sharedContainer)
@@ -33,10 +44,10 @@ struct CKBController: RouteCollection {
         let result: [String: Any]
         do {
             if let privateKey = urlParameters["privateKey"] {
-                let address = try CKB.privateToAddress(privateKey)
+                let address = try CKBService.privateToAddress(privateKey)
                 result = ["address": address, "status": 0]
             } else if let publicKey = urlParameters["publicKey"] {
-                let address = try CKB.publicToAddress(publicKey)
+                let address = try CKBService.publicToAddress(publicKey)
                 result = ["address": address, "status": 0]
             } else {
                 result = ["status": -1, "error": "No public or private key"]
@@ -49,11 +60,11 @@ struct CKBController: RouteCollection {
     }
 
     func makeRandomAddress(_ req: Request) -> Response {
-        let privateKey = CKB.generatePrivateKey()
+        let privateKey = CKBService.generatePrivateKey()
         let result: [String: Any] = [
             "privateKey": privateKey,
-            "publicKey": try! CKB.privateToPublic(privateKey),
-            "address": try! CKB.privateToAddress(privateKey)
+            "publicKey": try! CKBService.privateToPublic(privateKey),
+            "address": try! CKBService.privateToAddress(privateKey)
         ]
         let headers = HTTPHeaders([("Access-Control-Allow-Origin", "*")])
         return Response(http: HTTPResponse(headers: headers, body: HTTPBody(string: result.toJson)), using: req.sharedContainer)

@@ -8,45 +8,41 @@
 import Foundation
 import CKB
 
-class CKB {
+class CKBService {
     let api: APIClient
 
-    static var shared = CKB()
+    static var shared = CKBService()
 
     init() {
         api = APIClient()
     }
     
-    func faucet(lock: Script) throws -> H256? {
-        let asw = try AlwaysSuccessAccount(api: api)
+    func faucet(address: String) throws -> H256 {
+        guard let publicKeyHash = AddressGenerator(network: .testnet).publicKeyHash(for: address) else { throw Error.invalidAddress }
+        let lock = Script(version: 0, args: [publicKeyHash], binaryHash: try api.systemScriptCellHash())
+        let asw = try AlwaysSuccessWallet(api: api)
         return try asw.sendCapacity(targetLock: lock, capacity: 10000)
     }
 
     static func privateToAddress(_ privateKey: String) throws -> String {
-        if privateKey.hasPrefix("0x") && privateKey.lengthOfBytes(using: .utf8) == 66 {
-            return Utils.privateToAddress(String(privateKey.dropFirst(2)))
-        } else if privateKey.lengthOfBytes(using: .utf8) == 64 {
-            return Utils.privateToAddress(privateKey)
-        } else {
-            throw Error.invalidPrivateKey
-        }
+        return try publicToAddress(try privateToPublic(privateKey))
     }
 
     static func publicToAddress(_ publicKey: String) throws -> String {
         if publicKey.hasPrefix("0x") && publicKey.lengthOfBytes(using: .utf8) == 68 {
-            return Utils.publicToAddress(String(publicKey.dropFirst(2)))
+            return AddressGenerator(network: .testnet).address(for: publicKey)
         } else if publicKey.lengthOfBytes(using: .utf8) == 66 {
-            return Utils.publicToAddress(publicKey)
+            return AddressGenerator(network: .testnet).address(for: publicKey)
         } else {
-            throw Error.invalidPrivateKey
+            throw Error.invalidPublicKey
         }
     }
 
     static func privateToPublic(_ privateKey: String) throws -> String {
         if privateKey.hasPrefix("0x") && privateKey.lengthOfBytes(using: .utf8) == 66 {
-            return Utils.privateToPublic(String(privateKey.dropFirst(2)))
+            return try publicToAddress(Utils.publicToAddress(String(privateKey.dropFirst(2))))
         } else if privateKey.lengthOfBytes(using: .utf8) == 64 {
-            return Utils.privateToPublic(privateKey)
+            return try publicToAddress(Utils.privateToPublic(privateKey))
         } else {
             throw Error.invalidPrivateKey
         }
@@ -59,9 +55,10 @@ class CKB {
     }
 }
 
-extension CKB {
+extension CKBService {
     enum Error: String, Swift.Error {
         case invalidPrivateKey = "Invalid privateKey"
         case invalidPublicKey = "Invalid publicKey"
+        case invalidAddress = "Invalid address"
     }
 }
