@@ -7,7 +7,6 @@ export default (props: any) => {
   React.useEffect(() => {
     fetch(`${APIHost}`).then((_response) => {
       props.history.push({ pathname: Routes.Home })
-    }).catch(() => {
     })
   }, [])
 
