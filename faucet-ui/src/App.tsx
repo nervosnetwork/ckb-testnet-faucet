@@ -14,8 +14,7 @@ const App = () => {
   return (
     <Box height="100vh">
       <Stack fill>
-        <img src="//cdn.cryptape.com/videos/nervos_poster.png" width="100%"></img>
-        <Video autoPlay loop>
+        <Video autoPlay loop poster="//cdn.cryptape.com/videos/nervos_poster.png">
           <source src="//cdn.cryptape.com/videos/nervos_org_bg.mp4" type="video/mp4" />
         </Video>
         <Theme>
