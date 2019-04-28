@@ -9,9 +9,9 @@ export default (props: any) => {
       return response.json()
     }).then((json: any) => {
       switch (json.status) {
-        case 0: 
-        props.history.push({ pathname: Routes.Home })
-        break
+        case 0:
+          props.history.push({ pathname: Routes.Home })
+          break
         case -1:
           props.history.push({ pathname: Routes.Auth })
           break
