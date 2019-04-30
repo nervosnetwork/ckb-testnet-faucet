@@ -50,7 +50,13 @@ class CKBService {
 
     static func generatePrivateKey() -> String {
         var data = Data(repeating: 0, count: 32)
-        data.withUnsafeMutableBytes({ _ = SecRandomCopyBytes(kSecRandomDefault, 32, $0.baseAddress! ) })
+        if #available(OSX 10.7, *) {
+            data.withUnsafeMutableBytes({ _ = SecRandomCopyBytes(kSecRandomDefault, 32, $0.baseAddress! ) })
+        } else {
+            for _ in 0..<32 {
+                data.append(UInt8.random(in: UInt8.min...UInt8.max))
+            }
+        }
         return data.toHexString()
     }
 }
