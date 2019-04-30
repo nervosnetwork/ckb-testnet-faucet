@@ -12,12 +12,12 @@ export default (props: any) => {
     const address = element.value
     if (address.length > 0) {
       setErrorMessage(null)
-      
+
       fetchJsonp(`${process.env.REACT_APP_API_HOST}/ckb/faucet?address=${address}`).then((response: any) => {
         return response.json()
       }).then((json: any) => {
         switch (json.status) {
-          case 0: 
+          case 0:
             props.history.push({ pathname: Routes.Success, query: { txhash: json.txhash } })
             break
           case -1:
