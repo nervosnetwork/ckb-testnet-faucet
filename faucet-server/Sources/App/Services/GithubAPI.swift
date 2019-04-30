@@ -6,14 +6,15 @@
 //
 
 import Foundation
+import Vapor
 
 struct GithubAPI {
     static func getAccessToken(code: String) -> String? {
         var request = URLRequest(url: URL(string: "https://github.com/login/oauth/access_token")!)
         request.httpMethod = "POST"
         request.httpBody = [
-            "client_id": GithubOAuth.clientId,
-            "client_secret": GithubOAuth.clientSecret,
+            "client_id": Environment.Process.oauthClientId,
+            "client_secret": Environment.Process.oauthClientSecret,
             "code": code
         ].urlParametersEncode.data(using: .utf8)
 
