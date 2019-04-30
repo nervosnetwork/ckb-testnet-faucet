@@ -16,7 +16,7 @@ extension Environment {
         static func configure(_ environment: inout Environment) {
             nodeURL = try? environment.commandInput.parse(option: .value(name: "node_url")) ?? ""
             oauthClientId = try? environment.commandInput.parse(option: .value(name: "github_oauth_client_id")) ?? ""
-            oauthClientSecret  = try? environment.commandInput.parse(option: .value(name: "github_oauth_client_secret")) ?? ""
+            oauthClientSecret = try? environment.commandInput.parse(option: .value(name: "github_oauth_client_secret")) ?? ""
         }
     }
 }
