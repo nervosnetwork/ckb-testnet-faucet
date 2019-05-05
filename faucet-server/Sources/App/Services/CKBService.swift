@@ -8,7 +8,7 @@
 import Foundation
 import CKB
 
-class CKBService {
+public class CKBService {
     let api: APIClient
 
     static var shared = CKBService()
@@ -48,13 +48,13 @@ class CKBService {
         }
     }
 
-    static func generatePrivateKey() -> String {
+    public static func generatePrivateKey() -> String {
         var data = Data(repeating: 0, count: 32)
         #if os(OSX)
         data.withUnsafeMutableBytes({ _ = SecRandomCopyBytes(kSecRandomDefault, 32, $0.baseAddress! ) })
         #else
-        for _ in 0..<32 {
-            data.append(UInt8.random(in: UInt8.min...UInt8.max))
+        for idx in 0..<32 {
+            data[idx] = UInt8.random(in: UInt8.min...UInt8.max)
         }
         #endif
         return data.toHexString()
