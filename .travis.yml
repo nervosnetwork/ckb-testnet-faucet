@@ -9,6 +9,8 @@ jobs:
   include:
     - language: object-c
       osx_image: xcode10.2
+      env:
+        - SKIP_RPC_TESTS=1
       before_install:
         - cd faucet-server
       install:

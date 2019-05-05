@@ -10,11 +10,24 @@ import XCTest
 import Vapor
 
 class AuthorizationTests: XCTestCase {
+    override func invokeTest() {
+        if ProcessInfo().environment["SKIP_RPC_TESTS"] == "1" {
+            return
+        }
+        super.invokeTest()
+    }
+
     override func setUp() {
         super.setUp()
         DispatchQueue.global().async {
             do {
-                try app(.detect(arguments: ["", "--env", "test"])).run()
+                try app(.detect(arguments: ["",
+                                            "--env", "dev",
+                                            "--port", "22333",
+                                            "--node_url", "http://localhost:8114",
+                                            "--github_oauth_client_id", "",
+                                            "--github_oauth_client_secret", ""
+                    ])).run()
             } catch {
                 XCTAssert(false, error.localizedDescription)
             }
