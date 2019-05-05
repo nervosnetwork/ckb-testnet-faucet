@@ -24,13 +24,14 @@ extension User {
     public func save() {
         do {
             let filterResult = userTable.filter(accessTokenExpression == accessToken)
-            if try connection.scalar(filterResult.count) > 0 {
-                try connection.run(filterResult.update(
+            do {
+                try connection.run(userTable.insert(
+                    accessTokenExpression <- accessToken,
                     authorizationDateExpression <- authorizationDate,
                     collectionDateExpression <- collectionDate
                 ))
-            } else {
-                try connection.run(userTable.insert(
+            } catch {
+                try connection.run(filterResult.update(
                     accessTokenExpression <- accessToken,
                     authorizationDateExpression <- authorizationDate,
                     collectionDateExpression <- collectionDate
