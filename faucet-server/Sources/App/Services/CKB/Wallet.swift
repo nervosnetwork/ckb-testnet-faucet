@@ -10,7 +10,7 @@ import CKB
 
 let minCellCapacity: Capacity = 40
 
-class Wallet {
+public class Wallet {
     let api: APIClient
     let privateKey: String
 
@@ -20,7 +20,7 @@ class Wallet {
     var publicKey: H256 {
         return "0x" + Utils.privateToPublic(privateKey)
     }
-    var lock: Script {
+    public var lock: Script {
         return Script.verifyScript(for: publicKey, binaryHash: systemScriptCellHash)
     }
     var lockHash: H256 {
@@ -30,7 +30,7 @@ class Wallet {
     let systemScriptOutPoint: OutPoint
     let systemScriptCellHash: H256
 
-    init(api: APIClient, privateKey: H256) throws {
+    public init(api: APIClient, privateKey: H256) throws {
         self.api = api
         self.privateKey = privateKey
 
@@ -38,7 +38,7 @@ class Wallet {
         systemScriptOutPoint = try api.systemScriptOutPoint()
     }
 
-    func getBalance() throws -> Capacity {
+    public func getBalance() throws -> Capacity {
         return try getUnspentCells().reduce(0, { $0 + $1.capacity })
     }
 

@@ -8,12 +8,12 @@
 import Foundation
 import CKB
 
-class AlwaysSuccessWallet: Wallet {
-    override var lock: Script {
+public class AlwaysSuccessWallet: Wallet {
+    override public var lock: Script {
         return Script.alwaysSuccess
     }
 
-    init(api: APIClient) throws {
+    public init(api: APIClient) throws {
         try super.init(api: api, privateKey: "")
     }
 
