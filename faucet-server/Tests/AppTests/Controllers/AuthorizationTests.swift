@@ -10,13 +10,6 @@ import XCTest
 import Vapor
 
 class AuthorizationTests: XCTestCase {
-    override func invokeTest() {
-        if ProcessInfo().environment["SKIP_RPC_TESTS"] == "1" {
-            return
-        }
-        super.invokeTest()
-    }
-
     override func setUp() {
         super.setUp()
         DispatchQueue.global().async {
@@ -36,7 +29,7 @@ class AuthorizationTests: XCTestCase {
     }
 
     func testVerify() throws {
-        let request = URLRequest(url: URL(string: "http://localhost:8080/auth/verify")!)
+        let request = URLRequest(url: URL(string: "http://localhost:22333/auth/verify")!)
         let result = try sendSyncRequest(request: request)
         XCTAssertEqual(String(data: result, encoding: .utf8), "{\"status\":-1}")
     }

@@ -11,7 +11,7 @@ import Vapor
 
 class CKBControllerTests: XCTestCase {
     override func invokeTest() {
-        if ProcessInfo().environment["SKIP_RPC_TESTS"] == "1" {
+        if ProcessInfo().environment["SKIP_CKB_API_TESTS"] == "1" {
             return
         }
         super.invokeTest()
