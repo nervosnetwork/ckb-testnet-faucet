@@ -42,7 +42,7 @@ class WalletTests: XCTestCase {
             } catch {
                 repeatCount -= 1
                 if repeatCount == 0 {
-                    XCTAssert(false, "transaction failed")
+                    XCTAssert(false, "Transaction failed")
                 }
             }
         }
