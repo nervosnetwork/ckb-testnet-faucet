@@ -17,9 +17,6 @@ class AuthorizationTests: XCTestCase {
                 try app(.detect(arguments: ["",
                                             "--env", "dev",
                                             "--port", "22333",
-                                            "--node_url", "http://localhost:8114",
-                                            "--github_oauth_client_id", "",
-                                            "--github_oauth_client_secret", ""
                     ])).run()
             } catch {
                 XCTAssert(false, error.localizedDescription)
@@ -29,8 +26,19 @@ class AuthorizationTests: XCTestCase {
     }
 
     func testVerify() throws {
-        let request = URLRequest(url: URL(string: "http://localhost:22333/auth/verify")!)
+        // Setup access token
+        let accessToken = "nanannananana"
+        let user = User(accessToken: accessToken, authorizationDate: Date(), collectionDate: nil)
+        try user.save()
+
+        // Init request
+        let cookie = HTTPCookie(properties: [.name: "github_access_token", .value: accessToken, .domain: "*", .path: "*"])!
+        let header = HTTPCookie.requestHeaderFields(with: [cookie])
+        var request = URLRequest(url: URL(string: "http://localhost:22333/auth/verify")!)
+        request.setValue(header["Cookie"], forHTTPHeaderField: "Cookie")
+
         let result = try sendSyncRequest(request: request)
-        XCTAssertEqual(String(data: result, encoding: .utf8), "{\"status\":-1}")
+        let json = try JSONSerialization.jsonObject(with: result, options: .allowFragments) as! [String: Any]
+        XCTAssertEqual(json["status"] as? Int, 0)
     }
 }
