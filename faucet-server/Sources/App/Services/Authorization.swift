@@ -41,14 +41,14 @@ class Authorization {
         } else {
             user = User(accessToken: accessToken, authorizationDate: Date(), collectionDate: nil)
         }
-        user.save()
+        try? user.save()
         return accessToken
     }
 
     func recordCollectionDate(accessToken: String) {
         if var user = User.query(accessToken: accessToken) {
             user.collectionDate = Date()
-            user.save()
+            try? user.save()
         }
     }
 }
