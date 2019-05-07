@@ -1,0 +1,31 @@
+version: "3.6"
+
+services:
+    vapor:
+        build:
+            context: ./
+        image: ${CURRENT_VAPOR_IMG}
+        ports:
+            - 8080:8080
+        volumes:
+            - ${HOST_ROOT}:${CONTAINER_ROOT}
+        working_dir: ${CONTAINER_ROOT}
+        tty: true
+        entrypoint: bash
+        networks:
+            - faucet-net
+
+    nginx:
+        build:
+            context: ./nginx
+        image: ${CURRENT_NGINX_IMG}
+        ports:
+            - ${HOST_HTTP_PORT}:80
+        volumes:
+            - ${HOST_ROOT}:${CONTAINER_ROOT}
+        networks:
+            - faucet-net
+
+networks:
+    faucet-net:
+        driver: bridge
