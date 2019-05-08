@@ -1,30 +1,25 @@
 ## Run faucet-server with Docker
 
 ### Prerequisite
-- docker 18.09.6
-- docker-compose 1.24.0
+- docker
+
 
 `git clone https://github.com/nervosnetwork/ckb-testnet-faucet.git && cd ./ckb-testnet-faucet`
 
 ### Build images
 ```
 $ cd ./faucet-server/
-$ sudo docker-compose build
+$ sudo docker build -t faucet .
 ```
 
 ### Run 
 
 ```
-$ sudo docker-compose up -d
-$ sudo docker exec -it faucet-server_vapor_1 bash
-$ swift build -c release
-$ ./.build/release/Run --hostname 0.0.0.0 --port 8080 
+$ sudo docker run -P 80:80 -d faucet --github_oauth_client_id xxx --github_oauth_client_secret xxxxx
 ```
 
 ### Stop
 
 ```
-Control + C
-$ exit
-$ sudo docker-compose stop
+$ sudo docker stop $CONTAINER_ID
 ```
