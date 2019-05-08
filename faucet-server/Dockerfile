@@ -39,12 +39,8 @@ COPY --from=builder /build/lib/* /usr/lib/
 #COPY --from=builder /app/Public ./Public
 # Uncomment the next line if you are using Leaf
 #COPY --from=builder /app/Resources ./Resources
-ARG ENVIRONMEN
+ARG ENVIRONMENT
 ARG GITHUB_OAUTH_CLIENT_SECRET
 ARG GITHUB_OAUTH_CLIENT_ID
-
-ENV ENVIRONMEN=$ENVIRONMEN
-ENV GITHUB_OAUTH_CLIENT_SECRET=$GITHUB_OAUTH_CLIENT_SECRET
-ENV GITHUB_OAUTH_CLIENT_ID=$GITHUB_OAUThH_CLIENT_SECRET
 
 ENTRYPOINT ./Run serve --env $ENVIRONMENT --hostname 0.0.0.0 --port 80 --github_oauth_client_id $GITHUB_OAUTH_CLIENT_ID --github_oauth_client_secret $GITHUB_OAUTH_CLIENT_SECRET
