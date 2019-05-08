@@ -11,6 +11,8 @@ services:
      - ./facet-ui/build:/usr/share/nginx/html
     command: /bin/bash -c "nginx -g 'daemon off;'"
    faucet:
+    env_file:
+      - ./.env
     build:
       context: ./faucet-server
       dockerfile: ./Dockerfile
