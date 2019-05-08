@@ -24,13 +24,10 @@ RUN swift build -c release && mv `swift build -c release --show-bin-path` /build
 FROM ubuntu:16.04
 ARG env
 RUN apt-get -qq update && apt-get install -y \
-  nginx build-essential wget libicu55 libxml2 libbsd0 libcurl3 libatomic1 \
+  build-essential libicu55 libxml2 libbsd0 libcurl3 libatomic1 \
   tzdata \
   && rm -r /var/lib/apt/lists/*
-RUN wget https://download.libsodium.org/libsodium/releases/libsodium-1.0.16.tar.gz \
-    && tar xf libsodium-1.0.16.tar.gz && cd libsodium-1.0.16 \
-    && ./configure && make -j4 && make install \
-    && ldconfig
+
 
 WORKDIR /app
 COPY --from=builder /build/bin/Run .
