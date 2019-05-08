@@ -27,7 +27,10 @@ RUN apt-get -qq update && apt-get install -y \
   build-essential libicu55 libxml2 libbsd0 libcurl3 libatomic1 \
   tzdata \
   && rm -r /var/lib/apt/lists/*
-
+COPY --from=builder /libsodium-1.0.16 ./libsodium
+RUN cd libsodium \
+    && ./configure && make -j4 && make install \
+    && ldconfig
 
 WORKDIR /app
 COPY --from=builder /build/bin/Run .
