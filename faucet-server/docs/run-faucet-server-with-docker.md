@@ -1,8 +1,8 @@
 ## Run faucet-server with Docker
 
 ### Prerequisite
-- docker
-- docker-compose
+- docker 18.09.6
+- docker-compose 1.24.0
 
 `git clone https://github.com/nervosnetwork/ckb-testnet-faucet.git && cd ./ckb-testnet-faucet`
 

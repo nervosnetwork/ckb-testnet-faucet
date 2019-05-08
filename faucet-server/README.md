@@ -1,8 +1,8 @@
 # CKB Testnet Faucet Server
 
-## Build dependencies
+## Dependencies
 
-- Swift 4.2
+- Swift 5.0.1
 - libsodium `brew install libsodium`
 
 ## Build
@@ -15,6 +15,7 @@
 
 `./.build/debug/Run --env dev --github_oauth_client_id <client_id> --github_oauth_client_secret <client_secret>`
 
+## Documentations
 
-#### [faucet-server-api]()
-#### [run-faucet-server-with-docker]()
+ - [faucet-server-api]()
+ - [run-faucet-server-with-docker]()
