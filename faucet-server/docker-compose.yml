@@ -11,7 +11,7 @@ services:
             - ${HOST_ROOT}:${CONTAINER_ROOT}
         working_dir: ${CONTAINER_ROOT}
         tty: true
-        entrypoint: bash
+        entrypoint: swift build -c release && ./.build/release/Run --hostname 0.0.0.0 --port 8080
         networks:
             - faucet-net
 
