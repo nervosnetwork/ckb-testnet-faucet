@@ -1,0 +1,24 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:latest
+    expose:
+     - "80"
+    ports:
+     - "9000:3000"
+    volumes:
+     - ./faucet-ui/nginx.conf:/etc/nginx/conf.d/default.conf
+     - ./facet-ui/build:/usr/share/nginx/html
+    command: /bin/bash -c "nginx -g 'daemon off;'"
+  faucet:
+    env_file:
+      - ./.env # which copy from example.evn and filling parameter by yourself.
+    build:
+      context: ./faucet-server
+      dockerfile: ./Dockerfile
+      args:
+       - ENVIRONMENT: $ENVIRONMENT
+       - GITHUB_OAUTH_CLIENT_ID: $GITHUB_OAUTH_CLIENT_ID
+       - GITHUB_OAUTH_CLIENT_SECRET: $GITHUB_OAUTH_CLIENT_SECRET
+    ports:
+      - "9001:80"
