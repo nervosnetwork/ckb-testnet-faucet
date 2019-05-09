@@ -30,7 +30,7 @@ class WalletTests: XCTestCase {
         let privateKey = CKBService.generatePrivateKey()
 
         let wallet = try Wallet(api: client, privateKey: privateKey)
-        let txhash = try asw.sendCapacity(targetLock: wallet.lock, capacity: 10000)
+        let txhash = try asw.sendCapacity(targetLock: wallet.lock, capacity: 20000000000)
 
         var repeatCount = 20
         while repeatCount > 0 {
