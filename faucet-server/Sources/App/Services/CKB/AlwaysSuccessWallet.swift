@@ -7,6 +7,7 @@
 
 import Foundation
 import CKB
+import Vapor
 
 public class AlwaysSuccessWallet: Wallet {
     override public var lock: Script {
@@ -14,7 +15,7 @@ public class AlwaysSuccessWallet: Wallet {
     }
 
     public init(api: APIClient) throws {
-        try super.init(api: api, privateKey: "")
+        try super.init(api: api, privateKey: Environment.Process.minerPrivateKey)
     }
 
     override func gatherInputs(capacity: Capacity, minCapacity: Capacity = minCellCapacity) throws -> ValidInputs {

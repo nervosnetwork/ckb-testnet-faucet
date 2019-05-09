@@ -7,6 +7,7 @@
 
 import Foundation
 import CKB
+import Vapor
 
 public class CKBService {
     let api: APIClient
@@ -14,7 +15,7 @@ public class CKBService {
     static var shared = CKBService()
 
     init() {
-        api = APIClient()
+        api = APIClient(url: URL(string: Environment.Process.nodeURL)!)
     }
     
     public func faucet(address: String) throws -> H256 {

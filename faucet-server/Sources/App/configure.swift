@@ -13,5 +13,5 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     middlewares.use(ErrorMiddleware.self) // Catches errors and converts to HTTP response
     services.register(middlewares)
 
-    Environment.Process.configure(&env)
+    try Environment.Process.configure(&env)
 }
