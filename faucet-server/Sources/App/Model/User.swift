@@ -21,23 +21,20 @@ public struct User {
 }
 
 extension User {
-    public func save() {
+    public func save() throws {
+        let filterResult = userTable.filter(accessTokenExpression == accessToken)
         do {
-            let filterResult = userTable.filter(accessTokenExpression == accessToken)
-            do {
-                try connection.run(userTable.insert(
-                    accessTokenExpression <- accessToken,
-                    authorizationDateExpression <- authorizationDate,
-                    collectionDateExpression <- collectionDate
-                ))
-            } catch {
-                try connection.run(filterResult.update(
-                    accessTokenExpression <- accessToken,
-                    authorizationDateExpression <- authorizationDate,
-                    collectionDateExpression <- collectionDate
-                ))
-            }
+            try connection.run(userTable.insert(
+                accessTokenExpression <- accessToken,
+                authorizationDateExpression <- authorizationDate,
+                collectionDateExpression <- collectionDate
+            ))
         } catch {
+            try connection.run(filterResult.update(
+                accessTokenExpression <- accessToken,
+                authorizationDateExpression <- authorizationDate,
+                collectionDateExpression <- collectionDate
+            ))
         }
     }
 

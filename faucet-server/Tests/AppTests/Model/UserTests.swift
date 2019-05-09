@@ -9,14 +9,14 @@ import App
 import XCTest
 
 class UserTests: XCTestCase {
-    func testUser() {
+    func testUser() throws {
         let accessToken = "nananana"
         var user = User(accessToken: accessToken, authorizationDate: Date(), collectionDate: nil)
-        user.save()
+        try user.save()
         XCTAssertEqual(user, User.query(accessToken: accessToken))
 
         user.collectionDate = Date()
-        user.save()
+        try user.save()
         XCTAssert(User.query(accessToken: accessToken)?.collectionDate != nil)
     }
 }
