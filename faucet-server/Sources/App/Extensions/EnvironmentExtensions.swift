@@ -14,11 +14,11 @@ extension Environment {
         static var oauthClientSecret: String! = nil
         static var minerPrivateKey: String! = nil
 
-        static func configure(_ environment: inout Environment) {
-            minerPrivateKey = try? environment.commandInput.parse(option: .value(name: "miner_private_key")) ?? ""
-            nodeURL = try? environment.commandInput.parse(option: .value(name: "node_url")) ?? ""
-            oauthClientId = try? environment.commandInput.parse(option: .value(name: "github_oauth_client_id")) ?? ""
-            oauthClientSecret = try? environment.commandInput.parse(option: .value(name: "github_oauth_client_secret")) ?? ""
+        static func configure(_ environment: inout Environment) throws {
+            minerPrivateKey = try environment.commandInput.parse(option: .value(name: "miner_private_key"))
+            nodeURL = try environment.commandInput.parse(option: .value(name: "node_url"))
+            oauthClientId = try environment.commandInput.parse(option: .value(name: "github_oauth_client_id"))
+            oauthClientSecret = try environment.commandInput.parse(option: .value(name: "github_oauth_client_secret"))
         }
     }
 }
