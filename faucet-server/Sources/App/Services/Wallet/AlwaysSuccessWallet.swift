@@ -17,7 +17,7 @@ public class AlwaysSuccessWallet: Wallet {
         try super.init(api: api, privateKey: "")
     }
 
-    override func gatherInputs(capacity: UInt, minCapacity: UInt = minCellCapacity) throws -> ValidInputs {
+    override func gatherInputs(capacity: Decimal, minCapacity: Decimal = minCellCapacity) throws -> ValidInputs {
         let validInputs = try super.gatherInputs(capacity: capacity, minCapacity: minCapacity)
         let cellInputs = validInputs.cellInputs.map { CellInput(previousOutput: $0.previousOutput, args: [], since: "0") }
         return ValidInputs(cellInputs: cellInputs, capacity: validInputs.capacity)

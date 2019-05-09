@@ -8,7 +8,7 @@
 import Foundation
 import CKB
 
-let minCellCapacity: UInt = 40
+let minCellCapacity: Decimal = 42 * pow(10, 8)
 
 public class Wallet {
     let api: APIClient
@@ -44,7 +44,7 @@ public class Wallet {
         return try getUnspentCells().reduce(0, { $0 + UInt($1.capacity)! })
     }
 
-    public func sendCapacity(targetLock: Script, capacity: UInt) throws -> H256 {
+    public func sendCapacity(targetLock: Script, capacity: Decimal) throws -> H256 {
         let tx = try generateTransaction(targetLock: targetLock, capacity: capacity)
         return try api.sendTransaction(transaction: tx)
     }
@@ -53,19 +53,19 @@ public class Wallet {
 
     struct ValidInputs {
         let cellInputs: [CellInput]
-        let capacity: UInt
+        let capacity: Decimal
     }
 
-    func gatherInputs(capacity: UInt, minCapacity: UInt = minCellCapacity) throws -> ValidInputs {
+    func gatherInputs(capacity: Decimal, minCapacity: Decimal = minCellCapacity) throws -> ValidInputs {
         guard capacity > minCapacity else {
             throw WalletError.tooLowCapacity(min: "\(minCapacity)")
         }
-        var inputCapacities: UInt = 0
+        var inputCapacities: Decimal = 0
         var inputs = [CellInput]()
         for cell in try getUnspentCells() {
             let input = CellInput(previousOutput: cell.outPoint, args: [publicKey], since: "0")
             inputs.append(input)
-            inputCapacities += UInt(cell.capacity) ?? 0
+            inputCapacities += Decimal(string: cell.capacity) ?? 0
             if inputCapacities - capacity >= minCapacity {
                 break
             }
@@ -76,7 +76,7 @@ public class Wallet {
         return ValidInputs(cellInputs: inputs, capacity: inputCapacities)
     }
 
-    func generateTransaction(targetLock: Script, capacity: UInt) throws -> Transaction {
+    func generateTransaction(targetLock: Script, capacity: Decimal) throws -> Transaction {
         let validInputs = try gatherInputs(capacity: capacity, minCapacity: minCellCapacity)
         var outputs: [CellOutput] = [
             CellOutput(capacity: "\(capacity)", data: "0x", lock: targetLock, type: nil)
