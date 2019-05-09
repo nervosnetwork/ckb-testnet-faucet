@@ -34,14 +34,14 @@ public class Wallet {
         self.api = api
         self.privateKey = privateKey
 
-        let syscell = try api.genesisBlock().transactions[0]
-        let cellData = Data(hex: syscell.outputs[0].data)
+        let systemScriptCell = try api.genesisBlock().transactions[0]
+        let cellData = Data(hex: systemScriptCell.outputs[0].data)
         systemScriptCellHash = Utils.prefixHex(Blake2b().hash(data: cellData)!.toHexString())
-        systemScriptOutPoint = OutPoint(txHash: syscell.hash, index: 0)
+        systemScriptOutPoint = OutPoint(txHash: systemScriptCell.hash, index: 0)
     }
 
-    public func getBalance() throws -> UInt {
-        return try getUnspentCells().reduce(0, { $0 + UInt($1.capacity)! })
+    public func getBalance() throws -> Decimal {
+        return try getUnspentCells().reduce(0, { $0 + Decimal(string: $1.capacity)! })
     }
 
     public func sendCapacity(targetLock: Script, capacity: Decimal) throws -> H256 {
