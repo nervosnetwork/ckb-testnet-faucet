@@ -52,7 +52,7 @@ class CKBControllerTests: XCTestCase {
         try user.save()
 
         let privateKey = "b7a5e163e4963751ed023acfc2b93deb03169b71a4abe3d44abf4123ff2ce2a3"
-        let address = try CKBService.privateToAddress(privateKey)
+        let address = try CKBController().privateToAddress(privateKey)
 
         // Send faucet request
         let cookie = HTTPCookie(properties: [.name: "github_access_token", .value: accessToken, .domain: "*", .path: "*"])!
