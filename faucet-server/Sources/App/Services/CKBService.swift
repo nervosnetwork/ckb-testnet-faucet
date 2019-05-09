@@ -15,11 +15,7 @@ public class CKBService {
     static var shared = CKBService()
 
     init() {
-        guard let nodeUrl = Environment.Process.nodeURL else {
-            api = APIClient()
-            return
-        }
-        api = APIClient(url: URL(string: nodeUrl)!)
+        api = APIClient(url: URL(string: Environment.Process.nodeURL)!)
     }
     
     public func faucet(address: String) throws -> H256 {
