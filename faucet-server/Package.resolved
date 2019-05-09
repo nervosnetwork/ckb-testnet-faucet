@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "CKB",
+        "repositoryURL": "https://github.com/cezres/ckb-sdk-swift",
+        "state": {
+          "branch": null,
+          "revision": "e8d2205fa2105f3855a6c535ab3a679c35b147b3",
+          "version": null
+        }
+      },
+      {
         "package": "Clibsodium",
         "repositoryURL": "https://github.com/tiwoc/Clibsodium.git",
         "state": {
