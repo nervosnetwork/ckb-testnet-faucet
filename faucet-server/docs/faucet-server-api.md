@@ -34,14 +34,14 @@ Support jsonp (Using JSON requests can cause cross-domain problems in the local 
 | Name   |      Type      |  Description |
 |----------|:-------------:|:------|
 | `status` | `int` | 0: success; -1 -2: verify failed; -3: failed  |
-| `txhash` | `string` | tx hash |
+| `txHash` | `string` | tx hash |
 | `error` | `string` | error message |
 
 
 ```
 {
     "status" : 0,
-    "txhash" : "0x9a46fc47a4fbb6b155d46e26311a011d40f13a377e3f97084b45c856ffd29e9d"
+    "txHash" : "0x9a46fc47a4fbb6b155d46e26311a011d40f13a377e3f97084b45c856ffd29e9d"
 }
 ```
 

@@ -24,9 +24,9 @@ struct CKBController: RouteCollection {
             let urlParameters = req.http.urlString.urlParametersDecode
             do {
                 if let address = urlParameters["address"] {
-                    let txhash = try CKBService.shared.faucet(address: address)
+                    let txHash = try CKBService.shared.faucet(address: address)
                     Authorization().recordCollectionDate(accessToken: accessToken!)
-                    result = ["status": 0, "txhash": txhash]
+                    result = ["status": 0, "txHash": txHash]
                 } else {
                      result = ["status": -3, "error": "No address"]
                 }
