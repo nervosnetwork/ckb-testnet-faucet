@@ -67,7 +67,7 @@ class CKBControllerTests: XCTestCase {
         // Search tx
         if let txhash = json["txhash"] as? String {
             var repeatCount = 20
-            let client = APIClient(url: URL(string: Environment.Process.nodeURL)!)
+            let client = APIClient()
             while repeatCount > 0 {
                 Thread.sleep(forTimeInterval: 6)
                 do {
