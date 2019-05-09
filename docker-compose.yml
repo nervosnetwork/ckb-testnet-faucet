@@ -12,7 +12,7 @@ services:
     command: /bin/bash -c "nginx -g 'daemon off;'"
    faucet:
     env_file:
-      - ./example.env
+      - ./.env # which copy from example.evn and filling parameter by yourself.
     build:
       context: ./faucet-server
       dockerfile: ./Dockerfile
