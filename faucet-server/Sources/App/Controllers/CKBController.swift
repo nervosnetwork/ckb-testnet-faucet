@@ -92,22 +92,20 @@ public struct CKBController: RouteCollection {
     }
 
     public func publicToAddress(_ publicKey: String) throws -> String {
-        if publicKey.hasPrefix("0x") && publicKey.lengthOfBytes(using: .utf8) == 68 {
-            return AddressGenerator(network: .testnet).address(for: publicKey)
-        } else if publicKey.lengthOfBytes(using: .utf8) == 66 {
-            return AddressGenerator(network: .testnet).address(for: publicKey)
-        } else {
-            throw Error.invalidPublicKey
+        switch validatePublicKey(publicKey) {
+        case .valid(let value):
+            return AddressGenerator(network: .testnet).address(for: value)
+        case .invalid(let error):
+            throw error
         }
     }
 
     public func privateToPublic(_ privateKey: String) throws -> String {
-        if privateKey.hasPrefix("0x") && privateKey.lengthOfBytes(using: .utf8) == 66 {
-            return Utils.publicToAddress(String(privateKey.dropFirst(2)))
-        } else if privateKey.lengthOfBytes(using: .utf8) == 64 {
-            return Utils.privateToPublic(privateKey)
-        } else {
-            throw Error.invalidPrivateKey
+        switch validatePrivateKey(privateKey) {
+        case .valid(let value):
+            return Utils.privateToPublic(value)
+        case .invalid(let error):
+            throw error
         }
     }
 
@@ -122,12 +120,45 @@ public struct CKBController: RouteCollection {
         #endif
         return data.toHexString()
     }
+
+    public func validatePrivateKey(_ privateKey: String) -> VerifyResult {
+        if privateKey.hasPrefix("0x") {
+            if privateKey.lengthOfBytes(using: .utf8) == 66 {
+                return .valid(value: String(privateKey.dropFirst(2)))
+            } else {
+                return .invalid(error: .invalidPrivateKey)
+            }
+        } else if privateKey.lengthOfBytes(using: .utf8) == 64 {
+            return .valid(value: privateKey)
+        } else {
+            return .invalid(error: .invalidPrivateKey)
+        }
+    }
+
+    public func validatePublicKey(_ publicKey: String) -> VerifyResult {
+        if publicKey.hasPrefix("0x") {
+            if publicKey.lengthOfBytes(using: .utf8) == 68 {
+                return .valid(value: publicKey)
+            } else {
+                return .invalid(error: .invalidPublicKey)
+            }
+        } else if publicKey.lengthOfBytes(using: .utf8) == 66 {
+            return .valid(value: publicKey)
+        } else {
+            return .invalid(error: .invalidPublicKey)
+        }
+    }
 }
 
 extension CKBController {
-    enum Error: String, Swift.Error {
+    public enum Error: String, Swift.Error {
         case invalidPrivateKey = "Invalid privateKey"
         case invalidPublicKey = "Invalid publicKey"
         case invalidAddress = "Invalid address"
+    }
+
+    public enum VerifyResult {
+        case valid(value: String)
+        case invalid(error: Error)
     }
 }
