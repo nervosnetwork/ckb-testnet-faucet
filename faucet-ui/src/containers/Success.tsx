@@ -21,7 +21,7 @@ export default (props: any) => {
         <TextInput style={{ color: "white" }} width="100%" value={txhash} />
         <Box width="100%" align="end" pad={{ top: "large" }} gap="small">
           <Text color="text" size="14px">It may take some time for the transaction to be mined and confirmed.</Text>
-          <Text color="text" size="16px">Check here for what to do next for developing on Nervos CKB -></Text>
+          {/* <Text color="text" size="16px">Check here for what to do next for developing on Nervos CKB -></Text> */}
         </Box>
       </Box>
     </Box>
