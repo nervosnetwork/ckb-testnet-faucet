@@ -84,7 +84,7 @@ public struct CKBController: RouteCollection {
         guard let publicKeyHash = AddressGenerator(network: .testnet).publicKeyHash(for: address) else { throw Error.invalidAddress }
         let asw = try AlwaysSuccessWallet(api: api)
         let lock = Script(args: [publicKeyHash], codeHash: asw.systemScriptCellHash)
-        return try asw.sendCapacity(targetLock: lock, capacity: 20000000000)
+        return try asw.sendCapacity(targetLock: lock, capacity: Environment.Process.sendCapacityCount)
     }
 
     public func privateToAddress(_ privateKey: String) throws -> String {
