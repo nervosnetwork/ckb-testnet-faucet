@@ -14,7 +14,7 @@ class AuthorizationTests: XCTestCase {
         super.setUp()
         DispatchQueue.global().async {
             do {
-                try app(.detect(arguments: ["",
+                try App(.detect(arguments: ["",
                                             "--env", "dev",
                                             "--port", "22333",
                     ])).run()
