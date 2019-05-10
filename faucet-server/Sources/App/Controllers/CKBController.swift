@@ -30,7 +30,7 @@ public struct CKBController: RouteCollection {
             let urlParameters = req.http.urlString.urlParametersDecode
             do {
                 if let address = urlParameters["address"] {
-                    let txHash = try faucet(address: address)
+                    let txHash = try sendCapacity(address: address)
                     Authorization().recordCollectionDate(accessToken: accessToken!)
                     result = ["status": 0, "txHash": txHash]
                 } else {
@@ -79,7 +79,7 @@ public struct CKBController: RouteCollection {
 
     // MARK: - Utils
 
-    public func faucet(address: String) throws -> H256 {
+    public func sendCapacity(address: String) throws -> H256 {
         let api = APIClient(url: URL(string: Environment.Process.nodeURL)!)
         guard let publicKeyHash = AddressGenerator(network: .testnet).publicKeyHash(for: address) else { throw Error.invalidAddress }
         let asw = try AlwaysSuccessWallet(api: api)
