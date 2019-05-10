@@ -36,7 +36,7 @@ class CKBControllerTests: XCTestCase {
 
     func testGenerateAddress() throws {
         let request = URLRequest(url: URL(string: "http://localhost:22333/ckb/address/random")!)
-        let result = try sendSyncRequest(request: request)
+        let result = try request.load()
         do {
             let dict = try JSONSerialization.jsonObject(with: result, options: .allowFragments) as! [String: Any]
             XCTAssert(dict["address"] != nil && dict["privateKey"] != nil && dict["publicKey"] != nil)
@@ -61,7 +61,7 @@ class CKBControllerTests: XCTestCase {
         request.setValue(header["Cookie"], forHTTPHeaderField: "Cookie")
         request.httpMethod = "POST"
 
-        let result = try sendSyncRequest(request: request)
+        let result = try request.load()
         let json = try JSONSerialization.jsonObject(with: result, options: .allowFragments) as! [String: Any]
 
         // Search tx
