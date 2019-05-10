@@ -116,9 +116,9 @@ public struct CKBController: RouteCollection {
         #if os(OSX)
             data.withUnsafeMutableBytes({ _ = SecRandomCopyBytes(kSecRandomDefault, 32, $0.baseAddress! ) })
         #else
-        for idx in 0..<32 {
-            data[idx] = UInt8.random(in: UInt8.min...UInt8.max)
-        }
+            for idx in 0..<32 {
+                data[idx] = UInt8.random(in: UInt8.min...UInt8.max)
+            }
         #endif
         return data.toHexString()
     }
