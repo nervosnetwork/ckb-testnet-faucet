@@ -2,8 +2,6 @@ version: '3'
 services:
   nginx:
     image: nginx:latest
-    expose:
-     - "80"
     ports:
      - "9000:3000"
     volumes:
@@ -16,9 +14,15 @@ services:
     build:
       context: ./faucet-server
       dockerfile: ./Dockerfile
-      args:
-       - ENVIRONMENT: $ENVIRONMENT
-       - GITHUB_OAUTH_CLIENT_ID: $GITHUB_OAUTH_CLIENT_ID
-       - GITHUB_OAUTH_CLIENT_SECRET: $GITHUB_OAUTH_CLIENT_SECRET
     ports:
       - "9001:80"
+    volumes:
+      - ./faucet-server:/app
+    command: /bin/bash -c "swift build -c release && ./.build/release/Run serve 
+             --hostname 0.0.0.0
+             --port 80
+             --github_oauth_client_id $GITHUB_OAUTH_CLIENT_ID 
+             --github_oauth_client_secret $GITHUB_OAUTH_CLIENT_SECRET
+             --node_url $NODE_RUL 
+             --miner_private_key $MINER_PRIVATE_KEY"
+             
