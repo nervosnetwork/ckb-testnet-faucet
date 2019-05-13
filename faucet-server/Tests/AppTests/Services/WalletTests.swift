@@ -20,24 +20,23 @@ class WalletTests: XCTestCase {
 
     func testBalance() throws {
         let client = APIClient()
-        let asw = try AlwaysSuccessWallet(api: client)
-        XCTAssert(try asw.getBalance() > 0)
+        let wallet = try Wallet(api: client, privateKey: "")    // Set a valid wallet private key
+        XCTAssert(try wallet.getBalance() > 0)
     }
 
     func testSendCapacity() throws {
         let client = APIClient()
-        let asw = try AlwaysSuccessWallet(api: client)
-        let privateKey = CKBController().generatePrivateKey()
+        let wallet = try Wallet(api: client, privateKey: "")    // Set a valid wallet private key
 
-        let wallet = try Wallet(api: client, privateKey: privateKey)
-        let txhash = try asw.sendCapacity(targetLock: wallet.lock, capacity: 20000000000)
+        let newWallet = try Wallet(api: client, privateKey: CKBController().generatePrivateKey())
+        let txhash = try wallet.sendCapacity(targetLock: newWallet.lock, capacity: 20000000000)
 
         var repeatCount = 20
         while repeatCount > 0 {
             Thread.sleep(forTimeInterval: 6)
             do {
                 _ = try client.getTransaction(hash: txhash)
-                XCTAssert(try wallet.getBalance() >= 20000000000)
+                XCTAssert(try newWallet.getBalance() >= 20000000000)
                 break
             } catch {
                 repeatCount -= 1

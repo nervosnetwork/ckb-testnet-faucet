@@ -22,11 +22,13 @@ class CKBControllerTests: XCTestCase {
         super.setUp()
         DispatchQueue.global().async {
             do {
-                try App(.detect(arguments: ["",
-                                            "--env", "dev",
-                                            "--port", "22333",
-                                            "--node_url", "http://localhost:8114",
-                    ])).run()
+                try App(.detect(arguments: [
+                    "",
+                    "--env", "dev",
+                    "--port", "22333",
+                    "--node_url", "http://localhost:8114",
+                    "--wallet_private_key", ""  // Set a valid wallet private key
+                ])).run()
             } catch {
                 XCTAssert(false, error.localizedDescription)
             }
@@ -51,7 +53,7 @@ class CKBControllerTests: XCTestCase {
         let user = User(accessToken: accessToken, authorizationDate: Date(), collectionDate: nil)
         try user.save()
 
-        let privateKey = "b7a5e163e4963751ed023acfc2b93deb03169b71a4abe3d44abf4123ff2ce2a3"
+        let privateKey = CKBController().generatePrivateKey()
         let address = try CKBController().privateToAddress(privateKey)
 
         // Send faucet request
