@@ -24,5 +24,5 @@
 
 ## Documentations
 
- - [faucet-server-api]()
- - [run-faucet-server-with-docker]()
+ - [faucet-server-api](docs/faucet-server-api.md)
+ - [run-faucet-server-with-docker](docs/run-faucet-server-with-docker.md)
