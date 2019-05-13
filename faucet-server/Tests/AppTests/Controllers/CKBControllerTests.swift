@@ -22,7 +22,7 @@ class CKBControllerTests: XCTestCase {
         super.setUp()
         DispatchQueue.global().async {
             do {
-                try app(.detect(arguments: ["",
+                try App(.detect(arguments: ["",
                                             "--env", "dev",
                                             "--port", "22333",
                                             "--node_url", "http://localhost:8114",
@@ -36,7 +36,7 @@ class CKBControllerTests: XCTestCase {
 
     func testGenerateAddress() throws {
         let request = URLRequest(url: URL(string: "http://localhost:22333/ckb/address/random")!)
-        let result = try sendSyncRequest(request: request)
+        let result = try request.load()
         do {
             let dict = try JSONSerialization.jsonObject(with: result, options: .allowFragments) as! [String: Any]
             XCTAssert(dict["address"] != nil && dict["privateKey"] != nil && dict["publicKey"] != nil)
@@ -52,7 +52,7 @@ class CKBControllerTests: XCTestCase {
         try user.save()
 
         let privateKey = "b7a5e163e4963751ed023acfc2b93deb03169b71a4abe3d44abf4123ff2ce2a3"
-        let address = try CKBService.privateToAddress(privateKey)
+        let address = try CKBController().privateToAddress(privateKey)
 
         // Send faucet request
         let cookie = HTTPCookie(properties: [.name: "github_access_token", .value: accessToken, .domain: "*", .path: "*"])!
@@ -61,7 +61,7 @@ class CKBControllerTests: XCTestCase {
         request.setValue(header["Cookie"], forHTTPHeaderField: "Cookie")
         request.httpMethod = "POST"
 
-        let result = try sendSyncRequest(request: request)
+        let result = try request.load()
         let json = try JSONSerialization.jsonObject(with: result, options: .allowFragments) as! [String: Any]
 
         // Search tx
@@ -82,6 +82,52 @@ class CKBControllerTests: XCTestCase {
             }
         } else {
             XCTAssert(false, "Send transaction failed")
+        }
+    }
+
+    func testValidatePrivateKey() {
+        switch CKBController().validatePrivateKey("b7a5e163e4963751ed023acfc2b93deb03169b71a4abe3d44abf4123ff2ce2a3") {
+        case .valid:
+            XCTAssert(true)
+        case .invalid:
+            XCTAssert(false)
+        }
+
+        switch CKBController().validatePrivateKey("0xb7a5e163e4963751ed023acfc2b93deb03169b71a4abe3d44abf4123ff2ce2a3") {
+        case .valid:
+            XCTAssert(true)
+        case .invalid:
+            XCTAssert(false)
+        }
+
+        switch CKBController().validatePrivateKey("0xa5e163e4963751ed023acfc2b93deb03169b71a4abe3d44abf4123ff2ce2a3") {
+        case .valid:
+            XCTAssert(false)
+        case .invalid:
+            XCTAssert(true)
+        }
+    }
+
+    func testValidatePublicKey() throws {
+        switch CKBController().validatePublicKey("03b443a996e5b04d6e0606e9023dcb385c5a3faa2888640c2b76e4381af239ee7b") {
+        case .valid:
+            XCTAssert(true)
+        case .invalid:
+            XCTAssert(false)
+        }
+
+        switch CKBController().validatePublicKey("0x03b443a996e5b04d6e0606e9023dcb385c5a3faa2888640c2b76e4381af239ee7b") {
+        case .valid:
+            XCTAssert(true)
+        case .invalid:
+            XCTAssert(false)
+        }
+
+        switch CKBController().validatePublicKey("0x03b3a996e5b04d6e0606e9023dcb385c5a3faa2888640c2b76e4381af239ee7b") {
+        case .valid:
+            XCTAssert(false)
+        case .invalid:
+            XCTAssert(true)
         }
     }
 }

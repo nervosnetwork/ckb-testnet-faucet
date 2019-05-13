@@ -1,3 +1,3 @@
 import App
 
-try app(.detect()).run()
+try App(.detect()).run()

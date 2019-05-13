@@ -19,7 +19,7 @@ struct GithubAPI {
         ].urlParametersEncode.data(using: .utf8)
 
         do {
-            let data = try sendSyncRequest(request: request)
+            let data = try request.load()
             return String(data: data, encoding: .utf8)?.urlParametersDecode["access_token"]
         } catch {
             return nil

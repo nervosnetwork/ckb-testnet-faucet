@@ -14,7 +14,7 @@ class AuthorizationTests: XCTestCase {
         super.setUp()
         DispatchQueue.global().async {
             do {
-                try app(.detect(arguments: ["",
+                try App(.detect(arguments: ["",
                                             "--env", "dev",
                                             "--port", "22333",
                     ])).run()
@@ -37,7 +37,7 @@ class AuthorizationTests: XCTestCase {
         var request = URLRequest(url: URL(string: "http://localhost:22333/auth/verify")!)
         request.setValue(header["Cookie"], forHTTPHeaderField: "Cookie")
 
-        let result = try sendSyncRequest(request: request)
+        let result = try request.load()
         let json = try JSONSerialization.jsonObject(with: result, options: .allowFragments) as! [String: Any]
         XCTAssertEqual(json["status"] as? Int, 0)
     }
