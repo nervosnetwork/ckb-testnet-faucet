@@ -14,7 +14,7 @@ public struct CKBController: RouteCollection {
     }
 
     public func boot(router: Router) throws {
-        router.post("ckb/faucet", use: faucet)
+        router.get("ckb/faucet", use: faucet)
         router.get("ckb/address", use: address)
         router.get("ckb/address/random", use: makeRandomAddress)
     }

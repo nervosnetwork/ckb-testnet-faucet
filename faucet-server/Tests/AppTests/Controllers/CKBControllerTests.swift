@@ -61,7 +61,6 @@ class CKBControllerTests: XCTestCase {
         let header = HTTPCookie.requestHeaderFields(with: [cookie])
         var request = URLRequest(url: URL(string: "http://localhost:22333/ckb/faucet?address=\(address)")!)
         request.setValue(header["Cookie"], forHTTPHeaderField: "Cookie")
-        request.httpMethod = "POST"
 
         let result = try request.load()
         let json = try JSONSerialization.jsonObject(with: result, options: .allowFragments) as! [String: Any]
