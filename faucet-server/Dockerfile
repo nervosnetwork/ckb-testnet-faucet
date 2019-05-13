@@ -6,8 +6,6 @@ FROM swift:5.0.1-xenial
 ENV DEBIAN_FRONTEND noninteractive
 ARG env
 
-RUN git --version
-
 RUN apt-get -qq update && apt-get -q -y install \
     pkg-config libssl-dev wget libsodium-dev software-properties-common libsqlite3-dev \
     tzdata \

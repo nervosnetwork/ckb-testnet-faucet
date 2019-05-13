@@ -24,5 +24,6 @@ services:
              --github_oauth_client_id $GITHUB_OAUTH_CLIENT_ID 
              --github_oauth_client_secret $GITHUB_OAUTH_CLIENT_SECRET
              --node_url $NODE_RUL 
+             --send_capacity_count $SEND_CAPACITY_COUNT
              --miner_private_key $MINER_PRIVATE_KEY"
              
