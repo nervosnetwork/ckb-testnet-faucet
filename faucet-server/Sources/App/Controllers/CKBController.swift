@@ -82,9 +82,9 @@ public struct CKBController: RouteCollection {
     public func sendCapacity(address: String) throws -> H256 {
         let api = APIClient(url: URL(string: Environment.Process.nodeURL)!)
         guard let publicKeyHash = AddressGenerator(network: .testnet).publicKeyHash(for: address) else { throw Error.invalidAddress }
-        let asw = try AlwaysSuccessWallet(api: api)
-        let lock = Script(args: [publicKeyHash], codeHash: asw.systemScriptCellHash)
-        return try asw.sendCapacity(targetLock: lock, capacity: Environment.Process.sendCapacityCount)
+        let wallet = try Wallet(api: api, privateKey: Environment.Process.walletPrivateKey)
+        let lock = Script(args: [publicKeyHash], codeHash: wallet.systemScriptCellHash)
+        return try wallet.sendCapacity(targetLock: lock, capacity: Environment.Process.sendCapacityCount)
     }
 
     public func privateToAddress(_ privateKey: String) throws -> String {

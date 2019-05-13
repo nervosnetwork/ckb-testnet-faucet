@@ -16,7 +16,8 @@ $ sudo docker build -t faucet .
 
 ```
 $ sudo docker run -P 80:80 -d faucet \
-  --node_url <node_url>
+  --wallet_private_key <private_key> \
+  --node_url <node_url> \
   --github_oauth_client_id <client_id> \
   --github_oauth_client_secret <client_secret> \
   --send_capacity_count <send_capacity_count>

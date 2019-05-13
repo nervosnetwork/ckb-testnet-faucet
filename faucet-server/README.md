@@ -15,7 +15,7 @@
 
 ```
 ./.build/debug/Run --env dev \
-  --miner_private_key <miner_private_key> \
+  --wallet_private_key <private_key> \
   --node_url <node_url> \
   --github_oauth_client_id <client_id> \
   --github_oauth_client_secret <client_secret> \

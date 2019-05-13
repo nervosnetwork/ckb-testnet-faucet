@@ -15,7 +15,7 @@ public class AlwaysSuccessWallet: Wallet {
     }
 
     public init(api: APIClient) throws {
-        try super.init(api: api, privateKey: Environment.Process.minerPrivateKey)
+        try super.init(api: api, privateKey: "")
     }
 
     override func gatherInputs(capacity: Decimal, minCapacity: Decimal = minCellCapacity) throws -> ValidInputs {
