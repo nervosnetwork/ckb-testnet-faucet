@@ -20,8 +20,14 @@ public class Wallet {
     var publicKey: H256 {
         return "0x" + Utils.privateToPublic(privateKey)
     }
+    var address: String {
+        return AddressGenerator(network: .testnet).address(for: publicKey)
+    }
+    var publicKeyHash: String {
+        return "0x" + AddressGenerator(network: .testnet).hash(for: Data(hex: publicKey)).toHexString()
+    }
     public var lock: Script {
-        return Script.verifyScript(for: publicKey, codeHash: systemScriptCellHash)
+        return Script(args: [publicKeyHash], codeHash: systemScriptCellHash)
     }
     var lockHash: H256 {
         return lock.typeHash
@@ -34,10 +40,11 @@ public class Wallet {
         self.api = api
         self.privateKey = privateKey
 
-        let systemScriptCell = try api.genesisBlock().transactions[0]
-        let cellData = Data(hex: systemScriptCell.outputs[0].data)
+        let blockHash = try api.getBlockHash(number: "0")
+        let transaction = try api.genesisBlock().transactions[0]
+        let cellData = Data(hex: transaction.outputs[0].data)
         systemScriptCellHash = Utils.prefixHex(Blake2b().hash(data: cellData)!.toHexString())
-        systemScriptOutPoint = OutPoint(txHash: systemScriptCell.hash, index: 0)
+        systemScriptOutPoint = OutPoint(blockHash: blockHash, cell: CellOutPoint(txHash: transaction.hash, index: "0"))
     }
 
     public func getBalance() throws -> Decimal {
@@ -110,7 +117,7 @@ extension Wallet {
                 return cells.removeFirst()
             }
             while fromBlockNumber <= tipBlockNumber {
-                let toBlockNumber = min(fromBlockNumber + 800, tipBlockNumber)
+                let toBlockNumber = min(fromBlockNumber + 100, tipBlockNumber)
                 defer {
                     fromBlockNumber = toBlockNumber + 1
                 }
