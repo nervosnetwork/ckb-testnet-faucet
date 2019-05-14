@@ -8,7 +8,7 @@
 import Foundation
 import CKB
 
-let minCellCapacity: Decimal = 42 * pow(10, 8)
+let minCellCapacity = Decimal(floatLiteral: 42 * pow(10, 8))
 
 public class Wallet {
     let api: APIClient
