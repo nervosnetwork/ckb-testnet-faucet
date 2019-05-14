@@ -14,22 +14,22 @@ public class Wallet {
     let api: APIClient
     let privateKey: String
 
-    var deps: [OutPoint] {
+    private(set) lazy var deps: [OutPoint] = {
         return [systemScriptOutPoint]
-    }
-    lazy var publicKey: H256 = {
+    }()
+    private(set) lazy var publicKey: H256 = {
         return "0x" + Utils.privateToPublic(privateKey)
     }()
-    lazy var address: String = {
+    private(set) lazy var address: String = {
         return AddressGenerator(network: .testnet).address(for: publicKey)
     }()
-    lazy var publicKeyHash: String = {
-        return "0x" + AddressGenerator(network: .testnet).publicKeyHash(for: address)!
+    private(set) lazy var publicKeyHash: String = {
+        return "0x" + AddressGenerator(network: .testnet).hash(for: Data(hex: publicKey)).toHexString()
     }()
-    public lazy var lock: Script = {
+    private(set) lazy public var lock: Script = {
         return Script(args: [publicKeyHash], codeHash: systemScriptCellHash)
     }()
-    lazy var lockHash: H256 = {
+    private(set) lazy var lockHash: H256 = {
         return lock.typeHash
     }()
 
