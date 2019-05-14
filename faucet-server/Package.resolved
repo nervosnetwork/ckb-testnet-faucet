@@ -3,10 +3,10 @@
     "pins": [
       {
         "package": "CKB",
-        "repositoryURL": "https://github.com/cezres/ckb-sdk-swift",
+        "repositoryURL": "https://github.com/nervosnetwork/ckb-sdk-swift",
         "state": {
           "branch": null,
-          "revision": "df1c1d0bacdda8550d84f343121822b9c480dcf2",
+          "revision": "51266eb3fd5ef74b2284700509fff514daa9b1c6",
           "version": null
         }
       },
