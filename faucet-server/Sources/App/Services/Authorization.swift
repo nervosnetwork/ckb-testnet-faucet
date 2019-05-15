@@ -54,23 +54,21 @@ class Authorization {
     }
 
     private func saveEmailCSV(email: String?) {
-        if let email = email {
-            let time = getDataNow()
-            let fileName = "email.csv"
-            let newLine = "\(email),\(time)\n"
-            let currentPath = FileManager.default.currentDirectoryPath
-            let currentPathUrl = URL(fileURLWithPath: currentPath)
-            let fileURL = currentPathUrl.appendingPathComponent(fileName)
+        guard let email = email else { return }
+        let time = getDataNow()
+        let fileName = "email.csv"
+        let newLine = "\(email),\(time)\n"
+        let currentDirectory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+        let fileURL = currentDirectory.appendingPathComponent(fileName)
 
-            if FileManager.default.fileExists(atPath: currentPath + "/email.csv") {
-                let fileHandle = FileHandle(forWritingAtPath: currentPath + "/email.csv")
-                fileHandle?.seekToEndOfFile()
-                fileHandle?.write(newLine.data(using: .utf8)!)
-                fileHandle?.closeFile()
-            } else {
-                let csvText = "email,time\n" + newLine
-                try? csvText.write(to: fileURL, atomically: false, encoding: .utf8)
-            }
+        if FileManager.default.fileExists(atPath: currentPath + "/email.csv") {
+            let fileHandle = FileHandle(forWritingAtPath: currentPath + "/email.csv")
+            fileHandle?.seekToEndOfFile()
+            fileHandle?.write(newLine.data(using: .utf8)!)
+            fileHandle?.closeFile()
+        } else {
+            let csvText = "email,time\n" + newLine
+            try? csvText.write(to: fileURL, atomically: false, encoding: .utf8)
         }
     }
 
