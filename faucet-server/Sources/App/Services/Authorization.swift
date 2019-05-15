@@ -57,7 +57,6 @@ class Authorization {
         if let email = email {
             let time = getDataNow()
             let fileName = "email.csv"
-            var csvText = "email,time\n"
             let newLine = "\(email),\(time)\n"
             let currentPath = FileManager.default.currentDirectoryPath
             let currentPathUrl = URL(fileURLWithPath: currentPath)
@@ -66,11 +65,10 @@ class Authorization {
             if FileManager.default.fileExists(atPath: currentPath + "/email.csv") {
                 let fileHandle = FileHandle(forWritingAtPath: currentPath + "/email.csv")
                 fileHandle?.seekToEndOfFile()
-                print(newLine.data(using: .utf8)!)
                 fileHandle?.write(newLine.data(using: .utf8)!)
                 fileHandle?.closeFile()
             } else {
-                csvText.append(newLine)
+                let csvText = "email,time\n" + newLine
                 try? csvText.write(to: fileURL, atomically: false, encoding: .utf8)
             }
         }
