@@ -64,10 +64,11 @@ class Authorization {
             let fileURL = currentPathUrl.appendingPathComponent(fileName)
 
             if FileManager.default.fileExists(atPath: currentPath + "/email.csv") {
-                let path = Bundle.main.path(forResource: "email", ofType: "csv")
-                var text = try! String(contentsOfFile:path!, encoding: .utf8)
-                text.append(newLine)
-                try? text.write(to: fileURL, atomically: false, encoding: .utf8)
+                let fileHandle = FileHandle(forWritingAtPath: currentPath + "/email.csv")
+                fileHandle?.seekToEndOfFile()
+                print(newLine.data(using: .utf8)!)
+                fileHandle?.write(newLine.data(using: .utf8)!)
+                fileHandle?.closeFile()
             } else {
                 csvText.append(newLine)
                 try? csvText.write(to: fileURL, atomically: false, encoding: .utf8)
