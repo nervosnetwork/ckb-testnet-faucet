@@ -47,7 +47,7 @@ public class Wallet {
         let cellData = Data(hex: transaction.outputs[0].data)
         systemScriptCellHash = Utils.prefixHex(Blake2b().hash(data: cellData)!.toHexString())
         systemScriptOutPoint = OutPoint(blockHash: blockHash, cell: CellOutPoint(txHash: transaction.hash, index: "0"))
-        cellService = CellService(lockHash: lockHash, pubkey: publicKey, api: api)
+        cellService = CellService(lockHash: lockHash, publicKey: publicKey, api: api)
     }
 
     public func getBalance() throws -> Decimal {

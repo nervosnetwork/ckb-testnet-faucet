@@ -25,11 +25,11 @@ class CellService {
     private var currentBlockNumber: UInt = 0
     private var api: APIClient!
     private var lockHash: H256!
-    private var pubkey: H256!
+    private var publicKey: H256!
 
-    init(lockHash: H256, pubkey: H256, api: APIClient) {
+    init(lockHash: H256, publicKey: H256, api: APIClient) {
         self.lockHash = lockHash
-        self.pubkey = pubkey
+        self.publicKey = publicKey
         self.api = api
     }
 
@@ -38,7 +38,7 @@ class CellService {
         var inputCapacities: Decimal = 0
         var inputs = [CellInput]()
         for cell in sequence {
-            let input = CellInput(previousOutput: cell.outPoint, args: [pubkey], since: "0")
+            let input = CellInput(previousOutput: cell.outPoint, args: [publicKey], since: "0")
             inputs.append(input)
             inputCapacities += Decimal(string: cell.capacity) ?? 0
             if inputCapacities > capacity {
