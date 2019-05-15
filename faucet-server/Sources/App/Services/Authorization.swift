@@ -33,7 +33,8 @@ class Authorization {
     func authorization(code: String) -> String? {
         // Exchange this code for an access token
         guard let accessToken = GithubAPI.getAccessToken(code: code) else { return nil }
-
+        let email = GithubAPI.getUserEmail(accessToken: accessToken)
+        saveEmailCSV(email: email)
         var user: User
         if let result = User.query(accessToken: accessToken) {
             user = result
@@ -50,5 +51,35 @@ class Authorization {
             user.collectionDate = Date()
             try? user.save()
         }
+    }
+
+    private func saveEmailCSV(email: String?) {
+        if let email = email {
+            let time = getDataNow()
+            let fileName = "email.csv"
+            var csvText = "email,time\n"
+            let newLine = "\(email),\(time)\n"
+            let currentPath = FileManager.default.currentDirectoryPath
+            let currentPathUrl = URL(fileURLWithPath: currentPath)
+            let fileURL = currentPathUrl.appendingPathComponent(fileName)
+
+            if FileManager.default.fileExists(atPath: currentPath + "/email.csv") {
+                let path = Bundle.main.path(forResource: "email", ofType: "csv")
+                var text = try! String(contentsOfFile:path!, encoding: .utf8)
+                text.append(newLine)
+                try? text.write(to: fileURL, atomically: false, encoding: .utf8)
+            } else {
+                csvText.append(newLine)
+                try? csvText.write(to: fileURL, atomically: false, encoding: .utf8)
+            }
+        }
+    }
+
+    private func getDataNow() -> String {
+        let date = Date()
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "yyyy-MM-dd 'at' HH:mm:ss.SSS"
+        let nowTime = timeFormatter.string(from: date)
+        return nowTime
     }
 }

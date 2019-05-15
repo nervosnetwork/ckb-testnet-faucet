@@ -25,4 +25,12 @@ struct GithubAPI {
             return nil
         }
     }
+
+    static func getUserEmail(accessToken: String) -> String? {
+        let request = URLRequest(url: URL(string: "https://api.github.com/user?access_token=\(accessToken)")!)
+
+        guard let data = try? request.load() else { return nil }
+        let email = try? JSONDecoder().decode(Email.self, from: data)
+        return email?.email
+    }
 }
