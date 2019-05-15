@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct Email: Codable {
+struct GithubUserInfo: Codable {
     var email: String?
 }
