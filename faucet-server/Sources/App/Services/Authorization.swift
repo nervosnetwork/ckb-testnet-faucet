@@ -61,8 +61,8 @@ class Authorization {
         let currentDirectory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
         let fileURL = currentDirectory.appendingPathComponent(fileName)
 
-        if FileManager.default.fileExists(atPath: currentPath + "/email.csv") {
-            let fileHandle = FileHandle(forWritingAtPath: currentPath + "/email.csv")
+        if FileManager.default.fileExists(atPath: fileURL.path) {
+            let fileHandle = FileHandle(forWritingAtPath: fileURL.path)
             fileHandle?.seekToEndOfFile()
             fileHandle?.write(newLine.data(using: .utf8)!)
             fileHandle?.closeFile()
