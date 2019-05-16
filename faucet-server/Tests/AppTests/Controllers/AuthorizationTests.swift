@@ -10,6 +10,13 @@ import XCTest
 import Vapor
 
 class AuthorizationTests: XCTestCase {
+    override func invokeTest() {
+        if ProcessInfo().environment["SKIP_CKB_API_TESTS"] == "1" {
+            return
+        }
+        super.invokeTest()
+    }
+    
     override func setUp() {
         super.setUp()
         DispatchQueue.global().async {

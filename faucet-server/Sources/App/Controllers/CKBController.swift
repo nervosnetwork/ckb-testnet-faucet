@@ -10,7 +10,14 @@ import Vapor
 import CKB
 
 public struct CKBController: RouteCollection {
-    public init() {
+    let nodeUrl: URL
+    let api: APIClient
+    let systemScript: SystemScript
+
+    public init(nodeUrl: URL) throws {
+        self.nodeUrl = nodeUrl
+        api = APIClient(url: nodeUrl)
+        systemScript = try SystemScript.loadFromGenesisBlock(nodeUrl: nodeUrl)
     }
 
     public func boot(router: Router) throws {
@@ -51,10 +58,10 @@ public struct CKBController: RouteCollection {
         let result: [String: Any]
         do {
             if let privateKey = urlParameters["privateKey"] {
-                let address = try privateToAddress(privateKey)
+                let address = try CKBController.privateToAddress(privateKey)
                 result = ["address": address, "status": 0]
             } else if let publicKey = urlParameters["publicKey"] {
-                let address = try publicToAddress(publicKey)
+                let address = try CKBController.publicToAddress(publicKey)
                 result = ["address": address, "status": 0]
             } else {
                 result = ["status": -1, "error": "No public or private key"]
@@ -67,11 +74,11 @@ public struct CKBController: RouteCollection {
     }
 
     func makeRandomAddress(_ req: Request) -> Response {
-        let privateKey = generatePrivateKey()
+        let privateKey = CKBController.generatePrivateKey()
         let result: [String: Any] = [
             "privateKey": privateKey,
-            "publicKey": try! privateToPublic(privateKey),
-            "address": try! privateToAddress(privateKey)
+            "publicKey": try! CKBController.privateToPublic(privateKey),
+            "address": try! CKBController.privateToAddress(privateKey)
         ]
         let headers = HTTPHeaders([("Access-Control-Allow-Origin", "*")])
         return Response(http: HTTPResponse(headers: headers, body: HTTPBody(string: result.toJson)), using: req.sharedContainer)
@@ -80,18 +87,18 @@ public struct CKBController: RouteCollection {
     // MARK: - Utils
 
     public func sendCapacity(address: String) throws -> H256 {
-        let api = APIClient(url: URL(string: Environment.Process.nodeURL)!)
         guard let publicKeyHash = AddressGenerator(network: .testnet).publicKeyHash(for: address) else { throw Error.invalidAddress }
-        let wallet = try Wallet(api: api, privateKey: Environment.Process.walletPrivateKey)
-        let lock = Script(args: [publicKeyHash], codeHash: wallet.systemScriptCellHash)
-        return try wallet.sendCapacity(targetLock: lock, capacity: Environment.Process.sendCapacityCount)
+        let targetLock = Script(args: [publicKeyHash], codeHash: systemScript.codeHash)
+
+        let wallet = Wallet(api: api, systemScript: systemScript, privateKey: Environment.Process.walletPrivateKey)
+        return try wallet.sendCapacity(targetLock: targetLock, capacity: Environment.Process.sendCapacityCount)
     }
 
-    public func privateToAddress(_ privateKey: String) throws -> String {
+    public static func privateToAddress(_ privateKey: String) throws -> String {
         return try publicToAddress(try privateToPublic(privateKey))
     }
 
-    public func publicToAddress(_ publicKey: String) throws -> String {
+    public static func publicToAddress(_ publicKey: String) throws -> String {
         switch validatePublicKey(publicKey) {
         case .valid(let value):
             return AddressGenerator(network: .testnet).address(for: value)
@@ -100,7 +107,7 @@ public struct CKBController: RouteCollection {
         }
     }
 
-    public func privateToPublic(_ privateKey: String) throws -> String {
+    public static func privateToPublic(_ privateKey: String) throws -> String {
         switch validatePrivateKey(privateKey) {
         case .valid(let value):
             return Utils.privateToPublic(value)
@@ -109,7 +116,7 @@ public struct CKBController: RouteCollection {
         }
     }
 
-    public func generatePrivateKey() -> String {
+    public static func generatePrivateKey() -> String {
         var data = Data(repeating: 0, count: 32)
         #if os(OSX)
             data.withUnsafeMutableBytes({ _ = SecRandomCopyBytes(kSecRandomDefault, 32, $0.baseAddress! ) })
@@ -121,7 +128,7 @@ public struct CKBController: RouteCollection {
         return data.toHexString()
     }
 
-    public func validatePrivateKey(_ privateKey: String) -> VerifyResult {
+    public static func validatePrivateKey(_ privateKey: String) -> VerifyResult {
         if privateKey.hasPrefix("0x") {
             if privateKey.lengthOfBytes(using: .utf8) == 66 {
                 return .valid(value: String(privateKey.dropFirst(2)))
@@ -135,7 +142,7 @@ public struct CKBController: RouteCollection {
         }
     }
 
-    public func validatePublicKey(_ publicKey: String) -> VerifyResult {
+    public static func validatePublicKey(_ publicKey: String) -> VerifyResult {
         if publicKey.hasPrefix("0x") {
             if publicKey.lengthOfBytes(using: .utf8) == 68 {
                 return .valid(value: publicKey)

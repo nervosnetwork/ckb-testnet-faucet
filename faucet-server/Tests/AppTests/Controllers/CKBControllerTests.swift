@@ -53,8 +53,8 @@ class CKBControllerTests: XCTestCase {
         let user = User(accessToken: accessToken, authorizationDate: Date(), collectionDate: nil)
         try user.save()
 
-        let privateKey = CKBController().generatePrivateKey()
-        let address = try CKBController().privateToAddress(privateKey)
+        let privateKey = CKBController.generatePrivateKey()
+        let address = try CKBController.privateToAddress(privateKey)
 
         // Send faucet request
         let cookie = HTTPCookie(properties: [.name: "github_access_token", .value: accessToken, .domain: "*", .path: "*"])!
@@ -87,21 +87,21 @@ class CKBControllerTests: XCTestCase {
     }
 
     func testValidatePrivateKey() {
-        switch CKBController().validatePrivateKey("b7a5e163e4963751ed023acfc2b93deb03169b71a4abe3d44abf4123ff2ce2a3") {
+        switch CKBController.validatePrivateKey("b7a5e163e4963751ed023acfc2b93deb03169b71a4abe3d44abf4123ff2ce2a3") {
         case .valid:
             XCTAssert(true)
         case .invalid:
             XCTAssert(false)
         }
 
-        switch CKBController().validatePrivateKey("0xb7a5e163e4963751ed023acfc2b93deb03169b71a4abe3d44abf4123ff2ce2a3") {
+        switch CKBController.validatePrivateKey("0xb7a5e163e4963751ed023acfc2b93deb03169b71a4abe3d44abf4123ff2ce2a3") {
         case .valid:
             XCTAssert(true)
         case .invalid:
             XCTAssert(false)
         }
 
-        switch CKBController().validatePrivateKey("0xa5e163e4963751ed023acfc2b93deb03169b71a4abe3d44abf4123ff2ce2a3") {
+        switch CKBController.validatePrivateKey("0xa5e163e4963751ed023acfc2b93deb03169b71a4abe3d44abf4123ff2ce2a3") {
         case .valid:
             XCTAssert(false)
         case .invalid:
@@ -110,21 +110,21 @@ class CKBControllerTests: XCTestCase {
     }
 
     func testValidatePublicKey() throws {
-        switch CKBController().validatePublicKey("03b443a996e5b04d6e0606e9023dcb385c5a3faa2888640c2b76e4381af239ee7b") {
+        switch CKBController.validatePublicKey("03b443a996e5b04d6e0606e9023dcb385c5a3faa2888640c2b76e4381af239ee7b") {
         case .valid:
             XCTAssert(true)
         case .invalid:
             XCTAssert(false)
         }
 
-        switch CKBController().validatePublicKey("0x03b443a996e5b04d6e0606e9023dcb385c5a3faa2888640c2b76e4381af239ee7b") {
+        switch CKBController.validatePublicKey("0x03b443a996e5b04d6e0606e9023dcb385c5a3faa2888640c2b76e4381af239ee7b") {
         case .valid:
             XCTAssert(true)
         case .invalid:
             XCTAssert(false)
         }
 
-        switch CKBController().validatePublicKey("0x03b3a996e5b04d6e0606e9023dcb385c5a3faa2888640c2b76e4381af239ee7b") {
+        switch CKBController.validatePublicKey("0x03b3a996e5b04d6e0606e9023dcb385c5a3faa2888640c2b76e4381af239ee7b") {
         case .valid:
             XCTAssert(false)
         case .invalid:
