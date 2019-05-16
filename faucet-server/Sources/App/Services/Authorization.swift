@@ -52,23 +52,4 @@ class Authorization {
         }
     }
 
-//    private func saveEmailCSV(email: String?) {
-//        guard let email = email else { return }
-//        let time = getDataNow()
-//        let fileName = "email.csv"
-//        let newLine = "\(email),\(time)\n"
-//        let currentDirectory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-//        let fileURL = currentDirectory.appendingPathComponent(fileName)
-//
-//        if FileManager.default.fileExists(atPath: fileURL.path) {
-//            let fileHandle = FileHandle(forWritingAtPath: fileURL.path)
-//            fileHandle?.seekToEndOfFile()
-//            fileHandle?.write(newLine.data(using: .utf8)!)
-//            fileHandle?.closeFile()
-//        } else {
-//            let csvText = "email,time\n" + newLine
-//            try? csvText.write(to: fileURL, atomically: false, encoding: .utf8)
-//        }
-//    }
-
 }
