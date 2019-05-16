@@ -7,14 +7,7 @@
 
 import Foundation
 import CKB
-import SQLite3
-
-struct UnspentCell {
-    let capacity: Decimal
-    let blockHash: H256
-    let txHash: H256
-    let index: Number
-}
+import SQLite
 
 class CellService {
     struct ValidInputs {
@@ -22,7 +15,7 @@ class CellService {
         let capacity: Decimal
     }
 
-    private var currentBlockNumber: UInt = 0
+    private var currentBlockNumber: Int = 0
     private var api: APIClient!
     private var lockHash: H256!
     private var publicKey: H256!
@@ -31,6 +24,7 @@ class CellService {
         self.lockHash = lockHash
         self.publicKey = publicKey
         self.api = api
+        currentBlockNumber = CellService.readBlockNumber(for: lockHash)
     }
 
     public func gatherInputs(capacity: Decimal) throws -> ValidInputs {
@@ -42,33 +36,61 @@ class CellService {
             inputs.append(input)
             inputCapacities += Decimal(string: cell.capacity) ?? 0
             if inputCapacities > capacity {
+                currentBlockNumber = getBlockNumber(for: cell.outPoint)
+                CellService.saveBlockNumber(currentBlockNumber, for: lockHash)
                 break
             }
         }
         guard inputCapacities > capacity else {
-            throw WalletError.notEnoughCapacity(required: "\(capacity)", available: "\(inputCapacities)")
+            throw Error.notEnoughCapacity(required: "\(capacity)", available: "\(inputCapacities)")
         }
         return ValidInputs(cellInputs: inputs, capacity: inputCapacities)
     }
 
+    private func getBlockNumber(for outPoint: OutPoint) -> Int {
+        if let blockHash = outPoint.blockHash {
+            if let block = try? api.getBlock(hash: blockHash) {
+                return Int(block.header.number)!
+            }
+        }
+        return currentBlockNumber
+    }
+}
 
-    // MARK:
+extension CellService {
+    private static let connection = try! Connection(.uri(FileManager.default.currentDirectoryPath + "/block_number.db"))
+    private static let table = createTable()
+    private static let lockHashColumn = Expression<String>("lockHash")
+    private static let blockNumberColumn = Expression<Int>("block_number")
 
-    func saveBlockNumber(for outPoint: OutPoint) {
-        guard let blockHash = outPoint.blockHash else { return }
-        guard let block = try? api.getBlock(hash: blockHash) else { return }
-        currentBlockNumber = UInt(block.header.number) ?? currentBlockNumber
+    private static func createTable() -> Table {
+        let table = Table("block_number")
+        try! connection.run(table.create { t in
+            t.column(lockHashColumn, primaryKey: true)
+            t.column(blockNumberColumn)
+        })
+        return table
     }
 
-    func readBlockNumber() -> UInt {
-        return 1
+    static func saveBlockNumber(_ blockNumber: Int, for lockHash: H256) {
+        do {
+            try connection.run(table.insert(
+                lockHashColumn <- lockHash,
+                blockNumberColumn <- blockNumber
+            ))
+        } catch {
+            let filterResult = table.filter(lockHashColumn == lockHash)
+            try! connection.run(filterResult.update(
+                lockHashColumn <- lockHash,
+                blockNumberColumn <- blockNumber
+            ))
+        }
     }
 
-    var fileUrl: URL {
-        var url = URL(fileURLWithPath: ProcessInfo().arguments[0])
-        url.deleteLastPathComponent()
-        url.appendPathComponent("block_number")
-        return url
+    static func readBlockNumber(for lockHash: H256) -> Int {
+        let filterResult = table.filter(lockHashColumn == lockHash)
+        guard let row = try? connection.prepare(filterResult).first(where: { _ in true }) else { return 1 }
+        return row[blockNumberColumn]
     }
 }
 
@@ -78,15 +100,15 @@ extension CellService {
     struct UnspentCellsIterator: IteratorProtocol {
         let api: APIClient
         let lockHash: H256
-        var fromBlockNumber: UInt
-        let tipBlockNumber: UInt
+        var fromBlockNumber: Int
+        let tipBlockNumber: Int
         var cells = [CellOutputWithOutPoint]()
 
-        public init(api: APIClient, lockHash: H256, fromBlockNumber: UInt = 1) throws {
+        public init(api: APIClient, lockHash: H256, fromBlockNumber: Int = 1) throws {
             self.api = api
             self.lockHash = lockHash
             self.fromBlockNumber = fromBlockNumber
-            tipBlockNumber = UInt(try api.getTipBlockNumber())!
+            tipBlockNumber = Int(try api.getTipBlockNumber())!
         }
 
         mutating public func next() -> CellOutputWithOutPoint? {
@@ -111,5 +133,18 @@ extension CellService {
 
     func getUnspentCells() throws -> IteratorSequence<UnspentCellsIterator> {
         return IteratorSequence(try UnspentCellsIterator(api: api, lockHash: lockHash, fromBlockNumber: currentBlockNumber))
+    }
+}
+
+extension CellService {
+    enum Error: LocalizedError {
+        case notEnoughCapacity(required: Capacity, available: Capacity)
+
+        var localizedDescription: String {
+            switch self {
+            case .notEnoughCapacity(let required, let available):
+                return "Not enough capacity, required: \(required), available: \(available)"
+            }
+        }
     }
 }
