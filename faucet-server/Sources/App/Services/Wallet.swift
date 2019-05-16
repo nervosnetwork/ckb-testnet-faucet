@@ -73,16 +73,17 @@ public class Wallet {
     }
 }
 
-enum WalletError: LocalizedError {
-    case tooLowCapacity(min: Capacity)
-    case notEnoughCapacity(required: Capacity, available: Capacity)
+extension Wallet {
+    enum Error: LocalizedError {
+        case tooLowCapacity(min: Capacity)
 
-    var localizedDescription: String {
-        switch self {
-        case .tooLowCapacity(let min):
-            return "Capacity cannot less than \(min)"
-        case .notEnoughCapacity(let required, let available):
-            return "Not enough capacity, required: \(required), available: \(available)"
+        var localizedDescription: String {
+            switch self {
+            case .tooLowCapacity(let min):
+                return "Capacity cannot less than \(min)"
+            }
         }
     }
 }
+
+
