@@ -16,6 +16,8 @@ public class App {
     }
 
     private func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
+        try Environment.Process.configure(&env)
+        
         // Register routes to the router
         let router = EngineRouter.default()
         try setupRoutes(router)
@@ -25,8 +27,6 @@ public class App {
         var middlewares = MiddlewareConfig()
         middlewares.use(ErrorMiddleware.self)
         services.register(middlewares)
-
-        try Environment.Process.configure(&env)
     }
 
     private func setupRoutes(_ router: Router) throws {
