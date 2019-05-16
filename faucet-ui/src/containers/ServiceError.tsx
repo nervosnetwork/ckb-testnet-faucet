@@ -21,8 +21,8 @@ export default (props: any) => {
 
   return (
     <Box align='center' gap='small'>
-      <Text color="text" size="16px">Sorry, the server may have something wrong.</Text>
-      <Text color="text" size="16px">Please try again later.</Text>
+      <Text textAlign='center' color="text" size='xxlarge'>There's something wrong with your internet connection.
+      Please try again later.</Text>
     </Box>
   )
 }

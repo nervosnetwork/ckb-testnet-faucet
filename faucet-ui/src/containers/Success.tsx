@@ -1,4 +1,4 @@
-import { Box, Button, Text, TextInput } from 'grommet';
+import { Box, Button, Text } from 'grommet';
 import * as React from 'react';
 
 export default (props: any) => {
@@ -18,9 +18,11 @@ export default (props: any) => {
             <Button primary label="Copy" />
           </Box>
         </Box>
-        <TextInput style={{ color: "white" }} width="100%" value={txhash} />
-        <Box width="100%" align="end" pad={{ top: "large" }} gap="small">
-          <Text color="text" size="14px">It may take some time for the transaction to be mined and confirmed.</Text>
+        <Box justify="center" align="center" pad="small" round="large" border={{ "color" : "white" }}>
+            <Text color='white'>{txhash}</Text>
+        </Box>
+        <Box width="100%" align="end" pad={{ top: "medium" }} gap="small">
+          <Text color="text" size="14px">It may take some time for the transaction to be mined and confirmed</Text>
         </Box>
       </Box>
     </Box>

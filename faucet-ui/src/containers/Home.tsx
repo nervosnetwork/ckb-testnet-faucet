@@ -1,5 +1,5 @@
 import fetchJsonp from 'fetch-jsonp';
-import { Box, Button, Text, TextInput } from 'grommet';
+import { Box, Button, Text, TextInput, Anchor } from 'grommet';
 import * as React from 'react';
 import { Routes } from '../utils/const';
 
@@ -58,10 +58,10 @@ export default (props: any) => {
 
   return (
     <Box width="100%" align="center" gap="small">
-      <Text color="text" size="16px">Please note that each GitHub account can only request test tokens once every 24 hours.</Text>
+      <Text color="text" size="xlarge">Please note that each GitHub account can only request test tokens once every 24 hours.</Text>
+      <Text color="text" size="xlarge">You can refer to our <Anchor href='https://docs.nervos.org' color='text' target='_blank'>documents</Anchor> for how to create a wallet.</Text>
       <Box width="600px" align="start" pad="small" gap="small">
-        <Text color="text" size="16px">Enter the lock hash here to receive test tokens</Text>
-        <TextInput style={{ color: "white" }} width="100%" ref={inputKey} placeholder="Please enter the lock hash here." />
+        <TextInput style={{ color: "white" }} width="100%" ref={inputKey} placeholder="Please enter your wallet address here" />
         {errorMessage ? <Text color="red" size="16px">Wrong lock hash. Please check here for the lock hash format of Nervos CKB</Text> : <div />}
       </Box>
       <Button disabled={!enable} primary label="Get Test Token" onClick={onClickGetTestToken} />
