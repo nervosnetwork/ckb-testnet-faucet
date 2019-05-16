@@ -10,7 +10,14 @@ import Vapor
 import CKB
 
 public struct CKBController: RouteCollection {
-    public init() {
+    let nodeUrl: URL
+    let api: APIClient
+    let systemScript: SystemScript
+
+    public init(nodeUrl: URL) throws {
+        self.nodeUrl = nodeUrl
+        api = APIClient(url: nodeUrl)
+        systemScript = try SystemScript.loadFromGenesisBlock(nodeUrl: nodeUrl)
     }
 
     public func boot(router: Router) throws {
@@ -80,10 +87,6 @@ public struct CKBController: RouteCollection {
     // MARK: - Utils
 
     public func sendCapacity(address: String) throws -> H256 {
-        let nodeUrl = URL(string: Environment.Process.nodeURL)!
-        let api = APIClient(url: URL(string: Environment.Process.nodeURL)!)
-        let systemScript = try SystemScript.loadFromGenesisBlock(nodeUrl: nodeUrl)
-
         guard let publicKeyHash = AddressGenerator(network: .testnet).publicKeyHash(for: address) else { throw Error.invalidAddress }
         let targetLock = Script(args: [publicKeyHash], codeHash: systemScript.codeHash)
 

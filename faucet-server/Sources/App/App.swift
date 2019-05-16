@@ -38,7 +38,7 @@ public class App {
         }
 
         try router.register(collection: AuthorizationController())
-        try router.register(collection: CKBController())
+        try router.register(collection: try CKBController(nodeUrl: URL(string: Environment.Process.nodeURL)!))
     }
 
 }
