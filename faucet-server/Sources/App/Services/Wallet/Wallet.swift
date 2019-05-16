@@ -91,7 +91,9 @@ public class Wallet {
         if validInputs.capacity > capacity {
             outputs.append(CellOutput(capacity: "\(validInputs.capacity - capacity)", data: "0x", lock: lock, type: nil))
         }
-        return Transaction(deps: deps, inputs: validInputs.cellInputs, outputs: outputs, hash: privateKey)
+        let tx = Transaction(deps: deps, inputs: validInputs.cellInputs, outputs: outputs, hash: privateKey)
+        let txhash = try api.computeTransactionHash(transaction: tx)
+        return Transaction.sign(tx: tx, with: Data(hex: privateKey), txHash: txhash)
     }
 }
 
