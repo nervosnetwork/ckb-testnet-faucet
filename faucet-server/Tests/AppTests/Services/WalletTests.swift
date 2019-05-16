@@ -34,7 +34,7 @@ class WalletTests: XCTestCase {
 
         let wallet = Wallet(api: api, systemScript: systemScript, privateKey: "") // Set a valid wallet private key
 
-        let newWallet = Wallet(api: api, systemScript: systemScript, privateKey: CKBController().generatePrivateKey())
+        let newWallet = Wallet(api: api, systemScript: systemScript, privateKey: CKBController.generatePrivateKey())
         let txhash = try wallet.sendCapacity(targetLock: newWallet.lock, capacity: 20000000000)
 
         var repeatCount = 20
