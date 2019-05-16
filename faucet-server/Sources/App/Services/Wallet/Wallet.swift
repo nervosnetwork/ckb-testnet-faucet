@@ -7,15 +7,17 @@
 
 import Foundation
 import CKB
+import Vapor
 
 let minCellCapacity = Decimal(floatLiteral: 42 * pow(10, 8))
 
 public class Wallet {
     let api: APIClient
     let privateKey: String
+    let systemScript: SystemScript
 
     var deps: [OutPoint] {
-        return [systemScriptOutPoint]
+        return [systemScript.outPoint]
     }
     var publicKey: H256 {
         return "0x" + Utils.privateToPublic(privateKey)
@@ -27,24 +29,16 @@ public class Wallet {
         return "0x" + AddressGenerator(network: .testnet).hash(for: Data(hex: publicKey)).toHexString()
     }
     public var lock: Script {
-        return Script(args: [publicKeyHash], codeHash: systemScriptCellHash)
+        return Script(args: [publicKeyHash], codeHash: systemScript.codeHash)
     }
     var lockHash: H256 {
         return lock.typeHash
     }
 
-    var systemScriptOutPoint: OutPoint!
-    var systemScriptCellHash: H256!
-
-    public init(api: APIClient, privateKey: H256) throws {
+    public init(api: APIClient, systemScript: SystemScript, privateKey: H256) {
         self.api = api
+        self.systemScript = systemScript
         self.privateKey = privateKey
-
-        let blockHash = try api.getBlockHash(number: "0")
-        let transaction = try api.genesisBlock().transactions[0]
-        let cellData = Data(hex: transaction.outputs[0].data)
-        systemScriptCellHash = Utils.prefixHex(Blake2b().hash(data: cellData)!.toHexString())
-        systemScriptOutPoint = OutPoint(blockHash: blockHash, cell: CellOutPoint(txHash: transaction.hash, index: "0"))
     }
 
     public func getBalance() throws -> Decimal {

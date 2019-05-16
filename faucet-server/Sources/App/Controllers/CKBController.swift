@@ -80,11 +80,15 @@ public struct CKBController: RouteCollection {
     // MARK: - Utils
 
     public func sendCapacity(address: String) throws -> H256 {
+        let nodeUrl = URL(string: Environment.Process.nodeURL)!
         let api = APIClient(url: URL(string: Environment.Process.nodeURL)!)
+        let systemScript = try SystemScript.loadFromGenesisBlock(nodeUrl: nodeUrl)
+
         guard let publicKeyHash = AddressGenerator(network: .testnet).publicKeyHash(for: address) else { throw Error.invalidAddress }
-        let wallet = try Wallet(api: api, privateKey: Environment.Process.walletPrivateKey)
-        let lock = Script(args: [publicKeyHash], codeHash: wallet.systemScriptCellHash)
-        return try wallet.sendCapacity(targetLock: lock, capacity: Environment.Process.sendCapacityCount)
+        let targetLock = Script(args: [publicKeyHash], codeHash: systemScript.codeHash)
+
+        let wallet = Wallet(api: api, systemScript: systemScript, privateKey: Environment.Process.walletPrivateKey)
+        return try wallet.sendCapacity(targetLock: targetLock, capacity: Environment.Process.sendCapacityCount)
     }
 
     public func privateToAddress(_ privateKey: String) throws -> String {
