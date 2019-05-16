@@ -32,7 +32,7 @@ public class Wallet {
         return Script(args: [publicKeyHash], codeHash: systemScript.codeHash)
     }
     var lockHash: H256 {
-        return lock.typeHash
+        return lock.hash
     }
 
     public init(api: APIClient, systemScript: SystemScript, privateKey: H256) {
