@@ -8,9 +8,17 @@
 import Foundation
 import SQLite
 
-struct GithubUserInfo: Codable {
-    var email: String?
-    var loginDate: String?
+public struct GithubUserInfo: Codable {
+    public var email: String?
+    public var loginDate: String?
+    public init(email: String?, loginDate: String?) {
+        self.email = email
+        self.loginDate = loginDate
+    }
+
+    public init() {
+        
+    }
 }
 
 extension GithubUserInfo {

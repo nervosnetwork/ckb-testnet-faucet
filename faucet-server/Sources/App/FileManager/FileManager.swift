@@ -8,24 +8,20 @@
 import Foundation
 
 final class File {
-
-    init() {
-
-    }
-
-    func importCSV() {
+    static func SaveCSV(filePath: String) {
         let githubArray = GithubUserInfo.getAll()
         var csvText = "email,time\n"
         let fileName = "email-\(getDateNow()).csv"
         for githubInfo in githubArray {
             csvText += "\(githubInfo.email ?? ""),\(githubInfo.loginDate ?? "")\n"
         }
-        let currentDirectory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+
+        let currentDirectory = URL(fileURLWithPath: filePath)
         let fileURL = currentDirectory.appendingPathComponent(fileName)
         try? csvText.write(to: fileURL, atomically: false, encoding: .utf8)
     }
 
-    private func getDateNow() -> String {
+    static private func getDateNow() -> String {
         let date = Date()
         let timeFormatter = DateFormatter()
         timeFormatter.dateFormat = "yyyy-MM-dd 'at' HH:mm:ss.SSS"
