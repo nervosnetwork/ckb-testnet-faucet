@@ -33,8 +33,7 @@ class Authorization {
     func authorization(code: String) -> String? {
         // Exchange this code for an access token
         guard let accessToken = GithubAPI.getAccessToken(code: code) else { return nil }
-        let email = GithubAPI.getUserEmail(accessToken: accessToken)
-        saveEmailCSV(email: email)
+        GithubAPI.saveGithubInfo(accessToken: accessToken)
         var user: User
         if let result = User.query(accessToken: accessToken) {
             user = result
@@ -53,30 +52,23 @@ class Authorization {
         }
     }
 
-    private func saveEmailCSV(email: String?) {
-        guard let email = email else { return }
-        let time = getDataNow()
-        let fileName = "email.csv"
-        let newLine = "\(email),\(time)\n"
-        let currentDirectory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-        let fileURL = currentDirectory.appendingPathComponent(fileName)
+//    private func saveEmailCSV(email: String?) {
+//        guard let email = email else { return }
+//        let time = getDataNow()
+//        let fileName = "email.csv"
+//        let newLine = "\(email),\(time)\n"
+//        let currentDirectory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+//        let fileURL = currentDirectory.appendingPathComponent(fileName)
+//
+//        if FileManager.default.fileExists(atPath: fileURL.path) {
+//            let fileHandle = FileHandle(forWritingAtPath: fileURL.path)
+//            fileHandle?.seekToEndOfFile()
+//            fileHandle?.write(newLine.data(using: .utf8)!)
+//            fileHandle?.closeFile()
+//        } else {
+//            let csvText = "email,time\n" + newLine
+//            try? csvText.write(to: fileURL, atomically: false, encoding: .utf8)
+//        }
+//    }
 
-        if FileManager.default.fileExists(atPath: fileURL.path) {
-            let fileHandle = FileHandle(forWritingAtPath: fileURL.path)
-            fileHandle?.seekToEndOfFile()
-            fileHandle?.write(newLine.data(using: .utf8)!)
-            fileHandle?.closeFile()
-        } else {
-            let csvText = "email,time\n" + newLine
-            try? csvText.write(to: fileURL, atomically: false, encoding: .utf8)
-        }
-    }
-
-    private func getDataNow() -> String {
-        let date = Date()
-        let timeFormatter = DateFormatter()
-        timeFormatter.dateFormat = "yyyy-MM-dd 'at' HH:mm:ss.SSS"
-        let nowTime = timeFormatter.string(from: date)
-        return nowTime
-    }
 }

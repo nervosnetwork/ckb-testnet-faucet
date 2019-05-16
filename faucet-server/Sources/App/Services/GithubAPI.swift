@@ -26,11 +26,12 @@ struct GithubAPI {
         }
     }
 
-    static func getUserEmail(accessToken: String) -> String? {
+    static func saveGithubInfo(accessToken: String) {
         let request = URLRequest(url: URL(string: "https://api.github.com/user?access_token=\(accessToken)")!)
-
-        guard let data = try? request.load() else { return nil }
-        let githubUserInfo = try? JSONDecoder().decode(GithubUserInfo.self, from: data)
-        return githubUserInfo?.email
+        do {
+            let data = try request.load()
+            var githubUserInfo = try? JSONDecoder().decode(GithubUserInfo.self, from: data)
+            githubUserInfo?.save()
+        } catch {}
     }
 }
