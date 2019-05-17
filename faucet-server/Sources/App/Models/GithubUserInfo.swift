@@ -11,11 +11,10 @@ import SQLite
 public struct GithubUserInfo: Codable {
     public var email: String?
     public var loginDate: String?
-    public init() {}
 
-    public init(email: String?) {
+    public init(email: String?, loginDate: String? = GithubUserInfo.getDateNow()) {
         self.email = email
-        self.loginDate = getDateNow()
+        self.loginDate = loginDate
     }
 }
 
@@ -46,15 +45,13 @@ extension GithubUserInfo {
     public static func getAll() -> [GithubUserInfo] {
         var all: [GithubUserInfo] = []
         for githubUserInfo in try! connection.prepare(GithubUserInfo.table) {
-            var githubUser = GithubUserInfo()
-            githubUser.email = githubUserInfo[emailExpression]
-            githubUser.loginDate = githubUserInfo[loginDateExpression]
+            let githubUser = GithubUserInfo(email: githubUserInfo[emailExpression], loginDate: githubUserInfo[loginDateExpression])
             all.append(githubUser)
         }
         return all
     }
 
-    public func getDateNow() -> String {
+    public static func getDateNow() -> String {
         let date = Date()
         let timeFormatter = DateFormatter()
         timeFormatter.dateFormat = "yyyy-MM-dd 'at' HH:mm:ss.SSS"
