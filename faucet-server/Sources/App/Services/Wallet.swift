@@ -8,7 +8,7 @@
 import Foundation
 import CKB
 
-let minCellCapacity = Decimal(floatLiteral: 60 * pow(10, 8))
+let minCellCapacity = Decimal(60 * pow(10, 8))
 
 public class Wallet {
     let api: APIClient
@@ -48,7 +48,7 @@ public class Wallet {
     }
 
     public func sendCapacity(targetLock: Script, capacity: Decimal) throws -> H256 {
-        guard capacity < minCellCapacity else { throw Error.tooLowCapacity(min: minCellCapacity.description) }
+        guard capacity >= minCellCapacity else { throw Error.tooLowCapacity(min: minCellCapacity.description) }
         let tx = try generateTransaction(targetLock: targetLock, capacity: capacity)
         return try api.sendTransaction(transaction: tx)
     }
