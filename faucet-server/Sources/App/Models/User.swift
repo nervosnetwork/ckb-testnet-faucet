@@ -29,7 +29,7 @@ extension User {
 
     private static func createTable() -> Table {
         let table = Table("user")
-        try! connection.run(table.create { t in
+        try? connection.run(table.create { t in
             t.column(accessTokenColumn, primaryKey: true)
             t.column(authorizationDateColumn)
             t.column(collectionDateColumn)

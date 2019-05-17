@@ -6,7 +6,57 @@
 //
 
 import Foundation
+import SQLite
 
-struct GithubUserInfo: Codable {
-    var email: String?
+public struct GithubUserInfo: Codable {
+    public var email: String?
+    public var loginDate: String?
+
+    public init(email: String?, loginDate: String? = GithubUserInfo.getDateNow()) {
+        self.email = email
+        self.loginDate = loginDate
+    }
 }
+
+extension GithubUserInfo {
+    private static let connection = try! Connection(.uri(FileManager.default.currentDirectoryPath + "/githubUserInfo.db"))
+    private static let table = createTable()
+    private static let emailExpression = Expression<String?>("email")
+    private static let loginDateExpression = Expression<String?>("loginDate")
+
+    private static func createTable() -> Table {
+        let table = Table("githubUserInfo")
+        try? connection.run(table.create { t in
+            t.column(emailExpression)
+            t.column(loginDateExpression)
+        })
+        return table
+    }
+
+    public func save() {
+        do {
+            try GithubUserInfo.connection.run(GithubUserInfo.table.insert(
+                GithubUserInfo.emailExpression <- email,
+                GithubUserInfo.loginDateExpression <- loginDate
+            ))
+        } catch {}
+    }
+
+    public static func getAll() -> [GithubUserInfo] {
+        var all: [GithubUserInfo] = []
+        for githubUserInfo in try! connection.prepare(GithubUserInfo.table) {
+            let githubUser = GithubUserInfo(email: githubUserInfo[emailExpression], loginDate: githubUserInfo[loginDateExpression])
+            all.append(githubUser)
+        }
+        return all
+    }
+
+    public static func getDateNow() -> String {
+        let date = Date()
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "yyyy-MM-dd 'at' HH:mm:ss.SSS"
+        let nowTime = timeFormatter.string(from: date)
+        return nowTime
+    }
+}
+

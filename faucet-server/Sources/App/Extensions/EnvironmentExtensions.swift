@@ -17,7 +17,7 @@ extension Environment {
 
         static func configure(_ environment: inout Environment) throws {
             walletPrivateKey = try environment.commandInput.parse(option: .value(name: "wallet_private_key"))
-            nodeURL = try? environment.commandInput.parse(option: .value(name: "node_url")) ?? "http://localhost:8114"
+            nodeURL = try environment.commandInput.parse(option: .value(name: "node_url"))
             sendCapacityCount = Decimal(string: (try? environment.commandInput.parse(option: .value(name: "send_capacity_count"))) ?? "20000000000")!
             oauthClientId = try environment.commandInput.parse(option: .value(name: "github_oauth_client_id"))
             oauthClientSecret = try environment.commandInput.parse(option: .value(name: "github_oauth_client_secret"))

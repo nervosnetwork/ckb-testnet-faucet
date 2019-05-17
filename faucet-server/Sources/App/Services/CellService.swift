@@ -65,7 +65,7 @@ extension CellService {
 
     private static func createTable() -> Table {
         let table = Table("block_number")
-        try! connection.run(table.create { t in
+        try? connection.run(table.create { t in
             t.column(lockHashColumn, primaryKey: true)
             t.column(blockNumberColumn)
         })
