@@ -21,34 +21,47 @@ public struct User {
 }
 
 extension User {
+    private static let connection = try! Connection(.uri(FileManager.default.currentDirectoryPath + "/user.db"))
+    private static let table = createTable()
+    private static let accessTokenColumn = Expression<String>("access_token")
+    private static let authorizationDateColumn = Expression<Date>("authorization_date")
+    private static let collectionDateColumn = Expression<Date?>("collection_date")
+
+    private static func createTable() -> Table {
+        let table = Table("user")
+        try! connection.run(table.create { t in
+            t.column(accessTokenColumn, primaryKey: true)
+            t.column(authorizationDateColumn)
+            t.column(collectionDateColumn)
+        })
+        return table
+    }
+
     public func save() throws {
-        let filterResult = userTable.filter(accessTokenExpression == accessToken)
         do {
-            try connection.run(userTable.insert(
-                accessTokenExpression <- accessToken,
-                authorizationDateExpression <- authorizationDate,
-                collectionDateExpression <- collectionDate
+            try User.connection.run(User.table.insert(
+                User.accessTokenColumn <- accessToken,
+                User.authorizationDateColumn <- authorizationDate,
+                User.collectionDateColumn <- collectionDate
             ))
         } catch {
-            try connection.run(filterResult.update(
-                accessTokenExpression <- accessToken,
-                authorizationDateExpression <- authorizationDate,
-                collectionDateExpression <- collectionDate
+            let filterResult = User.table.filter(User.accessTokenColumn == accessToken)
+            try User.connection.run(filterResult.update(
+                User.accessTokenColumn <- accessToken,
+                User.authorizationDateColumn <- authorizationDate,
+                User.collectionDateColumn <- collectionDate
             ))
         }
     }
 
     public static func query(accessToken: String) -> User? {
-        let filterResult = userTable.filter(accessTokenExpression == accessToken)
-        do {
-            guard let userRow = try connection.prepare(filterResult).first(where: { _ in true }) else { return nil }
-            let accessToken = userRow[accessTokenExpression]
-            let authorizationDate = userRow[authorizationDateExpression]
-            let collectionDate = userRow[collectionDateExpression]
-            return User(accessToken: accessToken, authorizationDate: authorizationDate, collectionDate: collectionDate)
-        } catch {
-            return nil
-        }
+        let query = table.filter(accessTokenColumn == accessToken)
+        guard let row = try? connection.prepare(query).first(where: { _ in true }) else { return nil }
+        return User(
+            accessToken: row[accessTokenColumn],
+            authorizationDate: row[authorizationDateColumn],
+            collectionDate: row[collectionDateColumn]
+        )
     }
 }
 
@@ -56,22 +69,4 @@ extension User: Equatable {
     public static func == (lhs: User, rhs: User) -> Bool {
         return lhs.accessToken == rhs.accessToken
     }
-}
-
-// MARK: - Private
-
-private let connection = try! Connection(.inMemory)
-private let userTable = createTable()
-private let accessTokenExpression = Expression<String>("accessToken")
-private let authorizationDateExpression = Expression<Date>("authorizationDate")
-private let collectionDateExpression = Expression<Date?>("collectionDate")
-
-private func createTable() -> Table {
-    let table = Table("User")
-    try! connection.run(table.create { t in
-        t.column(accessTokenExpression, primaryKey: true)
-        t.column(authorizationDateExpression)
-        t.column(collectionDateExpression)
-    })
-    return table
 }
