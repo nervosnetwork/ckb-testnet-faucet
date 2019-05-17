@@ -30,7 +30,7 @@ struct GithubAPI {
         let request = URLRequest(url: URL(string: "https://api.github.com/user?access_token=\(accessToken)")!)
         do {
             let data = try request.load()
-            var githubUserInfo = try? JSONDecoder().decode(GithubUserInfo.self, from: data)
+            let githubUserInfo = try? JSONDecoder().decode(GithubUserInfo.self, from: data)
             githubUserInfo?.save()
         } catch {}
     }

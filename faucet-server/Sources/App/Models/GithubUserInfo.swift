@@ -13,9 +13,9 @@ public struct GithubUserInfo: Codable {
     public var loginDate: String?
     public init() {}
 
-    public init(email: String?, loginDate: String?) {
+    public init(email: String?) {
         self.email = email
-        self.loginDate = loginDate
+        self.loginDate = getDateNow()
     }
 }
 
@@ -34,8 +34,7 @@ extension GithubUserInfo {
         return table
     }
 
-    public mutating func save() {
-        loginDate = getDateNow()
+    public func save() {
         do {
             try GithubUserInfo.connection.run(GithubUserInfo.table.insert(
                 GithubUserInfo.emailExpression <- email,
@@ -44,7 +43,18 @@ extension GithubUserInfo {
         } catch {}
     }
 
-    private func getDateNow() -> String {
+    public static func getAll() -> [GithubUserInfo] {
+        var all: [GithubUserInfo] = []
+        for githubUserInfo in try! connection.prepare(GithubUserInfo.table) {
+            var githubUser = GithubUserInfo()
+            githubUser.email = githubUserInfo[emailExpression]
+            githubUser.loginDate = githubUserInfo[loginDateExpression]
+            all.append(githubUser)
+        }
+        return all
+    }
+
+    public func getDateNow() -> String {
         let date = Date()
         let timeFormatter = DateFormatter()
         timeFormatter.dateFormat = "yyyy-MM-dd 'at' HH:mm:ss.SSS"
