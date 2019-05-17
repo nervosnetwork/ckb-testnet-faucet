@@ -12,7 +12,7 @@ import CKB
 
 class WalletTests: XCTestCase {
     override func invokeTest() {
-        if ProcessInfo().environment["SKIP_CKB_API_TESTS"] == "1" {
+        if ProcessInfo.processInfo.environment["SKIP_CKB_API_TESTS"] == "1" {
             return
         }
         super.invokeTest()
