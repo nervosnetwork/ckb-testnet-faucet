@@ -87,7 +87,7 @@ public struct CKBController: RouteCollection {
     // MARK: - Utils
 
     public func sendCapacity(address: String) throws -> H256 {
-        guard let publicKeyHash = AddressGenerator(network: .testnet).publicKeyHash(for: address) else { throw Error.invalidAddress }
+        guard let publicKeyHash = "0x" + AddressGenerator(network: .testnet).publicKeyHash(for: address) else { throw Error.invalidAddress }
         let targetLock = Script(args: [publicKeyHash], codeHash: systemScript.codeHash)
 
         let wallet = Wallet(api: api, systemScript: systemScript, privateKey: Environment.Process.walletPrivateKey)
