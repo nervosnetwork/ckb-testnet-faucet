@@ -32,8 +32,8 @@ class Authorization {
 
     func authorization(code: String) -> String? {
         // Exchange this code for an access token
-        guard let accessToken = GithubAPI.getAccessToken(code: code) else { return nil }
-        GithubAPI.saveGithubInfo(accessToken: accessToken)
+        guard let accessToken = GithubService.getAccessToken(code: code) else { return nil }
+        GithubService.saveUserInfo(accessToken: accessToken)
         var user: User
         if let result = User.query(accessToken: accessToken) {
             user = result

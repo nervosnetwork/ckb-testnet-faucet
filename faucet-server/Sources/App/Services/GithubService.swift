@@ -1,5 +1,5 @@
 //
-//  GithubAPI.swift
+//  GithubService.swift
 //  App
 //
 //  Created by 翟泉 on 2019/3/13.
@@ -8,7 +8,7 @@
 import Foundation
 import Vapor
 
-struct GithubAPI {
+struct GithubService {
     static func getAccessToken(code: String) -> String? {
         var request = URLRequest(url: URL(string: "https://github.com/login/oauth/access_token")!)
         request.httpMethod = "POST"
@@ -26,7 +26,7 @@ struct GithubAPI {
         }
     }
 
-    static func saveGithubInfo(accessToken: String) {
+    static func saveUserInfo(accessToken: String) {
         let request = URLRequest(url: URL(string: "https://api.github.com/user?access_token=\(accessToken)")!)
         do {
             let data = try request.load()
