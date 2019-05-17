@@ -37,23 +37,11 @@ extension GithubUserInfo {
     public mutating func save() {
         loginDate = getDateNow()
         do {
-            print(FileManager.default.currentDirectoryPath)
             try GithubUserInfo.connection.run(GithubUserInfo.table.insert(
                 GithubUserInfo.emailExpression <- email,
                 GithubUserInfo.loginDateExpression <- loginDate
             ))
         } catch {}
-    }
-
-    public static func getAll() -> [GithubUserInfo] {
-        var all: [GithubUserInfo] = []
-        for githubUserInfo in try! connection.prepare(GithubUserInfo.table) {
-            var githubUser = GithubUserInfo()
-            githubUser.email = githubUserInfo[emailExpression]
-            githubUser.loginDate = githubUserInfo[loginDateExpression]
-            all.append(githubUser)
-        }
-        return all
     }
 
     private func getDateNow() -> String {

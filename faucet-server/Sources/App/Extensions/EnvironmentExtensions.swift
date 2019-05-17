@@ -14,10 +14,8 @@ extension Environment {
         static var oauthClientSecret: String!
         static var walletPrivateKey: String!
         static var sendCapacityCount: Decimal!
-        static var saveFilePath: String?
 
         static func configure(_ environment: inout Environment) throws {
-            saveFilePath = try? environment.commandInput.parse(option: .value(name: "save_file_path"))
             walletPrivateKey = try? environment.commandInput.parse(option: .value(name: "wallet_private_key"))
             nodeURL = try environment.commandInput.parse(option: .value(name: "node_url"))
             sendCapacityCount = Decimal(string: (try? environment.commandInput.parse(option: .value(name: "send_capacity_count"))) ?? "20000000000")!
