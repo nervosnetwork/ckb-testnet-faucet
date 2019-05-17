@@ -25,6 +25,7 @@ extension GithubUserInfo {
     public mutating func save() {
         loginDate = getDateNow()
         do {
+            print(FileManager.default.currentDirectoryPath)
             try connection.run(githubTable.insert(
                 emailExpression <- email,
                 loginDateExpression <- loginDate
@@ -52,14 +53,14 @@ extension GithubUserInfo {
     }
 }
 
-private let connection = try! Connection(.inMemory)
+private let connection = try! Connection(.uri(FileManager.default.currentDirectoryPath + "/githubUserInfo.db"))
 private let githubTable = createTable()
 private let emailExpression = Expression<String?>("email")
 private let loginDateExpression = Expression<String?>("loginDate")
 
 private func createTable() -> Table {
-    let table = Table("github")
-    try! connection.run(table.create { t in
+    let table = Table("githubUserInfo")
+    try? connection.run(table.create { t in
         t.column(emailExpression)
         t.column(loginDateExpression)
     })
