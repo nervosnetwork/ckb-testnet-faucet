@@ -2,10 +2,10 @@ import { Box, Button, CheckBox, Text, Anchor } from 'grommet';
 import * as React from 'react';
 
 export default () => {
-  const [enable, setEnbale] = React.useState(false)
+  const [enable, setEnable] = React.useState(false)
 
   const onChangeEnable = () => {
-    setEnbale(!enable)
+    setEnable(!enable)
   }
 
   const onLoginWithGitHub = () => {
