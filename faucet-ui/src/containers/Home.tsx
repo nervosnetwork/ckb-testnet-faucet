@@ -18,7 +18,7 @@ export default (props: any) => {
       }).then((json: any) => {
         switch (json.status) {
           case 0:
-            props.history.push({ pathname: Routes.Success, query: { txhash: json.txhash } })
+            props.history.push({ pathname: Routes.Success, query: { txHash: json.txHash } })
             break
           case -1:
             props.history.push({ pathname: Routes.Auth })
