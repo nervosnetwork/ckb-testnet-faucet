@@ -9,6 +9,10 @@ import Foundation
 import Vapor
 
 struct GithubService {
+    struct User: Decodable {
+        let email: String
+    }
+
     static func getAccessToken(code: String) -> String? {
         var request = URLRequest(url: URL(string: "https://github.com/login/oauth/access_token")!)
         request.httpMethod = "POST"
@@ -26,12 +30,9 @@ struct GithubService {
         }
     }
 
-    static func saveUserInfo(accessToken: String) {
+    static func getUserInfo(for accessToken: String) throws -> User {
         let request = URLRequest(url: URL(string: "https://api.github.com/user?access_token=\(accessToken)")!)
-        do {
-            let data = try request.load()
-            let githubUserInfo = try? JSONDecoder().decode(GithubUserInfo.self, from: data)
-            githubUserInfo?.save()
-        } catch {}
+        let responseData = try request.load()
+        return try JSONDecoder().decode(User.self, from: responseData)
     }
 }
