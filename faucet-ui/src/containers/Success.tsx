@@ -1,10 +1,10 @@
-import { Box, Button, Text } from 'grommet';
+import { Box, Button, Text, TextInput } from 'grommet';
 import * as React from 'react';
 
 export default (props: any) => {
-  let txhash: string | undefined
+  let txHash: string | undefined
   if (props.location.query) {
-    txhash = props.location.query.txhash
+    txHash = props.location.query.txHash
   }
 
   return (
@@ -18,8 +18,8 @@ export default (props: any) => {
             <Button primary label="Copy" />
           </Box>
         </Box>
-        <Box justify="center" align="center" pad="small" round="large" border={{ "color" : "white" }}>
-            <Text color='white'>{txhash}</Text>
+        <Box justify="center" align="center" pad="none">
+          <TextInput style={{ color: "white" }} readOnly width="100%" value={txHash} />
         </Box>
         <Box width="100%" align="end" pad={{ top: "medium" }} gap="small">
           <Text color="text" size="14px">It may take some time for the transaction to be mined and confirmed</Text>
