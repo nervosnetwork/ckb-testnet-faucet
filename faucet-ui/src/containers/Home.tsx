@@ -61,7 +61,7 @@ export default (props: any) => {
       <Text color="text" size="xlarge">Please note that each GitHub account can only request test tokens once every 24 hours.</Text>
       <Text color="text" size="xlarge">You can refer to our <Anchor href='https://docs.nervos.org' color='text' target='_blank'>documents</Anchor> for how to create a wallet.</Text>
       <Box width="600px" align="start" pad="small" gap="small">
-        <TextInput style={{ color: "white" }} width="100%" ref={inputKey} placeholder="Please enter your wallet address here" />
+        <TextInput style={{ color: "black" }} width="100%" ref={inputKey} placeholder="Please enter your wallet address here" />
         {errorMessage ? <Text color="red" size="16px">Wrong lock hash. Please check here for the lock hash format of Nervos CKB</Text> : <div />}
       </Box>
       <Button disabled={!enable} primary label="Get Test Token" onClick={onClickGetTestToken} />
