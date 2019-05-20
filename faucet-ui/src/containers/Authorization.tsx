@@ -8,7 +8,7 @@ export default () => {
     setEnbale(!enable)
   }
 
-  const onLoginWithGithub = () => {
+  const onLoginWithGitHub = () => {
     window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GITHUB_OAUTH_CLIENT_ID}&state=${window.location.origin}&scope=user:email`;
   }
 
@@ -21,7 +21,7 @@ export default () => {
       <Box align="center" pad="small">
         <CheckBox checked={enable} onChange={onChangeEnable} label="I understand this is for getting test tokens instead of official CKB tokens" />
       </Box>
-      <Button disabled={!enable} primary onClick={onLoginWithGithub} label="Login with Github" />
+      <Button disabled={!enable} primary onClick={onLoginWithGitHub} label="Login with GitHub" />
     </Box>
   )
 }
