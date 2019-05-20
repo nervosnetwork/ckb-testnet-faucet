@@ -6,13 +6,13 @@ const customTheme = {
     border: {
       radius: "4px"
     },
-    color: "white",
+    color: "black",
   },
   global: {
     colors: {
       brand: "#4ec995",
-      text: "white",
-      border: "white"
+      text: "black",
+      border: "black"
     },
   },
   checkBox: {
@@ -27,11 +27,11 @@ const customTheme = {
     },
     hover: {
       border: {
-        color: undefined
+        color: "undefined",
       }
     },
     extend: `
-      color: white;
+      color: black;
     `
   }
 }

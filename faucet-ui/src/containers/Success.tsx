@@ -19,7 +19,7 @@ export default (props: any) => {
           </Box>
         </Box>
         <Box justify="center" align="center" pad="none">
-          <TextInput style={{ color: "white" }} readOnly width="100%" value={txHash} />
+          <TextInput style={{ color: "black" }} readOnly width="100%" value={txHash} />
         </Box>
         <Box width="100%" align="end" pad={{ top: "medium" }} gap="small">
           <Text color="text" size="14px">It may take some time for the transaction to be mined and confirmed</Text>
