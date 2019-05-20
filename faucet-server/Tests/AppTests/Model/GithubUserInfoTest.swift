@@ -10,9 +10,9 @@ import App
 
 class GithubUserInfoTest: XCTestCase {
     func testExample() {
-        let githubUserInfo = GithubUserInfo(email: "xxx@cryptape.com")
+        let githubUserInfo = AuthorizationInfo(email: "xxx@cryptape.com")
         githubUserInfo.save()
-        let githubUserInfoArray = GithubUserInfo.getAll()
+        let githubUserInfoArray = AuthorizationInfo.getAll()
         let isExist = githubUserInfoArray.contains(where: {$0.email == "xxx@cryptape.com"})
         XCTAssertTrue(isExist)
     }
