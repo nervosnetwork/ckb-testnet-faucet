@@ -50,7 +50,13 @@ public struct CKBController: RouteCollection {
             result = ["status": verifyStatus.rawValue, "error": "Verify failed"]
         }
 
-        return Response(http: HTTPResponse(body: HTTPBody(string: result.toJson)), using: req.sharedContainer)
+        let body: HTTPBody
+        if let callback = req.http.url.absoluteString.urlParametersDecode["callback"] {
+            body = HTTPBody(string: "\(callback)(\(result.toJson))")
+        } else {
+            body = HTTPBody(string: result.toJson)
+        }
+        return Response(http: HTTPResponse(body: body), using: req.sharedContainer)
     }
 
     func address(_ req: Request) -> Response {
