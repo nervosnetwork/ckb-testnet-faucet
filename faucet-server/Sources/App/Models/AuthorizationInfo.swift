@@ -30,7 +30,7 @@ extension AuthorizationInfo {
     private static let loginDateColumn = Expression<String>("authorization_date")
 
     private static func createTable() -> Table {
-        let table = Table("github_user_info")
+        let table = Table("github_user_info_v2")
         _ = try? connection.run(table.create { t in
             t.column(emailColumn)
             t.column(loginDateColumn)

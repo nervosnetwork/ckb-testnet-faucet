@@ -28,7 +28,7 @@ extension User {
     private static let collectionDateColumn = Expression<Date?>("recently_received_date")
 
     private static func createTable() -> Table {
-        let table = Table("user")
+        let table = Table("user_v2")
         _ = try? connection.run(table.create { t in
             t.column(accessTokenColumn, primaryKey: true)
             t.column(authorizationDateColumn)
