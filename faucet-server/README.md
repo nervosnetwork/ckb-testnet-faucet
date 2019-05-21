@@ -2,14 +2,21 @@
 
 ## Dependencies
 
-- Swift 5.0.1
-- libsodium `brew install libsodium`
+- Swift 5
+- libsodium
+- Vapor
 
 ## Build
 
-- `git clone https://github.com/nervosnetwork/ckb-testnet-faucet.git`
-- `cd ./ckb-testnet-faucet/faucet-server`
-- `swift build`
+```shell
+brew install libsodium
+brew tap vapor/tap
+brew install vapor/tap/vapor
+
+git clone https://github.com/nervosnetwork/ckb-testnet-faucet.git
+cd ./ckb-testnet-faucet/faucet-server
+swift build
+```
 
 ## Run
 
