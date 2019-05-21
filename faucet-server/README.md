@@ -22,6 +22,18 @@
   --send_capacity_count <send_capacity_count>
 ```
 
+## Run tests
+
+```shell
+swift test
+```
+
+Some API tests depends on a local CKB node to run. If a node is not found those tests would fail. To skip them:
+
+```shell
+SKIP_CKB_API_TESTS=1 swift test
+```
+
 ## Documentations
 
  - [faucet-server-api](docs/faucet-server-api.md)
