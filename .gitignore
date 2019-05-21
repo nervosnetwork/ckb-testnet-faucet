@@ -24,3 +24,4 @@ xcuserdata
 *.xcodeproj
 DerivedData/
 faucet-ui/.env
+*.db
