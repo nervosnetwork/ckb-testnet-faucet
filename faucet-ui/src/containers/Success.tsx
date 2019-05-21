@@ -1,22 +1,14 @@
 import { Box, Button, Text, TextInput } from 'grommet';
 import * as React from 'react';
-import copy from 'copy-to-clipboard';
 
 export default (props: any) => {
   let txHash: string | undefined
   if (props.location.query) {
     txHash = props.location.query.txHash
   }
-  const [copyResult, setCopyResult] = React.useState(false)
 
-  const copyTxHash = () => {
-    if (txHash != undefined) {
-      if (copy(txHash)) {
-        setCopyResult(true)
-      } else {
-        setCopyResult(false)
-      }
-    }
+  const transactionDetails = () => {
+    window.open("https://explorer.nervos.org/transaction/" + txHash)
   }
 
   return (
@@ -27,7 +19,7 @@ export default (props: any) => {
             <Text color="text">Transaction Hash</Text>
           </Box>
           <Box width="100%" align="end">
-            <Button primary onClick={copyTxHash} label={copyResult ? "Copied" : "Copy"} />
+            <Button primary onClick={transactionDetails} label="Details" />
           </Box>
         </Box>
         <Box justify="center" align="center" pad="none">
