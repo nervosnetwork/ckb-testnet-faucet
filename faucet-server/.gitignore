@@ -1,0 +1,7 @@
+Packages
+.build
+xcuserdata
+*.xcodeproj
+DerivedData/
+faucet-ui/.env
+*.db

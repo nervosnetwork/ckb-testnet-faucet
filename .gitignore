@@ -1,9 +1,9 @@
 .DS_Store
 
-# faucet-ui
+# react
 */node_modules
 /coverage
-/build
+*/build
 
 .env
 .env.local
@@ -14,14 +14,3 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-faucet-ui/build
-
-# faucet-service
-Packages
-.build
-xcuserdata
-*.xcodeproj
-DerivedData/
-faucet-ui/.env
-*.db
