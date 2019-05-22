@@ -146,15 +146,6 @@
         }
       },
       {
-        "package": "SQLite.swift",
-        "repositoryURL": "https://github.com/cezres/SQLite.swift.git",
-        "state": {
-          "branch": null,
-          "revision": "9683f29694166c7d7d2f58fd51e2164d3603c0dc",
-          "version": "0.11.6"
-        }
-      },
-      {
         "package": "swift-nio",
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {

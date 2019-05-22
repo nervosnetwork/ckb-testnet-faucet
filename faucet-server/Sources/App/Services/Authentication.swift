@@ -22,12 +22,11 @@ class Authentication {
             .first()
             .map({ (user) -> Authentication.Status in
             if let user = user {
-//                if user.recentlyReceivedDate?.timeIntervalSince1970 ?? 0 < Date().timeIntervalSince1970 - 24 * 60 * 60 {
-//                    return .tokenIsVailable
-//                } else {
-//                    return .received
-//                }
-                return .tokenIsVailable
+                if user.recentlyReceivedDate?.timeIntervalSince1970 ?? 0 < Date().timeIntervalSince1970 - 24 * 60 * 60 {
+                    return .tokenIsVailable
+                } else {
+                    return .received
+                }
             } else {
                 return .unauthenticated
             }
