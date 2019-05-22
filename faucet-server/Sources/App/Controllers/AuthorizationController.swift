@@ -10,57 +10,45 @@ import Vapor
 
 struct AuthorizationController: RouteCollection {
     func boot(router: Router) throws {
-        router.get("auth/verify", use: verify)
-        try router.register(collection: Github())
-    }
-
-    func verify(_ req: Request) -> Response {
-        let accessToken = req.http.cookies.all[accessTokenCookieName]?.string
-
-        let status = Authorization().verify(accessToken: accessToken)
-
-        let result = ["status": status.rawValue]
-        let body: HTTPBody
-        if let callback = req.http.url.absoluteString.urlParametersDecode["callback"] {
-            body = HTTPBody(string: "\(callback)(\(result.toJson))")
-        } else {
-            body = HTTPBody(string: result.toJson)
+        router.group("auth") { (router) in
+            router.get("verify", use: verify)
+            router.group("github", configure: { (router) in
+                router.get("callback", use: callback)
+            })
         }
-        return Response(http: HTTPResponse(body: body), using: req.sharedContainer)
-    }
-}
-
-extension AuthorizationController {
-    struct Github {
-    }
-}
-
-extension AuthorizationController.Github: RouteCollection {
-    func boot(router: Router) throws {
-        router.get("auth/github/callback", use: callback)
     }
 
-    func callback(_ req: Request) -> Response {
+    func verify(_ req: Request) throws -> Future<Response> {
+        let accessToken = req.http.cookies.all[accessTokenCookieName]?.string ?? ""
+
+        return Authorization().verify(accessToken: accessToken, on: req).map({ (status) -> String in
+            let result = ["status": status.rawValue]
+            if let callback = req.http.url.absoluteString.urlParametersDecode["callback"] {
+                return "\(callback)(\(result.toJson))"
+            } else {
+                return result.toJson
+            }
+        }).encode(status: .ok, for: req)
+    }
+
+    func callback(_ req: Request) throws -> Future<Response> {
         let parameters = req.http.url.absoluteString.urlParametersDecode
         guard let code = parameters["code"], let state = parameters["state"] else {
-            return Response(http: HTTPResponse(status: .notFound), using: req)
+            throw Abort(HTTPStatus.badRequest)
         }
 
-        // Exchange this code for an access token
-        let accessToken = Authorization().authorization(code: code)
+        /// Exchange this code for an access token
+        guard let accessToken = GithubService.getAccessToken(for: code) else {
+            throw Abort(HTTPStatus.badRequest)
+        }
 
-        // Redirect back to Web page
-        let headers = HTTPHeaders([("Location", state)])
-        var http = HTTPResponse(status: .found, headers: headers)
-
-        // If the validation is successful, Add access token Cookie
-        if let accessToken = accessToken {
-            let domain = URL(string: state)?.host
+        return  try Authorization().authorization(for: accessToken, on: req).map { res in
+            var http = HTTPResponse(status: .found, headers: HTTPHeaders([("Location", state)]))
             http.cookies = HTTPCookies(
-                dictionaryLiteral: (accessTokenCookieName, HTTPCookieValue(string: accessToken, domain: domain))
+                dictionaryLiteral: (accessTokenCookieName, HTTPCookieValue(string: accessToken, domain: URL(string: state)?.host))
             )
+            res.http = http
+            return res
         }
-
-        return Response(http: http, using: req.sharedContainer)
     }
 }

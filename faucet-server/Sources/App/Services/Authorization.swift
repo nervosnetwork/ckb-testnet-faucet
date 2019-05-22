@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Vapor
 
 class Authorization {
     enum Status: Int {
@@ -14,9 +15,13 @@ class Authorization {
         case received = -2
     }
 
-    func verify(accessToken: String?) -> Status {
-        if let accessToken = accessToken {
-            if let user = User.query(accessToken: accessToken) {
+    func verify(accessToken: String, on connection: Request) -> EventLoopFuture<Status> {
+        return User
+            .query(on: connection)
+            .filter(\.accessToken, .equal, accessToken)
+            .first()
+            .map({ (user) -> Authorization.Status in
+            if let user = user {
                 if user.recentlyReceivedDate?.timeIntervalSince1970 ?? 0 < Date().timeIntervalSince1970 - 24 * 60 * 60 {
                     return .tokenIsVailable
                 } else {
@@ -25,32 +30,32 @@ class Authorization {
             } else {
                 return .unauthenticated
             }
-        } else {
-            return .unauthenticated
-        }
+        })
     }
 
-    func authorization(code: String) -> String? {
-        // Exchange this code for an access token
-        guard let accessToken = GithubService.getAccessToken(code: code) else { return nil }
-        var user: User
-        if let result = User.query(accessToken: accessToken) {
-            user = result
-            user.authorizationDate = Date()
-        } else {
-            user = User(accessToken: accessToken)
-        }
-        try? user.save()
-        try? AuthorizationInfo(accrssToken: accessToken).save()
-
-        return accessToken
+    func authorization(for accessToken: String, on connection: Request) throws -> EventLoopFuture<Response> {
+        return User
+            .query(on: connection)
+            .filter(\.accessToken, .equal, accessToken)
+            .first()
+            .flatMap { (userExist) -> EventLoopFuture<Response> in
+                var user = userExist ?? User(accessToken: accessToken)
+                user.authorizationDate = Date()
+                return user.save(on: connection).encode(status: .ok, for: connection)
+            }.flatMap({ _ in
+                try Auth(accessToken: accessToken).save(on: connection).encode(status: .ok, for: connection)
+            })
     }
 
-    func recordCollectionDate(accessToken: String) {
-        if var user = User.query(accessToken: accessToken) {
+    func recordCollectionDate(for accessToken: String, on connection: Request) -> EventLoopFuture<Response> {
+        return User
+            .query(on: connection)
+            .filter(\.accessToken, .equal, accessToken)
+            .first()
+            .flatMap { (userExist) -> EventLoopFuture<Response> in
+                var user = userExist ?? User(accessToken: accessToken)
             user.recentlyReceivedDate = Date()
-            try? user.save()
-        }
+                return user.save(on: connection).encode(status: .ok, for: connection)
+            }
     }
-
 }

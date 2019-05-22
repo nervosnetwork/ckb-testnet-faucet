@@ -48,6 +48,8 @@ public class App {
 
         /// Configure migrations
         var migrations = MigrationConfig()
+        migrations.add(model: User.self, database: .mysql)
+        migrations.add(model: Auth.self, database: .mysql)
         services.register(migrations)
 
         // Configure the rest of your application here
