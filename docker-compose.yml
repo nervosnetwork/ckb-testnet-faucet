@@ -25,4 +25,9 @@ services:
              --github_oauth_client_secret $GITHUB_OAUTH_CLIENT_SECRET
              --node_url $NODE_URL 
              --send_capacity_count $SEND_CAPACITY_COUNT
-             --wallet_private_key $WALLET_PRIVATE_KEY"
+             --wallet_private_key $WALLET_PRIVATE_KEY
+             --db_hostname $DB_HOSTNAME
+             --db_port $DB_PORT
+             --db_username $DB_USERNAME
+             --db_password $DB_PASSWORD
+             --db_database $DB_DATABASE"
