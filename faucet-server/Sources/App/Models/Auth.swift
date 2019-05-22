@@ -17,8 +17,8 @@ struct Auth: Content, MySQLModel {
     var accessToken: String
     var date: Date
 
-    init(accessToken: String) throws {
-        email = try GithubService.getUserInfo(for: accessToken).email
+    init(accessToken: String, email: String) {
+        self.email = email
         self.accessToken = accessToken
         date = Date()
     }

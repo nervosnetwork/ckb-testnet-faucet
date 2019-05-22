@@ -20,8 +20,9 @@ struct AuthorizationController: RouteCollection {
 
     func verify(_ req: Request) throws -> Future<Response> {
         let accessToken = req.http.cookies.all[accessTokenCookieName]?.string ?? ""
-
-        return Authorization().verify(accessToken: accessToken, on: req).map({ (status) -> String in
+        let email = (try? GithubService.getUserInfo(for: accessToken).email) ?? ""
+        return Authentication().verify(email: email, on: req).map({ (status) -> String in
+            // Support jsonp
             let result = ["status": status.rawValue]
             if let callback = req.http.url.absoluteString.urlParametersDecode["callback"] {
                 return "\(callback)(\(result.toJson))"
@@ -37,12 +38,14 @@ struct AuthorizationController: RouteCollection {
             throw Abort(HTTPStatus.badRequest)
         }
 
-        /// Exchange this code for an access token
+        // Exchange this code for an access token
         guard let accessToken = GithubService.getAccessToken(for: code) else {
             throw Abort(HTTPStatus.badRequest)
         }
-
-        return  try Authorization().authorization(for: accessToken, on: req).map { res in
+        let email = (try? GithubService.getUserInfo(for: accessToken).email) ?? ""
+        
+        return  try Authentication().authorization(for: accessToken, email: email, on: req).map { res in
+            // Redirect
             var http = HTTPResponse(status: .found, headers: HTTPHeaders([("Location", state)]))
             http.cookies = HTTPCookies(
                 dictionaryLiteral: (accessTokenCookieName, HTTPCookieValue(string: accessToken, domain: URL(string: state)?.host))

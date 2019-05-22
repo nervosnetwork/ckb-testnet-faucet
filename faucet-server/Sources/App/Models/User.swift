@@ -13,12 +13,12 @@ import FluentMySQL
 public struct User: Content, MySQLModel {
     public var id: Int?
 
-    public let accessToken: String
+    public let email: String
     public var authorizationDate: Date
     public var recentlyReceivedDate: Date?
 
-    public init(accessToken: String, authorizationDate: Date = Date(), collectionDate: Date? = nil) {
-        self.accessToken = accessToken
+    public init(email: String, authorizationDate: Date = Date(), collectionDate: Date? = nil) {
+        self.email = email
         self.authorizationDate = authorizationDate
         self.recentlyReceivedDate = collectionDate
     }
@@ -34,11 +34,5 @@ extension User: Migration {
 
     public static func revert(on connection: MySQLConnection) -> Future<Void> {
         return Database.delete(User.self, on: connection)
-    }
-}
-
-extension User: Equatable {
-    public static func == (lhs: User, rhs: User) -> Bool {
-        return lhs.accessToken == rhs.accessToken
     }
 }
