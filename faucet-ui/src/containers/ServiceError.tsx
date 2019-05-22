@@ -20,7 +20,7 @@ export default (props: any) => {
   }, [])
 
   return (
-    <Box align='center' gap='small'>
+    <Box align='center' gap='small' pad={{"left": "xlarge", "right": "xlarge"}}>
       <Text textAlign='center' color="text" size='xxlarge'>There's something wrong with your internet connection. Please try again later.</Text>
     </Box>
   )
