@@ -7,6 +7,10 @@ export default (props: any) => {
     txHash = props.location.query.txHash
   }
 
+  const transactionDetails = () => {
+    window.open("https://explorer.nervos.org/transaction/" + txHash)
+  }
+
   return (
     <Box gap="small" align="center">
       <Box width="600px">
@@ -15,7 +19,7 @@ export default (props: any) => {
             <Text color="text">Transaction Hash</Text>
           </Box>
           <Box width="100%" align="end">
-            <Button primary label="Copy" />
+            <Button primary onClick={transactionDetails} label="Details" />
           </Box>
         </Box>
         <Box justify="center" align="center" pad="none">
