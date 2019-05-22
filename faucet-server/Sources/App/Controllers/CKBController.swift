@@ -28,35 +28,51 @@ public struct CKBController: RouteCollection {
 
     // MARK: - API
 
-    func faucet(_ req: Request) -> Response {
-        let accessToken = req.http.cookies.all[accessTokenCookieName]?.string
-        let verifyStatus = Authorization().verify(accessToken: accessToken)
-        let result: [String: Any]
-
-        if verifyStatus == .tokenIsVailable {
-            let urlParameters = req.http.urlString.urlParametersDecode
-            do {
-                if let address = urlParameters["address"] {
-                    let txHash = try sendCapacity(address: address)
-                    Authorization().recordCollectionDate(accessToken: accessToken!)
-                    result = ["status": 0, "txHash": txHash]
-                } else {
-                     result = ["status": -3, "error": "No address"]
+    func faucet(_ req: Request) -> Future<Response> {
+        let urlParameters = req.http.urlString.urlParametersDecode
+        let accessToken = req.http.cookies.all[accessTokenCookieName]?.string ?? ""
+        let email = (try? GithubService.getUserInfo(for: accessToken).email) ?? ""
+        var isSucceed = false
+        var txHash = ""
+        return Authentication().verify(email: email, on: req).map { (status) -> (String) in
+            // Send capacity
+            if status == .tokenIsVailable {
+                do {
+                    if let address = urlParameters["address"] {
+                        txHash = try self.sendCapacity(address: address)
+                        isSucceed = true
+                        return ["status": 0, "txHash": txHash].toJson
+                    } else {
+                        return ["status": -3, "error": "No address"].toJson
+                    }
+                } catch {
+                    return ["status": -4, "error": error.localizedDescription].toJson
                 }
-            } catch {
-                result = ["status": -4, "error": error.localizedDescription]
+            } else {
+                return ["status": status.rawValue, "error": "Verify failed"].toJson
             }
-        } else {
-            result = ["status": verifyStatus.rawValue, "error": "Verify failed"]
-        }
-
-        let body: HTTPBody
-        if let callback = req.http.url.absoluteString.urlParametersDecode["callback"] {
-            body = HTTPBody(string: "\(callback)(\(result.toJson))")
-        } else {
-            body = HTTPBody(string: result.toJson)
-        }
-        return Response(http: HTTPResponse(body: body), using: req.sharedContainer)
+        }.map { (json) -> String in
+            // Support jsonp
+            if let callback = req.http.url.absoluteString.urlParametersDecode["callback"] {
+                return "\(callback)(\(json))"
+            } else {
+                return json
+            }
+        }.encode(status: .ok, for: req).flatMap { (res) -> EventLoopFuture<Response> in
+            // Record recently received date
+            if isSucceed {
+                return Authentication().recordReceivedDate(for: email, on: req).map({ _ in
+                    return res
+                })
+            } else {
+                return req.sharedContainer.eventLoop.newSucceededFuture(result: res)
+            }
+        }.flatMap({ (res) -> EventLoopFuture<Response> in
+            // API logging
+            return try Faucet(email: email, txHash: txHash).save(on: req).encode(for: req).map({ (_) -> (Response) in
+                return res
+            })
+        })
     }
 
     func address(_ req: Request) -> Response {
