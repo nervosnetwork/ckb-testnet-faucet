@@ -32,7 +32,7 @@ public struct CKBController: RouteCollection {
         let urlParameters = req.http.urlString.urlParametersDecode
         let accessToken = req.http.cookies.all[accessTokenCookieName]?.string ?? ""
         let email = (try? GithubService.getUserInfo(for: accessToken).email) ?? ""
-        var isSucceed = false
+        var isSuccess = false
         var txHash = ""
         return Authentication().verify(email: email, on: req).map { status -> String in
             // Send capacity
