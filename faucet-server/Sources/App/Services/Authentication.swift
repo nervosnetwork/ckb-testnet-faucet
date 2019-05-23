@@ -20,7 +20,7 @@ class Authentication {
             .query(on: connection)
             .filter(\.email, .equal, email)
             .first()
-            .map({ (user) -> Authentication.Status in
+            .map { user -> Status in
             if let user = user {
                 if user.recentlyReceivedDate?.timeIntervalSince1970 ?? 0 < Date().timeIntervalSince1970 - 24 * 60 * 60 {
                     return .tokenIsVailable
@@ -30,7 +30,7 @@ class Authentication {
             } else {
                 return .unauthenticated
             }
-        })
+        }
     }
 
     func authorization(for accessToken: String, email: String, on connection: Request) throws -> EventLoopFuture<Response> {
@@ -38,13 +38,13 @@ class Authentication {
             .query(on: connection)
             .filter(\.email, .equal, email)
             .first()
-            .flatMap { (userExist) -> EventLoopFuture<Response> in
+            .flatMap { userExist -> EventLoopFuture<Response> in
                 var user = userExist ?? User(email: email)
                 user.authorizationDate = Date()
                 return user.save(on: connection).encode(status: .ok, for: connection)
-            }.flatMap({ _ in
+            }.flatMap { _ in
                 Auth(accessToken: accessToken, email: email).save(on: connection).encode(status: .ok, for: connection)
-            })
+            }
     }
 
     func recordReceivedDate(for email: String, on connection: Request) -> EventLoopFuture<Response> {
@@ -52,7 +52,7 @@ class Authentication {
             .query(on: connection)
             .filter(\.email, .equal, email)
             .first()
-            .flatMap { (userExist) -> EventLoopFuture<Response> in
+            .flatMap { userExist -> EventLoopFuture<Response> in
                 var user = userExist ?? User(email: email)
                 user.recentlyReceivedDate = Date()
                 return user.save(on: connection).encode(status: .ok, for: connection)

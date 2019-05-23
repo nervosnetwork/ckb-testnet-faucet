@@ -34,7 +34,7 @@ public struct CKBController: RouteCollection {
         let email = (try? GithubService.getUserInfo(for: accessToken).email) ?? ""
         var isSucceed = false
         var txHash = ""
-        return Authentication().verify(email: email, on: req).map { (status) -> (String) in
+        return Authentication().verify(email: email, on: req).map { status -> String in
             // Send capacity
             if status == .tokenIsVailable {
                 do {
@@ -51,28 +51,24 @@ public struct CKBController: RouteCollection {
             } else {
                 return ["status": status.rawValue, "error": "Verify failed"].toJson
             }
-        }.map { (json) -> String in
+        }.map { json -> String in
             // Support jsonp
             if let callback = req.http.url.absoluteString.urlParametersDecode["callback"] {
                 return "\(callback)(\(json))"
             } else {
                 return json
             }
-        }.encode(status: .ok, for: req).flatMap { (res) -> EventLoopFuture<Response> in
+        }.encode(status: .ok, for: req).flatMap { res -> EventLoopFuture<Response> in
             // Record recently received date
             if isSucceed {
-                return Authentication().recordReceivedDate(for: email, on: req).map({ _ in
-                    return res
-                })
+                return Authentication().recordReceivedDate(for: email, on: req).map { _ in res }
             } else {
                 return req.sharedContainer.eventLoop.newSucceededFuture(result: res)
             }
-        }.flatMap({ (res) -> EventLoopFuture<Response> in
+        }.flatMap { res -> EventLoopFuture<Response> in
             // API logging
-            return try Faucet(email: email, txHash: txHash).save(on: req).encode(for: req).map({ (_) -> (Response) in
-                return res
-            })
-        })
+            return try Faucet(email: email, txHash: txHash).save(on: req).encode(for: req).map { _ in res }
+        }
     }
 
     func address(_ req: Request) -> Response {

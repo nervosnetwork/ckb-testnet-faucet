@@ -11,7 +11,6 @@ import Vapor
 import App
 
 class CellServicesTests: XCTestCase {
-
     func testSaveAndRead() {
         CellService.saveBlockNumber(2333, for: "azusa")
         CellService.saveBlockNumber(123, for: "mio")
@@ -21,5 +20,4 @@ class CellServicesTests: XCTestCase {
         XCTAssertEqual(123, CellService.readBlockNumber(for: "mio"))
         XCTAssertEqual(435, CellService.readBlockNumber(for: "yui"))
     }
-    
 }

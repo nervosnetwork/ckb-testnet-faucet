@@ -10,9 +10,9 @@ import Vapor
 
 struct AuthorizationController: RouteCollection {
     func boot(router: Router) throws {
-        router.group("auth") { (router) in
+        router.group("auth") { router in
             router.get("verify", use: verify)
-            router.group("github", configure: { (router) in
+            router.group("github", configure: { router in
                 router.get("callback", use: callback)
             })
         }
@@ -21,7 +21,7 @@ struct AuthorizationController: RouteCollection {
     func verify(_ req: Request) throws -> Future<Response> {
         let accessToken = req.http.cookies.all[accessTokenCookieName]?.string ?? ""
         let email = (try? GithubService.getUserInfo(for: accessToken).email) ?? ""
-        return Authentication().verify(email: email, on: req).map({ (status) -> String in
+        return Authentication().verify(email: email, on: req).map { status -> String in
             // Support jsonp
             let result = ["status": status.rawValue]
             if let callback = req.http.url.absoluteString.urlParametersDecode["callback"] {
@@ -29,7 +29,7 @@ struct AuthorizationController: RouteCollection {
             } else {
                 return result.toJson
             }
-        }).encode(status: .ok, for: req)
+        }.encode(status: .ok, for: req)
     }
 
     func callback(_ req: Request) throws -> Future<Response> {
