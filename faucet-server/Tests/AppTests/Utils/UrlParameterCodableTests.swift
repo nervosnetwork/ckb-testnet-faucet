@@ -11,7 +11,7 @@ import XCTest
 
 class UrlParameterCodeableTests: XCTestCase {
     func testUrlParameterEncode() {
-        XCTAssertEqual("xxxx=zzz&aaa=22", ["aaa": "22", "xxxx": "zzz"].urlParametersEncode)
+        XCTAssertEqual(["aaa": "22", "xxxx": "zzz"], ["aaa": "22", "xxxx": "zzz"].urlParametersEncode.urlParametersDecode)
     }
 
     func testUrlParameterDecode() {

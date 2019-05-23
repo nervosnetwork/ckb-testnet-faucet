@@ -15,9 +15,6 @@ extension Dictionary {
     }
 
     public var urlParametersEncode: String {
-        var string = ""
-        enumerated().forEach { string += "\($1.key)=\($1.value)&" }
-        string.removeLast()
-        return string
+        return  String(enumerated().reduce("", { $0 + "\($1.element.key)=\($1.element.value)&" }).dropLast(1))
     }
 }
