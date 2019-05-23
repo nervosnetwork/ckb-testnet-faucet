@@ -32,7 +32,7 @@ public struct CKBController: RouteCollection {
         let urlParameters = req.http.urlString.urlParametersDecode
         let accessToken = req.http.cookies.all[accessTokenCookieName]?.string ?? ""
         let email = (try? GithubService.getUserInfo(for: accessToken).email) ?? ""
-        var isSuccess = false
+        var isSucceed = false
         var txHash = ""
         return Authentication().verify(email: email, on: req).map { status -> String in
             // Send capacity
@@ -108,8 +108,8 @@ public struct CKBController: RouteCollection {
         guard let publicKeyHash = AddressGenerator(network: .testnet).publicKeyHash(for: address) else { throw Error.invalidAddress }
         let targetLock = Script(args: [Utils.prefixHex(publicKeyHash)], codeHash: systemScript.codeHash)
 
-        let wallet = Wallet(api: api, systemScript: systemScript, privateKey: Environment.Process.walletPrivateKey)
-        return try wallet.sendCapacity(targetLock: targetLock, capacity: Environment.Process.sendCapacityCount)
+        let wallet = Wallet(api: api, systemScript: systemScript, privateKey: Environment.CKB.walletPrivateKey)
+        return try wallet.sendCapacity(targetLock: targetLock, capacity: Environment.CKB.sendCapacityCount)
     }
 
     public static func privateToAddress(_ privateKey: String) throws -> String {

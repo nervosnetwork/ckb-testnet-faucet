@@ -19,7 +19,7 @@ public class App {
     }
 
     private func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
-        try Environment.Process.configure(&env)
+        try env.configure()
 
         /// Register routes to the router
         let router = EngineRouter.default()
@@ -34,11 +34,11 @@ public class App {
         /// Register the configured MySQL database to the database config.
         try services.register(FluentMySQLProvider())
         let config = MySQLDatabaseConfig(
-            hostname: Environment.Process.dbHostname,
-            port: Environment.Process.dbPort,
-            username: Environment.Process.dbUsername,
-            password: Environment.Process.dbPassword,
-            database: Environment.Process.dbDatabase,
+            hostname: Environment.Database.hostname,
+            port: Environment.Database.port,
+            username: Environment.Database.username,
+            password: Environment.Database.password,
+            database: Environment.Database.database,
             transport: .unverifiedTLS
         )
         let mysql = MySQLDatabase(config: config)
@@ -66,9 +66,7 @@ public class App {
         router.get("hello") { req in
             return "Hello, world!"
         }
-
         try router.register(collection: AuthorizationController())
-        try router.register(collection: try CKBController(nodeUrl: URL(string: Environment.Process.nodeURL)!))
+        try router.register(collection: try CKBController(nodeUrl: URL(string: Environment.CKB.nodeURL)!))
     }
-
 }
