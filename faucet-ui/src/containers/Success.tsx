@@ -1,4 +1,4 @@
-import { Box, Button, Text, TextInput } from 'grommet';
+import { Box, Anchor, Text, TextInput } from 'grommet';
 import * as React from 'react';
 
 export default (props: any) => {
@@ -13,22 +13,21 @@ export default (props: any) => {
 
   return (
     <Box gap="small" align="center">
-      <Box width="600px">
-        <Box direction="row" pad={{ bottom: "small" }}>
-          <Box width="200px">
-            <Text color="text">Transaction Hash</Text>
-          </Box>
-          <Box width="100%" align="end">
-            <Button primary onClick={transactionDetails} label="Details" />
-          </Box>
+    <Text textAlign='start' weight="bold" color="text" size='xlarge'> Congratulations! </Text>
+    <Text textAlign='start' weight="bold" color="text" size='xlarge'> You just got 50,000 CKB Testnet tokens! </Text>
+    <Box width="750px">
+        <Box direction="row" pad={{ top: "medium", bottom: "small"}}>
+            <Box width="200px">
+                <Text color="text">Transaction Hash</Text>
+            </Box>
+            <Box width="100%" align="end">
+                <Anchor onClick={transactionDetails}>See the Transaction on Explorer</Anchor>
+            </Box>
         </Box>
         <Box justify="center" align="center" pad="none">
-          <TextInput style={{ color: "black" }} readOnly width="100%" value={txHash} />
+            <TextInput style={{ color: "black", textAlign: "center"}} readOnly width="100%" value={txHash} />
         </Box>
-        <Box width="100%" align="end" pad={{ top: "medium" }} gap="small">
-          <Text color="text" size="14px">It may take some time for the transaction to be mined and confirmed</Text>
-        </Box>
-      </Box>
     </Box>
+</Box>
   )
 }
