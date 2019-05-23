@@ -33,9 +33,10 @@ Support jsonp (Using JSON requests can cause cross-domain problems in the local 
 
 | Name   |      Type      |  Description |
 |----------|:-------------:|:------|
-| `status` | `int` | 0: success; -1 -2: verify failed; -3: failed  |
+| `status` | `int` | 0: success; -1: failed; -2: verify failed  |
 | `txHash` | `string` | tx hash |
 | `error` | `string` | error message |
+| `verifyStatus` | `string` | verify status |
 
 
 ```

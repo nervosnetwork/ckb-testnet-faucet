@@ -10,7 +10,7 @@ import Vapor
 
 class Authentication {
     enum Status: Int {
-        case tokenIsVailable = 0
+        case succeed = 0
         case unauthenticated = -1
         case received = -2
     }
@@ -23,7 +23,7 @@ class Authentication {
             .map { user -> Status in
             if let user = user {
                 if user.recentlyReceivedDate?.timeIntervalSince1970 ?? 0 < Date().timeIntervalSince1970 - 24 * 60 * 60 {
-                    return .tokenIsVailable
+                    return .succeed
                 } else {
                     return .received
                 }

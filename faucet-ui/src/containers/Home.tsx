@@ -21,13 +21,21 @@ export default (props: any) => {
             props.history.push({ pathname: Routes.Success, query: { txHash: json.txHash } })
             break
           case -1:
-            props.history.push({ pathname: Routes.Auth })
+            setErrorMessage(json.error)
             break
           case -2:
-            props.history.push({ pathname: Routes.Failure })
+            switch (json.authStatus) {
+              case -1:
+                props.history.push({ pathname: Routes.Auth })
+                break
+              case -2:
+                props.history.push({ pathname: Routes.Failure })
+                break
+              default:
+                break
+            }
             break
           default:
-            setErrorMessage(json.error)
             break
         }
       })
@@ -57,8 +65,8 @@ export default (props: any) => {
   }, [])
 
   return (
-    <Box width="100%" align="center" gap="small" pad={{ "left": "xlarge", "right": "xlarge"}}>
-    <ul>
+    <Box width="100%" align="center" gap="small" pad={{ "left": "xlarge", "right": "xlarge" }}>
+      <ul>
         <li><Text color="text" size="large">Please note that each GitHub account can only request tokens once every 24 hours.</Text></li>
         <li><Text color="text" size="large">For more information, please refer to the <Anchor href='https://docs.nervos.org' color='brand' target='_blank'>documentation website</Anchor></Text></li>
     </ul>

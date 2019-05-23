@@ -34,22 +34,22 @@ public struct CKBController: RouteCollection {
         let email = (try? GithubService.getUserInfo(for: accessToken).email) ?? ""
         var isSucceed = false
         var txHash = ""
-        return Authentication().verify(email: email, on: req).map { status -> String in
+        return Authentication().verify(email: email, on: req).map { verifyStatus -> String in
             // Send capacity
-            if status == .tokenIsVailable {
+            if verifyStatus == .succeed {
                 do {
                     if let address = urlParameters["address"] {
                         txHash = try self.sendCapacity(address: address)
                         isSucceed = true
-                        return ["status": 0, "txHash": txHash].toJson
+                        return ["status": Status.succeed.rawValue, "txHash": txHash].toJson
                     } else {
-                        return ["status": -3, "error": "No address"].toJson
+                        return ["status": Status.failed.rawValue, "error": "No address"].toJson
                     }
                 } catch {
-                    return ["status": -4, "error": error.localizedDescription].toJson
+                    return ["status": Status.failed.rawValue, "error": error.localizedDescription].toJson
                 }
             } else {
-                return ["status": status.rawValue, "error": "Verify failed"].toJson
+                return ["status": Status.verifyFailed.rawValue, "verifyStatus": verifyStatus.rawValue, "error": "Verify failed"].toJson
             }
         }.map { json -> String in
             // Support jsonp
@@ -77,15 +77,15 @@ public struct CKBController: RouteCollection {
         do {
             if let privateKey = urlParameters["privateKey"] {
                 let address = try CKBController.privateToAddress(privateKey)
-                result = ["address": address, "status": 0]
+                result = ["address": address, "status": Status.succeed.rawValue]
             } else if let publicKey = urlParameters["publicKey"] {
                 let address = try CKBController.publicToAddress(publicKey)
-                result = ["address": address, "status": 0]
+                result = ["address": address, "status": Status.succeed.rawValue]
             } else {
-                result = ["status": -1, "error": "No public or private key"]
+                result = ["status": Status.failed.rawValue, "error": "No public or private key"]
             }
         } catch {
-            result = ["status": -2, "error": error.localizedDescription]
+            result = ["status": Status.verifyFailed.rawValue, "error": error.localizedDescription]
         }
         let headers = HTTPHeaders([("Access-Control-Allow-Origin", "*")])
         return Response(http: HTTPResponse(headers: headers, body: HTTPBody(string: result.toJson)), using: req.sharedContainer)
@@ -185,5 +185,11 @@ extension CKBController {
     public enum VerifyResult {
         case valid(value: String)
         case invalid(error: Error)
+    }
+
+    public enum Status: Int {
+        case succeed = 0
+        case failed = -1
+        case verifyFailed = -2
     }
 }
