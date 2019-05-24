@@ -50,7 +50,7 @@ extension Environment {
         private(set) static var database: String!
 
         static func configure(_ environment: inout Environment) throws {
-            database = try environment.commandInput.parse(option: .value(name: "db_hostname"))
+            hostname = try environment.commandInput.parse(option: .value(name: "db_hostname"))
             port = Int(try environment.commandInput.parse(option: .value(name: "db_port"))!)!
             username = try environment.commandInput.parse(option: .value(name: "db_username"))
             password = try environment.commandInput.parse(option: .value(name: "db_password"))
