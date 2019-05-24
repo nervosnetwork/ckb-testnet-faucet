@@ -7,10 +7,9 @@
 
 import Foundation
 import CKB
-import SQLite
 
-class CellService {
-    struct ValidInputs {
+public class CellService {
+    public struct ValidInputs {
         let cellInputs: [CellInput]
         let capacity: Decimal
     }
@@ -57,40 +56,30 @@ class CellService {
     }
 }
 
+/// Data store
 extension CellService {
-    private static let connection = try! Connection(.uri(FileManager.default.currentDirectoryPath + "/block_number.db"))
-    private static let table = createTable()
-    private static let lockHashColumn = Expression<String>("lockHash")
-    private static let blockNumberColumn = Expression<Int>("block_number")
+    private static let savePath = URL(fileURLWithPath: FileManager.default.currentDirectoryPath + "/block_number")
 
-    private static func createTable() -> Table {
-        let table = Table("block_number")
-        _ = try? connection.run(table.create { t in
-            t.column(lockHashColumn, primaryKey: true)
-            t.column(blockNumberColumn)
-        })
-        return table
-    }
-
-    static func saveBlockNumber(_ blockNumber: Int, for lockHash: H256) {
+    public static func saveBlockNumber(_ blockNumber: Int, for lockHash: H256) {
+        var blockNumberOfLockHash: [String: Int]
         do {
-            try connection.run(table.insert(
-                lockHashColumn <- lockHash,
-                blockNumberColumn <- blockNumber
-            ))
+            let data = try Data(contentsOf: savePath)
+            blockNumberOfLockHash = try JSONDecoder().decode([String: Int].self, from: data)
         } catch {
-            let filterResult = table.filter(lockHashColumn == lockHash)
-            try! connection.run(filterResult.update(
-                lockHashColumn <- lockHash,
-                blockNumberColumn <- blockNumber
-            ))
+            blockNumberOfLockHash = [:]
         }
+        blockNumberOfLockHash[lockHash] = blockNumber
+        try? JSONEncoder().encode(blockNumberOfLockHash).write(to: savePath)
     }
 
-    static func readBlockNumber(for lockHash: H256) -> Int {
-        let filterResult = table.filter(lockHashColumn == lockHash)
-        guard let row = try? connection.prepare(filterResult).first(where: { _ in true }) else { return 1 }
-        return row[blockNumberColumn]
+    public static func readBlockNumber(for lockHash: H256) -> Int {
+        do {
+            let data = try Data(contentsOf: savePath)
+            let blockNumberOfLockHash = try JSONDecoder().decode([String: Int].self, from: data)
+            return blockNumberOfLockHash[lockHash] ?? 1
+        } catch {
+            return 1
+        }
     }
 }
 

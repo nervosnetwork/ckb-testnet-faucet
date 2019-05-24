@@ -13,12 +13,12 @@ struct GithubService {
         let email: String
     }
 
-    static func getAccessToken(code: String) -> String? {
+    static func getAccessToken(for code: String) -> String? {
         var request = URLRequest(url: URL(string: "https://github.com/login/oauth/access_token")!)
         request.httpMethod = "POST"
         request.httpBody = [
-            "client_id": Environment.Process.oauthClientId!,
-            "client_secret": Environment.Process.oauthClientSecret!,
+            "client_id": Environment.OAuth.clientId!,
+            "client_secret": Environment.OAuth.clientSecret!,
             "code": code
         ].urlParametersEncode.data(using: .utf8)
 

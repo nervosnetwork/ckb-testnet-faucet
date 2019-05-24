@@ -65,6 +65,24 @@
         }
       },
       {
+        "package": "Fluent",
+        "repositoryURL": "https://github.com/vapor/fluent.git",
+        "state": {
+          "branch": null,
+          "revision": "b915c321c6f9e83743ee5efa35a30895e1b02e51",
+          "version": "3.2.0"
+        }
+      },
+      {
+        "package": "FluentMySQL",
+        "repositoryURL": "https://github.com/vapor/fluent-mysql.git",
+        "state": {
+          "branch": null,
+          "revision": "2e2f6ea6a97d0b352cf55e6ec289dc1276a6b31a",
+          "version": "3.0.1"
+        }
+      },
+      {
         "package": "HTTP",
         "repositoryURL": "https://github.com/vapor/http.git",
         "state": {
@@ -80,6 +98,15 @@
           "branch": null,
           "revision": "bd7736c5f28e48ed8b683dcc9df3dcd346064c2b",
           "version": "3.0.3"
+        }
+      },
+      {
+        "package": "MySQL",
+        "repositoryURL": "https://github.com/vapor/mysql.git",
+        "state": {
+          "branch": null,
+          "revision": "03f97974235bdc7259fc013e0feb963fd322372e",
+          "version": "3.2.5"
         }
       },
       {
@@ -110,12 +137,12 @@
         }
       },
       {
-        "package": "SQLite.swift",
-        "repositoryURL": "https://github.com/cezres/SQLite.swift.git",
+        "package": "SQL",
+        "repositoryURL": "https://github.com/vapor/sql.git",
         "state": {
           "branch": null,
-          "revision": "9683f29694166c7d7d2f58fd51e2164d3603c0dc",
-          "version": "0.11.6"
+          "revision": "50eaeb8f52a1ce63f1ff3880e1114dd8757a78a6",
+          "version": "2.3.2"
         }
       },
       {

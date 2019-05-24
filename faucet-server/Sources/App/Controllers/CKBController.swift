@@ -28,35 +28,47 @@ public struct CKBController: RouteCollection {
 
     // MARK: - API
 
-    func faucet(_ req: Request) -> Response {
-        let accessToken = req.http.cookies.all[accessTokenCookieName]?.string
-        let verifyStatus = Authorization().verify(accessToken: accessToken)
-        let result: [String: Any]
-
-        if verifyStatus == .tokenIsVailable {
-            let urlParameters = req.http.urlString.urlParametersDecode
-            do {
-                if let address = urlParameters["address"] {
-                    let txHash = try sendCapacity(address: address)
-                    Authorization().recordCollectionDate(accessToken: accessToken!)
-                    result = ["status": 0, "txHash": txHash]
-                } else {
-                     result = ["status": -3, "error": "No address"]
+    func faucet(_ req: Request) -> Future<Response> {
+        let urlParameters = req.http.urlString.urlParametersDecode
+        let accessToken = req.http.cookies.all[accessTokenCookieName]?.string ?? ""
+        let email = (try? GithubService.getUserInfo(for: accessToken).email) ?? ""
+        var isSucceed = false
+        var txHash = ""
+        return Authentication().verify(email: email, on: req).map { verifyStatus -> String in
+            // Send capacity
+            if verifyStatus == .succeed {
+                do {
+                    if let address = urlParameters["address"] {
+                        txHash = try self.sendCapacity(address: address)
+                        isSucceed = true
+                        return ["status": Status.succeed.rawValue, "txHash": txHash].toJson
+                    } else {
+                        return ["status": Status.failed.rawValue, "error": "No address"].toJson
+                    }
+                } catch {
+                    return ["status": Status.failed.rawValue, "error": error.localizedDescription].toJson
                 }
-            } catch {
-                result = ["status": -4, "error": error.localizedDescription]
+            } else {
+                return ["status": Status.verifyFailed.rawValue, "verifyStatus": verifyStatus.rawValue, "error": "Verify failed"].toJson
             }
-        } else {
-            result = ["status": verifyStatus.rawValue, "error": "Verify failed"]
+        }.map { json -> String in
+            // Support jsonp
+            if let callback = req.http.url.absoluteString.urlParametersDecode["callback"] {
+                return "\(callback)(\(json))"
+            } else {
+                return json
+            }
+        }.encode(status: .ok, for: req).flatMap { res -> EventLoopFuture<Response> in
+            // Record recently received date
+            if isSucceed {
+                return Authentication().recordReceivedDate(for: email, on: req).map { _ in res }
+            } else {
+                return req.sharedContainer.eventLoop.newSucceededFuture(result: res)
+            }
+        }.flatMap { res -> EventLoopFuture<Response> in
+            // API logging
+            return try Faucet(email: email, txHash: txHash).save(on: req).encode(for: req).map { _ in res }
         }
-
-        let body: HTTPBody
-        if let callback = req.http.url.absoluteString.urlParametersDecode["callback"] {
-            body = HTTPBody(string: "\(callback)(\(result.toJson))")
-        } else {
-            body = HTTPBody(string: result.toJson)
-        }
-        return Response(http: HTTPResponse(body: body), using: req.sharedContainer)
     }
 
     func address(_ req: Request) -> Response {
@@ -65,15 +77,15 @@ public struct CKBController: RouteCollection {
         do {
             if let privateKey = urlParameters["privateKey"] {
                 let address = try CKBController.privateToAddress(privateKey)
-                result = ["address": address, "status": 0]
+                result = ["address": address, "status": Status.succeed.rawValue]
             } else if let publicKey = urlParameters["publicKey"] {
                 let address = try CKBController.publicToAddress(publicKey)
-                result = ["address": address, "status": 0]
+                result = ["address": address, "status": Status.succeed.rawValue]
             } else {
-                result = ["status": -1, "error": "No public or private key"]
+                result = ["status": Status.failed.rawValue, "error": "No public or private key"]
             }
         } catch {
-            result = ["status": -2, "error": error.localizedDescription]
+            result = ["status": Status.verifyFailed.rawValue, "error": error.localizedDescription]
         }
         let headers = HTTPHeaders([("Access-Control-Allow-Origin", "*")])
         return Response(http: HTTPResponse(headers: headers, body: HTTPBody(string: result.toJson)), using: req.sharedContainer)
@@ -96,8 +108,8 @@ public struct CKBController: RouteCollection {
         guard let publicKeyHash = AddressGenerator(network: .testnet).publicKeyHash(for: address) else { throw Error.invalidAddress }
         let targetLock = Script(args: [Utils.prefixHex(publicKeyHash)], codeHash: systemScript.codeHash)
 
-        let wallet = Wallet(api: api, systemScript: systemScript, privateKey: Environment.Process.walletPrivateKey)
-        return try wallet.sendCapacity(targetLock: targetLock, capacity: Environment.Process.sendCapacityCount)
+        let wallet = Wallet(api: api, systemScript: systemScript, privateKey: Environment.CKB.walletPrivateKey)
+        return try wallet.sendCapacity(targetLock: targetLock, capacity: Environment.CKB.sendCapacityCount)
     }
 
     public static func privateToAddress(_ privateKey: String) throws -> String {
@@ -173,5 +185,11 @@ extension CKBController {
     public enum VerifyResult {
         case valid(value: String)
         case invalid(error: Error)
+    }
+
+    public enum Status: Int {
+        case succeed = 0
+        case failed = -1
+        case verifyFailed = -2
     }
 }
