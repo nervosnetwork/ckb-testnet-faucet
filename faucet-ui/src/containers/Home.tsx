@@ -2,17 +2,22 @@ import fetchJsonp from 'fetch-jsonp';
 import { Box, Button, Text, TextInput, Anchor } from 'grommet';
 import * as React from 'react';
 import { Routes } from '../utils/const';
+import 'rsuite/dist/styles/rsuite.min.css';
+import { Loader } from 'rsuite';
 
 export default (props: any) => {
   const [enable, setEnable] = React.useState(false)
   const inputKey = React.useRef(null)
   const [errorMessage, setErrorMessage] = React.useState(null as string | null)
+  const [loading, setLoading] = React.useState(false)
+
   const onClickGetTestToken = () => {
     const element = inputKey.current! as HTMLInputElement
     const address = element.value
     if (address.length > 0) {
       setErrorMessage(null)
-
+      setLoading(true)
+      
       fetchJsonp(`${process.env.REACT_APP_API_HOST}/ckb/faucet?address=${address}`, { timeout: 1000 * 60 }).then((response: any) => {
         return response.json()
       }).then((json: any) => {
@@ -38,6 +43,8 @@ export default (props: any) => {
           default:
             break
         }
+      }).finally(() => {
+        setLoading(false)
       })
     } else {
       setErrorMessage("Wrong lock hash. Please check here for the lock hash format of Nervos CKB")
@@ -76,6 +83,7 @@ export default (props: any) => {
       </Box>
       <Button disabled={!enable} primary label="Get Some Testnes Tokens" onClick={onClickGetTestToken} />
       <Text color="text" size="small">If there are any problems, you can find us on <Anchor href='https://t.me/NervosNetwork' color='brand' target='_blank'>Telegram</Anchor>.</Text>
+      {loading ? <Loader backdrop content="loading..." vertical /> : <div />}
     </Box>
   )
 }
