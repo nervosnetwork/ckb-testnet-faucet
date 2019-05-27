@@ -44,7 +44,7 @@ public class Wallet {
     }
 
     public func getBalance() throws -> Decimal {
-        return try cellService.getUnspentCells().reduce(0, { $0 + Decimal(string: $1.capacity)! })
+        return try cellService.getUnspentCells().reduce(0, { $0 + Decimal(string: $1.0.capacity)! })
     }
 
     public func sendCapacity(targetLock: Script, capacity: Decimal) throws -> H256 {
