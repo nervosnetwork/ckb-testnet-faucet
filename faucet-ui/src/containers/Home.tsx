@@ -53,6 +53,7 @@ export default (props: any) => {
 
   // Determine whether need to enter the authentication or failure page
   React.useEffect(() => {
+    setLoading(true)
     fetchJsonp(`${process.env.REACT_APP_API_HOST}/auth/verify`).then((response: any) => {
       return response.json()
     }).then((json: any) => {
@@ -68,6 +69,7 @@ export default (props: any) => {
       props.history.push({ pathname: Routes.ServiceError })
     }).finally(() => {
       setEnable(true)
+      setLoading(false)
     })
   }, [])
 
