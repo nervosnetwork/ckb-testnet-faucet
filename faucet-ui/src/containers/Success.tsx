@@ -1,10 +1,14 @@
 import { Box, Anchor, Text, TextInput } from 'grommet';
 import * as React from 'react';
+import { Routes } from '../utils/const';
 
 export default (props: any) => {
   let txHash: string | undefined
   if (props.location.query) {
     txHash = props.location.query.txHash
+  }
+  if (txHash == undefined) {
+    props.history.push({ pathname: Routes.Home })
   }
 
   const transactionDetails = () => {
