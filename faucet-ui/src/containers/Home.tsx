@@ -47,7 +47,7 @@ export default (props: any) => {
         setLoading(false)
       })
     } else {
-      setErrorMessage("Wrong lock hash. Please check here for the address format of Nervos CKB")
+      setErrorMessage("Wrong address. Please check here for the address format of Nervos CKB")
     }
   }
 
@@ -79,7 +79,7 @@ export default (props: any) => {
       </ul>
       <Box width="600px" align="start" pad="small" gap="small">
         <TextInput style={{ color: "black" }} width="100%" ref={inputKey} placeholder='Please fill in your address here "ckt......"' />
-        {errorMessage ? <Text color="red" size="16px">Wrong lock hash. Please check here for the address format of Nervos CKB</Text> : <div />}
+        {errorMessage ? <Text color="red" size="16px">Wrong address. Please check here for the address format of Nervos CKB</Text> : <div />}
       </Box>
       <Button disabled={!enable} primary label="Get Some Testnes Tokens" onClick={onClickGetTestToken} />
       <Text color="text" size="small">If there are any problems, you can find us on <Anchor href='https://t.me/NervosNetwork' color='brand' target='_blank'>Telegram</Anchor>.</Text>
