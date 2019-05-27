@@ -13,11 +13,15 @@ import FluentMySQL
 public struct User: Content, MySQLModel {
     public var id: Int?
 
-    public let email: String
+    public let userId: Int
+    public let name: String?
+    public let email: String?
     public var authorizationDate: Date
     public var recentlyReceivedDate: Date?
 
-    public init(email: String, authorizationDate: Date = Date(), collectionDate: Date? = nil) {
+    public init(userId: Int, name: String? = nil, email: String? = nil, authorizationDate: Date = Date(), collectionDate: Date? = nil) {
+        self.userId = userId
+        self.name = name
         self.email = email
         self.authorizationDate = authorizationDate
         self.recentlyReceivedDate = collectionDate

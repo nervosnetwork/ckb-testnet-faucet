@@ -13,12 +13,12 @@ import FluentMySQL
 struct Faucet: Content, MySQLModel {
     var id: Int?
 
-    var email: String
+    var userId: Int
     var txHash: String
     var date: Date
     
-    init(email: String, txHash: String) {
-        self.email = email
+    init(userId: Int, txHash: String) {
+        self.userId = userId
         self.txHash = txHash
         self.date = Date()
     }

@@ -13,13 +13,13 @@ import FluentMySQL
 struct Auth: Content, MySQLModel {
     var id: Int?
 
-    var email: String
+    var userId: Int
     var accessToken: String
     var date: Date
 
-    init(accessToken: String, email: String) {
-        self.email = email
+    init(accessToken: String, userId: Int) {
         self.accessToken = accessToken
+        self.userId = userId
         date = Date()
     }
 }

@@ -10,7 +10,9 @@ import Vapor
 
 struct GithubService {
     struct User: Decodable {
-        let email: String
+        let email: String?
+        let id: Int
+        let login: String
     }
 
     static func getAccessToken(for code: String) -> String? {
