@@ -6,7 +6,7 @@ const customTheme = {
     border: {
       radius: "4px"
     },
-    color: "black",
+    color: "white",
   },
   global: {
     colors: {

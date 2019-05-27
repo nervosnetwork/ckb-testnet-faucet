@@ -15,6 +15,9 @@ export default (props: any) => {
         case -1:
           props.history.push({ pathname: Routes.Auth })
           break
+        case -2:
+          props.history.push({ pathname: Routes.Failure })
+          break
       }
     })
   }, [])
