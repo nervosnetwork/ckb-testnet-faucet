@@ -9,10 +9,11 @@ import Foundation
 import Vapor
 import CKB
 
-public struct CKBController: RouteCollection {
+public class CKBController: RouteCollection {
     let nodeUrl: URL
     let api: APIClient
     let systemScript: SystemScript
+    var faucetSending = [String]()
 
     public init(nodeUrl: URL) throws {
         self.nodeUrl = nodeUrl
@@ -28,10 +29,15 @@ public struct CKBController: RouteCollection {
 
     // MARK: - API
 
-    func faucet(_ req: Request) -> Future<Response> {
+    func faucet(_ req: Request) throws -> Future<Response> {
         let urlParameters = req.http.urlString.urlParametersDecode
         let accessToken = req.http.cookies.all[accessTokenCookieName]?.string ?? ""
         let email = (try? GithubService.getUserInfo(for: accessToken).email) ?? ""
+        guard faucetSending.firstIndex(of: email) == nil else {
+            throw Abort(HTTPStatus.badRequest)
+        }
+        faucetSending.append(email)
+
         var isSucceed = false
         var txHash = ""
         return Authentication().verify(email: email, on: req).map { verifyStatus -> String in
@@ -59,15 +65,17 @@ public struct CKBController: RouteCollection {
                 return json
             }
         }.encode(status: .ok, for: req).flatMap { res -> EventLoopFuture<Response> in
+            defer {
+                self.faucetSending.remove(at: email)
+            }
             // Record recently received date
             if isSucceed {
-                return Authentication().recordReceivedDate(for: email, on: req).map { _ in res }
+                return Authentication().recordReceivedDate(for: email, on: req).map { _ in res }.flatMap({ (res) -> EventLoopFuture<Response> in
+                    return try Faucet(email: email, txHash: txHash).save(on: req).encode(for: req).map { _ in res }
+                })
             } else {
                 return req.sharedContainer.eventLoop.newSucceededFuture(result: res)
             }
-        }.flatMap { res -> EventLoopFuture<Response> in
-            // API logging
-            return try Faucet(email: email, txHash: txHash).save(on: req).encode(for: req).map { _ in res }
         }
     }
 

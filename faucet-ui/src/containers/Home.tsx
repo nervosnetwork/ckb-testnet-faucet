@@ -13,7 +13,7 @@ export default (props: any) => {
     if (address.length > 0) {
       setErrorMessage(null)
 
-      fetchJsonp(`${process.env.REACT_APP_API_HOST}/ckb/faucet?address=${address}`).then((response: any) => {
+      fetchJsonp(`${process.env.REACT_APP_API_HOST}/ckb/faucet?address=${address}`, { timeout: 1000 * 60 }).then((response: any) => {
         return response.json()
       }).then((json: any) => {
         switch (json.status) {

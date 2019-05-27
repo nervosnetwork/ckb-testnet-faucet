@@ -30,12 +30,12 @@ public class CellService {
         let sequence = try getUnspentCells()
         var inputCapacities: Decimal = 0
         var inputs = [CellInput]()
-        for cell in sequence {
+        for (cell, blockNumber) in sequence {
             let input = CellInput(previousOutput: cell.outPoint, args: [], since: "0")
             inputs.append(input)
             inputCapacities += Decimal(string: cell.capacity) ?? 0
             if inputCapacities > capacity {
-                currentBlockNumber = getBlockNumber(for: cell.outPoint)
+                currentBlockNumber = blockNumber
                 CellService.saveBlockNumber(currentBlockNumber, for: lockHash)
                 break
             }
@@ -84,7 +84,8 @@ extension CellService {
 }
 
 extension CellService {
-    typealias Element = CellOutputWithOutPoint
+    typealias FromBlockNumber = Int
+    typealias Element = (CellOutputWithOutPoint, FromBlockNumber)
 
     struct UnspentCellsIterator: IteratorProtocol {
         let api: APIClient
@@ -100,9 +101,9 @@ extension CellService {
             tipBlockNumber = Int(try api.getTipBlockNumber())!
         }
 
-        mutating public func next() -> CellOutputWithOutPoint? {
+        mutating public func next() -> Element? {
             guard cells.count == 0 else {
-                return cells.removeFirst()
+                return (cells.removeFirst(), fromBlockNumber)
             }
             while fromBlockNumber <= tipBlockNumber {
                 let toBlockNumber = min(fromBlockNumber + 100, tipBlockNumber)
@@ -113,7 +114,7 @@ extension CellService {
                     defer {
                         self.cells = cells
                     }
-                    return cells.removeFirst()
+                    return (cells.removeFirst(), fromBlockNumber)
                 }
             }
             return nil
