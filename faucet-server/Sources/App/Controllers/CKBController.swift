@@ -32,15 +32,15 @@ public class CKBController: RouteCollection {
     func faucet(_ req: Request) throws -> Future<Response> {
         let urlParameters = req.http.urlString.urlParametersDecode
         let accessToken = req.http.cookies.all[accessTokenCookieName]?.string ?? ""
-        let email = (try? GithubService.getUserInfo(for: accessToken).email) ?? ""
-        guard faucetSending.firstIndex(of: email) == nil else {
+        guard faucetSending.firstIndex(of: accessToken) == nil else {
             throw Abort(HTTPStatus.badRequest)
         }
-        faucetSending.append(email)
+        faucetSending.append(accessToken)
+        let user = try? GithubService.getUserInfo(for: accessToken)
 
         var isSucceed = false
         var txHash = ""
-        return Authentication().verify(email: email, on: req).map { verifyStatus -> String in
+        return Authentication().verify(userId: user?.id, on: req).map { verifyStatus -> String in
             // Send capacity
             if verifyStatus == .succeed {
                 do {
@@ -66,12 +66,12 @@ public class CKBController: RouteCollection {
             }
         }.encode(status: .ok, for: req).flatMap { res -> EventLoopFuture<Response> in
             defer {
-                self.faucetSending.remove(at: email)
+                self.faucetSending.remove(at: accessToken)
             }
             // Record recently received date
-            if isSucceed {
-                return Authentication().recordReceivedDate(for: email, on: req).map { _ in res }.flatMap({ (res) -> EventLoopFuture<Response> in
-                    return try Faucet(email: email, txHash: txHash).save(on: req).encode(for: req).map { _ in res }
+            if isSucceed, let user = user {
+                return Authentication().recordReceivedDate(for: user.id, on: req).flatMap({ _ in
+                    return try Faucet(userId: user.id, txHash: txHash).save(on: req).encode(for: req).map { _ in res }
                 })
             } else {
                 return req.sharedContainer.eventLoop.newSucceededFuture(result: res)

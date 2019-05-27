@@ -15,10 +15,13 @@ class Authentication {
         case received = -2
     }
 
-    func verify(email: String, on connection: Request) -> EventLoopFuture<Status> {
+    func verify(userId: Int?, on connection: Request) -> EventLoopFuture<Status> {
+        guard let userId = userId else {
+            return connection.sharedContainer.eventLoop.newSucceededFuture(result: .unauthenticated)
+        }
         return User
             .query(on: connection)
-            .filter(\.email, .equal, email)
+            .filter(\.userId, .equal, userId)
             .first()
             .map { user -> Status in
             if let user = user {
@@ -33,27 +36,27 @@ class Authentication {
         }
     }
 
-    func authorization(for accessToken: String, email: String, on connection: Request) throws -> EventLoopFuture<Response> {
+    func authorization(for accessToken: String, user: GithubService.User, on connection: Request) throws -> EventLoopFuture<Response> {
         return User
             .query(on: connection)
-            .filter(\.email, .equal, email)
+            .filter(\.userId, .equal, user.id)
             .first()
             .flatMap { userExist -> EventLoopFuture<Response> in
-                var user = userExist ?? User(email: email)
+                var user = userExist ?? User(userId: user.id, name: user.login, email: user.email)
                 user.authorizationDate = Date()
                 return user.save(on: connection).encode(status: .ok, for: connection)
             }.flatMap { _ in
-                Auth(accessToken: accessToken, email: email).save(on: connection).encode(status: .ok, for: connection)
+                return Auth(accessToken: accessToken, userId: user.id).save(on: connection).encode(status: .ok, for: connection)
             }
     }
 
-    func recordReceivedDate(for email: String, on connection: Request) -> EventLoopFuture<Response> {
+    func recordReceivedDate(for userId: Int, on connection: Request) -> EventLoopFuture<Response> {
         return User
             .query(on: connection)
-            .filter(\.email, .equal, email)
+            .filter(\.userId, .equal, userId)
             .first()
             .flatMap { userExist -> EventLoopFuture<Response> in
-                var user = userExist ?? User(email: email)
+                var user = userExist ?? User(userId: userId)
                 user.recentlyReceivedDate = Date()
                 return user.save(on: connection).encode(status: .ok, for: connection)
             }

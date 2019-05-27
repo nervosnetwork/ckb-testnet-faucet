@@ -20,8 +20,8 @@ struct AuthorizationController: RouteCollection {
 
     func verify(_ req: Request) throws -> Future<Response> {
         let accessToken = req.http.cookies.all[accessTokenCookieName]?.string ?? ""
-        let email = (try? GithubService.getUserInfo(for: accessToken).email) ?? ""
-        return Authentication().verify(email: email, on: req).map { status -> String in
+        let user = try? GithubService.getUserInfo(for: accessToken)
+        return Authentication().verify(userId: user?.id, on: req).map { status -> String in
             // Support jsonp
             let result = ["status": status.rawValue]
             if let callback = req.http.url.absoluteString.urlParametersDecode["callback"] {
@@ -42,16 +42,17 @@ struct AuthorizationController: RouteCollection {
         guard let accessToken = GithubService.getAccessToken(for: code) else {
             throw Abort(HTTPStatus.badRequest)
         }
-        let email = (try? GithubService.getUserInfo(for: accessToken).email) ?? ""
-        
-        return  try Authentication().authorization(for: accessToken, email: email, on: req).map { res in
+        guard let user = try? GithubService.getUserInfo(for: accessToken) else {
+            throw Abort(HTTPStatus.badRequest)
+        }
+
+        return  try Authentication().authorization(for: accessToken, user: user, on: req).flatMap { _ in
             // Redirect
             var http = HTTPResponse(status: .found, headers: HTTPHeaders([("Location", state)]))
             http.cookies = HTTPCookies(
                 dictionaryLiteral: (accessTokenCookieName, HTTPCookieValue(string: accessToken, domain: URL(string: state)?.host))
             )
-            res.http = http
-            return res
+            return req.sharedContainer.eventLoop.newSucceededFuture(result: Response(http: http, using: req.sharedContainer))
         }
     }
 }
