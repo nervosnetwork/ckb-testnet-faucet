@@ -9,13 +9,7 @@ import Foundation
 import Vapor
 
 class Authentication {
-    enum Status: Int {
-        case succeed = 0
-        case unauthenticated = -1
-        case received = -2
-    }
-
-    func verify(userId: Int?, on connection: Request) -> EventLoopFuture<Status> {
+    func verify(userId: Int?, on connection: Request) -> EventLoopFuture<ResponseStatus> {
         guard let userId = userId else {
             return connection.sharedContainer.eventLoop.newSucceededFuture(result: .unauthenticated)
         }
@@ -23,10 +17,10 @@ class Authentication {
             .query(on: connection)
             .filter(\.userId, .equal, userId)
             .first()
-            .map { user -> Status in
+            .map { user -> ResponseStatus in
             if let user = user {
                 if user.recentlyReceivedDate?.timeIntervalSince1970 ?? 0 < Date().timeIntervalSince1970 - 24 * 60 * 60 {
-                    return .succeed
+                    return .ok
                 } else {
                     return .received
                 }

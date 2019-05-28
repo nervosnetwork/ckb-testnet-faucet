@@ -42,7 +42,7 @@ public class CKBController: RouteCollection {
         var txHash = ""
         return Authentication().verify(userId: user?.id, on: req).map { verifyStatus -> String in
             // Send capacity
-            if verifyStatus == .succeed {
+            if verifyStatus == .ok {
                 do {
                     if let address = urlParameters["address"] {
                         txHash = try self.sendCapacity(address: address)
