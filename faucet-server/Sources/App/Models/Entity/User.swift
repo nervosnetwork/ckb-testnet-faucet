@@ -10,7 +10,7 @@ import Vapor
 import Fluent
 import FluentMySQL
 
-public struct User: Content, MySQLModel {
+public struct User: Content, MySQLModel, Migration {
     public var id: Int?
 
     public let userId: Int
@@ -25,18 +25,5 @@ public struct User: Content, MySQLModel {
         self.email = email
         self.authorizationDate = authorizationDate
         self.recentlyReceivedDate = collectionDate
-    }
-}
-
-extension User: Migration {
-    public static func prepare(on connection: MySQLConnection) -> Future<Void> {
-        return Database.create(User.self, on: connection) {
-            builder in
-            try addProperties(to: builder)
-        }
-    }
-
-    public static func revert(on connection: MySQLConnection) -> Future<Void> {
-        return Database.delete(User.self, on: connection)
     }
 }

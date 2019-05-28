@@ -10,7 +10,7 @@ import Vapor
 import Fluent
 import FluentMySQL
 
-struct Faucet: Content, MySQLModel {
+struct Faucet: Content, MySQLModel, Migration {
     var id: Int?
 
     var userId: Int
@@ -21,18 +21,5 @@ struct Faucet: Content, MySQLModel {
         self.userId = userId
         self.txHash = txHash
         self.date = Date()
-    }
-}
-
-extension Faucet: Migration {
-    public static func prepare(on connection: MySQLConnection) -> Future<Void> {
-        return Database.create(Faucet.self, on: connection) {
-            builder in
-            try addProperties(to: builder)
-        }
-    }
-
-    public static func revert(on connection: MySQLConnection) -> Future<Void> {
-        return Database.delete(Faucet.self, on: connection)
     }
 }
