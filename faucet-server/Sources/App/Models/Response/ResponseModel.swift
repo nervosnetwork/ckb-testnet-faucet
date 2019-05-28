@@ -28,7 +28,14 @@ extension ResponseModel {
 }
 
 extension ResponseModel: ResponseEncodable {
-    
+}
+
+// MARK: - Future extensions
+
+extension Future where T: Content {
+    func makeJson(on request: Request) throws -> Future<Response> {
+        return try map { ResponseModel(data: $0) }.encode(for: request)
+    }
 }
 
 extension Future where T == ResponseStatus {
@@ -37,23 +44,18 @@ extension Future where T == ResponseStatus {
             return try ResponseModel<Empty>(status: status).encode(for: req)
         })
     }
-
-    func makeJsonp(on req: Request) -> Future<Response> {
-        return flatMap({ (status) -> EventLoopFuture<Response> in
-            return try ResponseModel<Empty>(status: status).encode(for: req)
-        }).map({ (res) -> (Response) in
-            if let callback = req.http.url.absoluteString.urlParametersDecode["callback"] {
-                if let data = res.http.body.data {
-                    if let text = String(data: data, encoding: .utf8) {
-                        res.http.body = HTTPBody(string: callback + "(" + text + ")")
-                    }
-                }
-            }
-            return res
-        })
-    }
 }
 
 extension Future where T == Response {
-
+    func supportJsonp(on req: Request) -> Future<Response> {
+        return map { res in
+            guard let callback = req.http.url.absoluteString.urlParametersDecode["callback"] else { return res }
+            if let data = res.http.body.data {
+                if let text = String(data: data, encoding: .utf8), !text.hasPrefix("jsonp_") && text.hasPrefix("{") {
+                    res.http.body = HTTPBody(string: callback + "(" + text + ")")
+                }
+            }
+            return res
+        }
+    }
 }

@@ -19,14 +19,14 @@ struct AuthorizationController: RouteCollection {
     }
 
     func verify(_ req: Request) throws -> Future<Response> {
-        return try VerifyRequestModel.decode(from: req).flatMap({ (container: VerifyRequestModel) -> EventLoopFuture<Response> in
+        return try VerifyRequestModel.decode(from: req).flatMap { (container: VerifyRequestModel) -> EventLoopFuture<Response> in
             let user = try? GithubService.getUserInfo(for: container.accessToken ?? "")
-            return Authentication().verify(userId: user?.id, on: req).makeJsonp(on: req)
-        })
+            return Authentication().verify(userId: user?.id, on: req).makeJson(on: req)
+        }.supportJsonp(on: req)
     }
 
     func authentication(_ req: Request) throws -> Future<Response> {
-        return try AuthenticationRequestModel.decode(from: req).flatMap({ (model) -> EventLoopFuture<Response> in
+        return try AuthenticationRequestModel.decode(from: req).flatMap{ (model) -> EventLoopFuture<Response> in
             guard let accessToken = GithubService.getAccessToken(for: model.code) else {
                 throw Abort(HTTPStatus.badRequest)
             }
@@ -40,6 +40,6 @@ struct AuthorizationController: RouteCollection {
                 )
                 return req.sharedContainer.eventLoop.newSucceededFuture(result: Response(http: http, using: req.sharedContainer))
             }
-        })
+        }
     }
 }
