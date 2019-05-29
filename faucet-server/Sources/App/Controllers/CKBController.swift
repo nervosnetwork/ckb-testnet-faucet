@@ -11,9 +11,11 @@ import CKB
 
 public class CKBController: RouteCollection {
     let nodeUrl: URL
-    let api: APIClient
-    let systemScript: SystemScript
-    var faucetSending = [String]()
+    private let api: APIClient
+    private let systemScript: SystemScript
+
+    private var faucetSending = [String]()
+    private let authService = AuthenticationService()
 
     public init(nodeUrl: URL) throws {
         self.nodeUrl = nodeUrl
@@ -30,84 +32,68 @@ public class CKBController: RouteCollection {
     // MARK: - API
 
     func faucet(_ req: Request) throws -> Future<Response> {
-        let urlParameters = req.http.urlString.urlParametersDecode
-        let accessToken = req.http.cookies.all[accessTokenCookieName]?.string ?? ""
-        guard faucetSending.firstIndex(of: accessToken) == nil else {
-            throw Abort(HTTPStatus.badRequest)
-        }
-        faucetSending.append(accessToken)
-        let user = try? GithubService.getUserInfo(for: accessToken)
+        return try FaucetRequestContent.decode(from: req).flatMap { (content) -> EventLoopFuture<Response> in
+            guard let accessToken = content.accessToken else { throw APIError(code: .unauthenticated) }
+            guard self.faucetSending.firstIndex(of: accessToken) == nil else {
+                throw Abort(HTTPStatus.badRequest)
+            }
+            self.faucetSending.append(accessToken)
 
-        var isSucceed = false
-        var txHash = ""
-        return Authentication().verify(userId: user?.id, on: req).map { verifyStatus -> String in
-            // Send capacity
-            if verifyStatus == .succeed {
-                do {
-                    if let address = urlParameters["address"] {
-                        txHash = try self.sendCapacity(address: address)
-                        isSucceed = true
-                        return ["status": Status.succeed.rawValue, "txHash": txHash].toJson
+            return GithubService.userInfo(for: accessToken, on: req).unwrap(or: APIError(code: .unauthenticated)).flatMap { (user) -> EventLoopFuture<Response> in
+                return self.authService.verify(userId: user.id, on: req).map { status -> Void in
+                    if status == .ok {
+                        return
                     } else {
-                        return ["status": Status.failed.rawValue, "error": "No address"].toJson
+                        throw APIError(code: status)
                     }
-                } catch {
-                    return ["status": Status.failed.rawValue, "error": error.localizedDescription].toJson
+                }.map { _ in
+                    do {
+                        return try self.sendCapacity(address: content.address)
+                    } catch {
+                        throw APIError(code: .sendTransactionFailed)
+                    }
+                }.map { (txHash: H256) -> H256 in
+                    _ = Faucet(userId: user.id, txHash: txHash).save(on: req)
+                    _ = self.authService.recordReceivedDate(for: user.id, on: req)
+                    return txHash
+                }.flatMap { txHash -> EventLoopFuture<Response> in
+                    return try FaucetResponseContent(txHash: txHash).makeJson(for: req)
                 }
-            } else {
-                return ["status": Status.verifyFailed.rawValue, "verifyStatus": verifyStatus.rawValue, "error": "Verify failed"].toJson
-            }
-        }.map { json -> String in
-            // Support jsonp
-            if let callback = req.http.url.absoluteString.urlParametersDecode["callback"] {
-                return "\(callback)(\(json))"
-            } else {
-                return json
-            }
-        }.encode(status: .ok, for: req).flatMap { res -> EventLoopFuture<Response> in
-            defer {
+            }.always {
                 self.faucetSending.remove(at: accessToken)
             }
-            // Record recently received date
-            if isSucceed, let user = user {
-                return Authentication().recordReceivedDate(for: user.id, on: req).flatMap({ _ in
-                    return try Faucet(userId: user.id, txHash: txHash).save(on: req).encode(for: req).map { _ in res }
-                })
+        }.supportJsonp(on: req)
+    }
+
+    func address(_ req: Request) throws -> Future<Response> {
+        return try AddressRequestContent.decode(from: req).flatMap { (content) -> EventLoopFuture<Response> in
+            if let privateKey = content.privateKey {
+                do {
+                    let address = try CKBController.privateToAddress(privateKey)
+                    return try AddressResponseContent(address: address).makeJson(for: req)
+                } catch {
+                    throw APIError(code: .invalidPrivateKey)
+                }
+            } else if let publicKey = content.publicKey {
+                do {
+                    let address = try CKBController.publicToAddress(publicKey)
+                    return try AddressResponseContent(address: address).makeJson(for: req)
+                } catch {
+                    throw APIError(code: .invalidPublicKey)
+                }
             } else {
-                return req.sharedContainer.eventLoop.newSucceededFuture(result: res)
+                throw APIError(code: .publickeyOrPrivatekeyNotExist)
             }
         }
     }
 
-    func address(_ req: Request) -> Response {
-        let urlParameters = req.http.urlString.urlParametersDecode
-        let result: [String: Any]
-        do {
-            if let privateKey = urlParameters["privateKey"] {
-                let address = try CKBController.privateToAddress(privateKey)
-                result = ["address": address, "status": Status.succeed.rawValue]
-            } else if let publicKey = urlParameters["publicKey"] {
-                let address = try CKBController.publicToAddress(publicKey)
-                result = ["address": address, "status": Status.succeed.rawValue]
-            } else {
-                result = ["status": Status.failed.rawValue, "error": "No public or private key"]
-            }
-        } catch {
-            result = ["status": Status.verifyFailed.rawValue, "error": error.localizedDescription]
-        }
-        let headers = HTTPHeaders([("Access-Control-Allow-Origin", "*")])
-        return Response(http: HTTPResponse(headers: headers, body: HTTPBody(string: result.toJson)), using: req.sharedContainer)
-    }
-
-    func makeRandomAddress(_ req: Request) -> Response {
+    func makeRandomAddress(_ req: Request) throws ->  Future<Response> {
         let privateKey = CKBController.generatePrivateKey()
-        let result: [String: Any] = [
+        return try [
             "privateKey": privateKey,
             "publicKey": try! CKBController.privateToPublic(privateKey),
             "address": try! CKBController.privateToAddress(privateKey)
-        ]
-        let headers = HTTPHeaders([("Access-Control-Allow-Origin", "*")])
-        return Response(http: HTTPResponse(headers: headers, body: HTTPBody(string: result.toJson)), using: req.sharedContainer)
+        ].makeJson(for: req)
     }
 
     // MARK: - Utils

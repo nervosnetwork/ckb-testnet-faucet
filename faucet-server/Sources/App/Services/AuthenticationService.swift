@@ -8,25 +8,18 @@
 import Foundation
 import Vapor
 
-class Authentication {
-    enum Status: Int {
-        case succeed = 0
-        case unauthenticated = -1
-        case received = -2
-    }
-
-    func verify(userId: Int?, on connection: Request) -> EventLoopFuture<Status> {
+class AuthenticationService {
+    func verify(userId: Int?, on connection: Request) -> EventLoopFuture<ResponseStatus> {
         guard let userId = userId else {
             return connection.sharedContainer.eventLoop.newSucceededFuture(result: .unauthenticated)
         }
-        return User
-            .query(on: connection)
+        return User.query(on: connection)
             .filter(\.userId, .equal, userId)
             .first()
-            .map { user -> Status in
+            .map { user -> ResponseStatus in
             if let user = user {
                 if user.recentlyReceivedDate?.timeIntervalSince1970 ?? 0 < Date().timeIntervalSince1970 - 24 * 60 * 60 {
-                    return .succeed
+                    return .ok
                 } else {
                     return .received
                 }
@@ -37,8 +30,7 @@ class Authentication {
     }
 
     func authorization(for accessToken: String, user: GithubService.User, on connection: Request) throws -> EventLoopFuture<Response> {
-        return User
-            .query(on: connection)
+        return User.query(on: connection)
             .filter(\.userId, .equal, user.id)
             .first()
             .flatMap { userExist -> EventLoopFuture<Response> in
@@ -51,8 +43,7 @@ class Authentication {
     }
 
     func recordReceivedDate(for userId: Int, on connection: Request) -> EventLoopFuture<Response> {
-        return User
-            .query(on: connection)
+        return User.query(on: connection)
             .filter(\.userId, .equal, userId)
             .first()
             .flatMap { userExist -> EventLoopFuture<Response> in
