@@ -61,7 +61,7 @@ public class App {
         ]))
         services.register(middlewaresConfig)
 
-        /// Configure the rest of your application here
+        /// Configure command
         var commandConfig = CommandConfig.default()
         commandConfig.useFluentCommands()
         services.register(commandConfig)
