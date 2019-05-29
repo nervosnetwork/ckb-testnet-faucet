@@ -48,13 +48,9 @@ public struct ModelNotFound: ErrorCatchingSpecialization {
     public init() {}
 
     public func convert(error: Error, on request: Request) -> ErrorResult? {
-        if
-            let wrappingError = error as? NotFound,
-            let error = wrappingError.rootCause as? FluentError
-        {
+        if let wrappingError = error as? NotFound, let error = wrappingError.rootCause as? FluentError {
             return ErrorResult(message: error.reason, status: .notFound)
         }
-
         return nil
     }
 }
