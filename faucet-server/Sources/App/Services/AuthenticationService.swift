@@ -8,13 +8,12 @@
 import Foundation
 import Vapor
 
-class Authentication {
+class AuthenticationService {
     func verify(userId: Int?, on connection: Request) -> EventLoopFuture<ResponseStatus> {
         guard let userId = userId else {
             return connection.sharedContainer.eventLoop.newSucceededFuture(result: .unauthenticated)
         }
-        return User
-            .query(on: connection)
+        return User.query(on: connection)
             .filter(\.userId, .equal, userId)
             .first()
             .map { user -> ResponseStatus in
@@ -31,8 +30,7 @@ class Authentication {
     }
 
     func authorization(for accessToken: String, user: GithubService.User, on connection: Request) throws -> EventLoopFuture<Response> {
-        return User
-            .query(on: connection)
+        return User.query(on: connection)
             .filter(\.userId, .equal, user.id)
             .first()
             .flatMap { userExist -> EventLoopFuture<Response> in
@@ -45,8 +43,7 @@ class Authentication {
     }
 
     func recordReceivedDate(for userId: Int, on connection: Request) -> EventLoopFuture<Response> {
-        return User
-            .query(on: connection)
+        return User.query(on: connection)
             .filter(\.userId, .equal, userId)
             .first()
             .flatMap { userExist -> EventLoopFuture<Response> in

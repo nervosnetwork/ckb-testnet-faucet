@@ -17,30 +17,22 @@ export default (props: any) => {
     if (address.length > 0) {
       setErrorMessage(null)
       setLoading(true)
-      
+
       fetchJsonp(`${process.env.REACT_APP_API_HOST}/ckb/faucet?address=${address}`, { timeout: 1000 * 60 }).then((response: any) => {
         return response.json()
       }).then((json: any) => {
         switch (json.status) {
           case 0:
-            props.history.push({ pathname: Routes.Success, query: { txHash: json.txHash } })
+            props.history.push({ pathname: Routes.Success, query: { txHash: json.data.txHash } })
             break
           case -1:
-            setErrorMessage(json.error)
+            props.history.push({ pathname: Routes.Auth })
             break
           case -2:
-            switch (json.authStatus) {
-              case -1:
-                props.history.push({ pathname: Routes.Auth })
-                break
-              case -2:
-                props.history.push({ pathname: Routes.Failure })
-                break
-              default:
-                break
-            }
+            props.history.push({ pathname: Routes.Failure })
             break
           default:
+            setErrorMessage(json.message)
             break
         }
       }).finally(() => {
