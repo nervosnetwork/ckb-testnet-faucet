@@ -66,7 +66,6 @@ public final class APIErrorMiddleware: Middleware, Service, ServiceType {
         // The HTTP headers to send with the error
         var headers: HTTPHeaders = ["Content-Type": "application/json"]
 
-        
         // Loop through the specializations, running
         // the error converter on each one.
         for converter in self.specializations {
@@ -127,7 +126,7 @@ public final class APIErrorMiddleware: Middleware, Service, ServiceType {
         let json: Data
         do {
             // Create JSON with an `error` key with the `message` constant as its value.
-            let container = APIErrorContainer(status: status ?? 10086, message: result.message)
+            let container = APIErrorContainer(status: status ?? 0, message: result.message)
             json = try JSONEncoder().encode(container)
         } catch {
             // Creating JSON data from error failed, so create a generic response message

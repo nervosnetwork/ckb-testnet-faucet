@@ -20,16 +20,16 @@ struct AuthorizationController: RouteCollection {
 
     func verify(_ req: Request) throws -> Future<Response> {
         return try VerifyRequestContent.decode(from: req).flatMap { (content: VerifyRequestContent) -> EventLoopFuture<Response> in
-            return GithubService.userInfo(for: content.accessToken ?? "", on: req).flatMap({ (user) -> EventLoopFuture<Response> in
+            return GithubService.userInfo(for: content.accessToken ?? "", on: req).flatMap { (user) -> EventLoopFuture<Response> in
                 return AuthenticationService().verify(userId: user?.id, on: req).makeJson(on: req)
-            })
+            }
         }.supportJsonp(on: req)
     }
 
     func authentication(_ req: Request) throws -> Future<Response> {
         return try AuthenticationRequestContent.decode(from: req).flatMap{ (content) -> EventLoopFuture<Response> in
-            return GithubService.accessToken(for: content.code, on: req).unwrap(or: Abort(HTTPStatus.badRequest)).flatMap({ (accessToken) -> EventLoopFuture<Response> in
-                return GithubService.userInfo(for: accessToken, on: req).unwrap(or: Abort(HTTPStatus.badRequest)).flatMap({ (user) -> EventLoopFuture<Response> in
+            return GithubService.accessToken(for: content.code, on: req).unwrap(or: Abort(HTTPStatus.badRequest)).flatMap { (accessToken) -> EventLoopFuture<Response> in
+                return GithubService.userInfo(for: accessToken, on: req).unwrap(or: Abort(HTTPStatus.badRequest)).flatMap { (user) -> EventLoopFuture<Response> in
                     return try AuthenticationService().authorization(for: accessToken, user: user, on: req).flatMap { _ in
                         var http = HTTPResponse(status: .found, headers: HTTPHeaders([("Location", content.state)]))
                         http.cookies = HTTPCookies(
@@ -37,8 +37,8 @@ struct AuthorizationController: RouteCollection {
                         )
                         return req.sharedContainer.eventLoop.newSucceededFuture(result: Response(http: http, using: req.sharedContainer))
                     }
-                })
-            })
+                }
+            }
         }
     }
 }

@@ -18,9 +18,9 @@ extension Future where T: Content {
 
 extension Future where T == ResponseStatus {
     func makeJson(on req: Request) -> Future<Response> {
-        return flatMap({ (status) -> EventLoopFuture<Response> in
+        return flatMap { (status) -> EventLoopFuture<Response> in
             return try ResponseContent<EmptyResponseContent>(status: status).encode(for: req)
-        })
+        }
     }
 }
 
@@ -35,9 +35,7 @@ extension Content {
 
 extension Future where T == Response {
     func supportJsonp(on req: Request) -> Future<Response> {
-        return map { res in
-            return res.supportJsonp(on: req)
-        }
+        return map { $0.supportJsonp(on: req) }
     }
 }
 
