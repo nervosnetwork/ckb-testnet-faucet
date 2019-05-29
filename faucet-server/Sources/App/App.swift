@@ -53,7 +53,15 @@ public class App {
         migrations.add(model: Faucet.self, database: .mysql)
         services.register(migrations)
 
-        // Configure the rest of your application here
+
+        /// Configure middleware
+        var middlewaresConfig = MiddlewareConfig()
+        middlewaresConfig.use(APIErrorMiddleware(environment: env, specializations: [
+            ModelNotFound()
+        ]))
+        services.register(middlewaresConfig)
+
+        /// Configure the rest of your application here
         var commandConfig = CommandConfig.default()
         commandConfig.useFluentCommands()
         services.register(commandConfig)
