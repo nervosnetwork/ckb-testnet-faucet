@@ -1,5 +1,5 @@
 import { Grommet } from 'grommet';
-import * as React from 'react';
+import React, { ReactNode } from 'react';
 
 const customTheme = {
   button: {
@@ -11,8 +11,8 @@ const customTheme = {
   global: {
     colors: {
       brand: "#4ec995",
-      text: "white",
-      border: "white"
+      text: "black",
+      border: "black"
     },
   },
   checkBox: {
@@ -27,16 +27,16 @@ const customTheme = {
     },
     hover: {
       border: {
-        color: undefined
+        color: "undefined",
       }
     },
     extend: `
-      color: white;
+      color: black;
     `
   }
 }
 
-export default ({ children }: { children?: React.ReactNode }) => {
+export default ({ children }: { children?: ReactNode }) => {
   return (
     <Grommet theme={customTheme}>{children}</Grommet>
   )

@@ -1,26 +1,32 @@
-import { Box, Button, CheckBox, Text } from 'grommet';
-import * as React from 'react';
+import { Box, Button, CheckBox, Text, Anchor } from 'grommet';
+import React, { useState } from 'react';
+import { Loader } from 'rsuite';
 
 export default () => {
-  const [enable, setEnbale] = React.useState(false)
+  const [enable, setEnable] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const onChangeEnable = () => {
-    setEnbale(!enable)
+    setEnable(!enable)
   }
 
-  const onLoginWithGithub = () => {
-    window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GITHUB_OAUTH_CLIENT_ID}&state=${window.location.origin}`;
+  const onLoginWithGitHub = () => {
+    setLoading(true)
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GITHUB_OAUTH_CLIENT_ID}&state=${window.location.origin}&scope=user:email`;
   }
 
   return (
-    <Box align="center" gap="small">
-      <Text color="text" size="16px">This faucet is for developers who wanna try developing on Nervos CKB but don't really feel like running a node themselves.</Text>
-      <Text color="text" size="16px">To get some test token, please click the button below to login with your GitHub ID.</Text>
-      <Text color="text" size="16px">Each account can only request test token once ever 24 hours.</Text>
-      <Box align="center" pad="small">
-        <CheckBox checked={enable} onChange={onChangeEnable} label="I understand this is for getting test tokens instead of official CKB" />
+    <Box align="center" gap="small" pad={{ "left": "xlarge", "right": "xlarge" }}>
+      <ul>
+        <li><Text color="text" size="xlarge">Sign in with your GitHub account to get Testnet tokens for free.</Text></li>
+        <li><Text color="text" size="xlarge">Please note that each account can only request tokens once every 24 hours.</Text></li>
+        <li><Text color="text" size="xlarge">For more information, please refer to the <Anchor href='https://docs.nervos.org' color='brand' target='_blank' >documentation website</Anchor>.</Text></li>
+      </ul>
+      <Box align="start" pad="small">
+        <CheckBox checked={enable} onChange={onChangeEnable} label="I understand that I am requesting for Testnet tokens instead of official Nervos tokens." />
       </Box>
-      <Button disabled={!enable} primary onClick={onLoginWithGithub} label="Login with Github" />
+      <Button disabled={!enable} primary onClick={onLoginWithGitHub} label="Log in with GitHub" />
+      {loading ? <Loader backdrop content="loading..." vertical /> : <div />}
     </Box>
   )
 }

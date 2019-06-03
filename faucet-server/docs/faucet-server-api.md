@@ -1,93 +1,90 @@
-## API
+# CKB Testnet Faucet Server API
 
-#### Request:
+### Verify
 
-`GET /auth/verify` 
+`GET /auth/verify`
 
-Support jsonp (Using JSON requests can cause cross-domain problems in the local test environment)
+#### Response
 
-#### Response:
-
-| Name   |      Type      |  Description |
-|----------|:-------------:|:------|
-| `status` |  `int` | 0: token is available; -1: unauthenticated; -2: received  |
-
-```
+```json
 {
-    "status" : -1
+    "status":0,
+    "message":"Request successful"
 }
 ```
 
+### Faucet
 
-#### Request:
+`GET /ckb/faucet`
 
-`POST /ckb/faucet`
-
-#### Parameters:
-
-| Name   |      Type      |  Description |
-|----------|:-------------:|:------|
-| `address` | `string` | wallet address P2PH  |
-
-#### Response:
+#### Parameters
 
 | Name   |      Type      |  Description |
 |----------|:-------------:|:------|
-| `status` | `int` | 0: success; -1 -2: verify failed; -3: failed  |
-| `txHash` | `string` | tx hash |
-| `error` | `string` | error message |
+| address |  string | Wallet address.  |
 
+#### Response
 
-```
+```json
 {
-    "status" : 0,
-    "txHash" : "0x9a46fc47a4fbb6b155d46e26311a011d40f13a377e3f97084b45c856ffd29e9d"
+    "status":0,
+    "message":"Request successful",
+    "data":{
+        "txHash":"0xeb33b0982e109eacbadb99caab918e42d5760a33eb3f54bfe27966ab6f50c2e4"
+    }
 }
 ```
 
-#### Request:
+### Generate Address
 
 `GET /ckb/address`
 
-#### Parameters:
+#### Parameters
 
 | Name   |      Type      |  Description |
 |----------|:-------------:|:------|
-| `privateKey` | `string` | Only one of the private key or public key is required. |
-| `publicKey` | `string` | Only one of the private key or public key is required. |
+| privateKey | string | Only one of the private key or public key is required. |
+| publicKey | string | Only one of the private key or public key is required. |
 
-#### Response:
+#### Response
 
-| Name   |      Type      |  Description |
-|----------|:-------------:|:------|
-| `status` | `int` | 0: Ok; -1: No public or private key; -2: Invalid public or private key  |
-| `address` | `string` | Wallet address |
-| `error` | `string` | Error message |
-
-```
+```json
 {
-    "status" : 0,
-    "address" : "0xbc374983430db3686ab181138bb510cb8f83aa136d833ac18fc3e73a3ad54b8b"
+    "status":0,
+    "message":"Request successful",
+    "data":{
+        "address":"ckt1q9gry5zgua0jse2vljymevpm7gey8pjvrptmslykrdt28k",
+    }
 }
 ```
 
-
-#### Request:
+### Generate Random Address
 
 `GET /ckb/address/random`
 
-#### Response:
+#### Response
 
-| Name   |      Type      |  Description |
-|----------|:-------------:|:------|
-| `privateKey` | `string` |  |
-| `publicKey` | `string` |  |
-| `address` | `string` |  |
-
-```
+```json
 {
-    "privateKey" : "a9d8a7c054fc859ca353f5448f339df850aa4242a83c6ad6d13d6e6a790e0142",
-    "publicKey" : "02f7d93237037b1743784e43ccc5442918a35d24b8c0975f1cdd6c94b6990e0bf9"
-    "address" : "0x4ad91b77b10569ab1bbdd56674443607dc8379bc734f08f422a50066377a3eb5"
+    "status":0,
+    "message":"Request successful",
+    "data":{
+        "address":"ckt1q9gry5zgua0jse2vljymevpm7gey8pjvrptmslykrdt28k",
+        "privateKey":"3e117b5164d1b29ccdab5120d92d805289e242272409194171aa149fe9967eef",
+        "publicKey":"03108a3738adf4241b398410d922c09c8f3545f10a0471f8b6a9c9a467ea21f61e"
+    }
 }
 ```
+
+### Response Status
+
+| Code   |  Message |
+|----------|:------|
+| 0 | Request successful  |
+| -1 | Unauthenticated  |
+| -2 | Received  |
+| -3 | Invalid address  |
+| -4 | Invalid private key  |
+| -5 | Invalid public key  |
+| -6 | Send transaction failed  |
+| -7 | Publickey or privatekey not exist  |

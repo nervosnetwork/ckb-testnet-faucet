@@ -12,30 +12,36 @@ import CKB
 
 class WalletTests: XCTestCase {
     override func invokeTest() {
-        if ProcessInfo().environment["SKIP_CKB_API_TESTS"] == "1" {
+        if ProcessInfo.processInfo.environment["SKIP_CKB_API_TESTS"] == "1" {
             return
         }
         super.invokeTest()
     }
 
     func testBalance() throws {
-        let client = APIClient()
-        let wallet = try Wallet(api: client, privateKey: "")    // Set a valid wallet private key
+        let nodeUrl = URL(string: "")! // Set a valid ckb node url
+        let api = APIClient(url: nodeUrl)
+        let systemScript = try SystemScript.loadFromGenesisBlock(nodeUrl: nodeUrl)
+
+        let wallet = Wallet(api: api, systemScript: systemScript, privateKey: "") // Set a valid wallet private key
         XCTAssert(try wallet.getBalance() > 0)
     }
 
     func testSendCapacity() throws {
-        let client = APIClient()
-        let wallet = try Wallet(api: client, privateKey: "")    // Set a valid wallet private key
+        let nodeUrl = URL(string: "")! // Set a valid ckb node url
+        let api = APIClient(url: nodeUrl)
+        let systemScript = try SystemScript.loadFromGenesisBlock(nodeUrl: nodeUrl)
 
-        let newWallet = try Wallet(api: client, privateKey: CKBController().generatePrivateKey())
+        let wallet = Wallet(api: api, systemScript: systemScript, privateKey: "") // Set a valid wallet private key
+
+        let newWallet = Wallet(api: api, systemScript: systemScript, privateKey: CKBController.generatePrivateKey())
         let txhash = try wallet.sendCapacity(targetLock: newWallet.lock, capacity: 20000000000)
 
         var repeatCount = 20
         while repeatCount > 0 {
             Thread.sleep(forTimeInterval: 6)
             do {
-                _ = try client.getTransaction(hash: txhash)
+                _ = try api.getTransaction(hash: txhash)
                 XCTAssert(try newWallet.getBalance() >= 20000000000)
                 break
             } catch {

@@ -10,57 +10,35 @@ import Vapor
 
 struct AuthorizationController: RouteCollection {
     func boot(router: Router) throws {
-        router.get("auth/verify", use: verify)
-        try router.register(collection: Github())
-    }
-
-    func verify(_ req: Request) -> Response {
-        let accessToken = req.http.cookies.all[accessTokenCookieName]?.string
-
-        let status = Authorization().verify(accessToken: accessToken)
-
-        let result = ["status": status.rawValue]
-        let body: HTTPBody
-        if let callback = req.http.url.absoluteString.urlParametersDecode["callback"] {
-            body = HTTPBody(string: "\(callback)(\(result.toJson))")
-        } else {
-            body = HTTPBody(string: result.toJson)
+        router.group("auth") { router in
+            router.get("verify", use: verify)
+            router.group("github", configure: { router in
+                router.get("callback", use: authentication)
+            })
         }
-        return Response(http: HTTPResponse(body: body), using: req.sharedContainer)
-    }
-}
-
-extension AuthorizationController {
-    struct Github {
-    }
-}
-
-extension AuthorizationController.Github: RouteCollection {
-    func boot(router: Router) throws {
-        router.get("auth/github/callback", use: callback)
     }
 
-    func callback(_ req: Request) -> Response {
-        let parameters = req.http.url.absoluteString.urlParametersDecode
-        guard let code = parameters["code"], let state = parameters["state"] else {
-            return Response(http: HTTPResponse(status: .notFound), using: req)
+    func verify(_ req: Request) throws -> Future<Response> {
+        return try VerifyRequestContent.decode(from: req).flatMap { (content: VerifyRequestContent) -> EventLoopFuture<Response> in
+            return GithubService.userInfo(for: content.accessToken ?? "", on: req).flatMap { (user) -> EventLoopFuture<Response> in
+                return AuthenticationService().verify(userId: user?.id, on: req).makeJson(on: req)
+            }
+        }.supportJsonp(on: req)
+    }
+
+    func authentication(_ req: Request) throws -> Future<Response> {
+        return try AuthenticationRequestContent.decode(from: req).flatMap{ (content) -> EventLoopFuture<Response> in
+            return GithubService.accessToken(for: content.code, on: req).unwrap(or: Abort(HTTPStatus.badRequest)).flatMap { (accessToken) -> EventLoopFuture<Response> in
+                return GithubService.userInfo(for: accessToken, on: req).unwrap(or: Abort(HTTPStatus.badRequest)).flatMap { (user) -> EventLoopFuture<Response> in
+                    return try AuthenticationService().authorization(for: accessToken, user: user, on: req).flatMap { _ in
+                        var http = HTTPResponse(status: .found, headers: HTTPHeaders([("Location", content.state)]))
+                        http.cookies = HTTPCookies(
+                            dictionaryLiteral: (accessTokenCookieName, HTTPCookieValue(string: accessToken, domain: URL(string: content.state)?.host))
+                        )
+                        return req.sharedContainer.eventLoop.newSucceededFuture(result: Response(http: http, using: req.sharedContainer))
+                    }
+                }
+            }
         }
-
-        // Exchange this code for an access token
-        let accessToken = Authorization().authorization(code: code)
-
-        // Redirect back to Web page
-        let headers = HTTPHeaders([("Location", state)])
-        var http = HTTPResponse(status: .found, headers: headers)
-
-        // If the validation is successful, Add access token Cookie
-        if let accessToken = accessToken {
-            let domain = URL(string: state)?.host
-            http.cookies = HTTPCookies(
-                dictionaryLiteral: (accessTokenCookieName, HTTPCookieValue(string: accessToken, domain: domain))
-            )
-        }
-
-        return Response(http: http, using: req.sharedContainer)
     }
 }

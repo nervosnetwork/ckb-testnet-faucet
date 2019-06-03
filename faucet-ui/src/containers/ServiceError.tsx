@@ -1,10 +1,10 @@
 import fetchJsonp from 'fetch-jsonp';
 import { Box, Text } from 'grommet';
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { Routes } from '../utils/const';
 
 export default (props: any) => {
-  React.useEffect(() => {
+  useEffect(() => {
     fetchJsonp(`${process.env.REACT_APP_API_HOST}/auth/verify`).then((response: any) => {
       return response.json()
     }).then((json: any) => {
@@ -15,14 +15,17 @@ export default (props: any) => {
         case -1:
           props.history.push({ pathname: Routes.Auth })
           break
+        case -2:
+          props.history.push({ pathname: Routes.Failure })
+          break
       }
     })
   }, [])
 
   return (
-    <Box align='center' gap='small'>
-      <Text color="text" size="16px">Sorry, the server may have something wrong.</Text>
-      <Text color="text" size="16px">Please try again later.</Text>
+    <Box align='center' gap='small' pad={{ "left": "xlarge", "right": "xlarge" }}>
+      <Text textAlign='center' color="text" size='xlarge'> There's something wrong with your internet connection. </Text>
+      <Text textAlign='center' color="text" size='xlarge'> Please try again later. </Text>
     </Box>
   )
 }
