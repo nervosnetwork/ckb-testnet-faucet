@@ -1,15 +1,15 @@
 import fetchJsonp from 'fetch-jsonp';
 import { Box, Button, Text, TextInput, Anchor } from 'grommet';
-import * as React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Routes } from '../utils/const';
 import 'rsuite/dist/styles/rsuite.min.css';
 import { Loader } from 'rsuite';
 
 export default (props: any) => {
-  const [enable, setEnable] = React.useState(false)
-  const inputKey = React.useRef(null)
-  const [errorMessage, setErrorMessage] = React.useState(null as string | null)
-  const [loading, setLoading] = React.useState(false)
+  const [enable, setEnable] = useState(false)
+  const inputKey = useRef(null)
+  const [errorMessage, setErrorMessage] = useState(null as string | null)
+  const [loading, setLoading] = useState(false)
 
   const onClickGetTestToken = () => {
     const element = inputKey.current! as HTMLInputElement
@@ -44,7 +44,7 @@ export default (props: any) => {
   }
 
   // Determine whether need to enter the authentication or failure page
-  React.useEffect(() => {
+  useEffect(() => {
     setLoading(true)
     fetchJsonp(`${process.env.REACT_APP_API_HOST}/auth/verify`).then((response: any) => {
       return response.json()

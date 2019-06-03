@@ -1,16 +1,16 @@
 import { Box, Text, TextInput, Button } from 'grommet'
-import * as React from 'react'
+import React, { useEffect, useState } from 'react'
 import copy from 'copy-to-clipboard'
 
 export default (props: any) => {
-  const [copyMsg, setCopyMsg] = React.useState(String)
-  const [addressShow, setAddressShow] = React.useState(String)
+  const [copyMsg, setCopyMsg] = useState(String)
+  const [addressShow, setAddressShow] = useState(String)
   let address: string
   if (props.location.query) {
     address = props.location.query.privateKey
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     setAddressShow(address)
   })
 
