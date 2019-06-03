@@ -1,14 +1,17 @@
 import { Box, Button, CheckBox, Text, Anchor } from 'grommet';
 import * as React from 'react';
+import { Loader } from 'rsuite';
 
 export default () => {
   const [enable, setEnable] = React.useState(false)
+  const [loading, setLoading] = React.useState(false)
 
   const onChangeEnable = () => {
     setEnable(!enable)
   }
 
   const onLoginWithGitHub = () => {
+    setLoading(true)
     window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GITHUB_OAUTH_CLIENT_ID}&state=${window.location.origin}&scope=user:email`;
   }
 
@@ -23,6 +26,7 @@ export default () => {
         <CheckBox checked={enable} onChange={onChangeEnable} label="I understand that I am requesting for Testnet tokens instead of official Nervos tokens." />
       </Box>
       <Button disabled={!enable} primary onClick={onLoginWithGitHub} label="Log in with GitHub" />
+      {loading ? <Loader backdrop content="loading..." vertical /> : <div />}
     </Box>
   )
 }
