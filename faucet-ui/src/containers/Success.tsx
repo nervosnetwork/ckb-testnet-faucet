@@ -18,7 +18,7 @@ export default (props: any) => {
   return (
     <Box gap="small" align="center">
       <Text textAlign='start' weight="bold" color="text" size='xlarge'> Congratulations! </Text>
-      <Text textAlign='start' weight="bold" color="text" size='xlarge'> You just got 500 CKB Testnet tokens! </Text>
+      <Text textAlign='start' weight="bold" color="text" size='xlarge'> You just got {process.env.REACT_APP_SEND_CAPACITY_COUNT} CKB Testnet tokens! </Text>
       <Box width="750px">
         <Box direction="row" pad={{ top: "medium", bottom: "small" }}>
           <Box width="200px">
