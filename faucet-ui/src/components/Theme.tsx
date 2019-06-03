@@ -1,5 +1,5 @@
 import { Grommet } from 'grommet';
-import * as React from 'react';
+import React, { ReactNode } from 'react';
 
 const customTheme = {
   button: {
@@ -36,7 +36,7 @@ const customTheme = {
   }
 }
 
-export default ({ children }: { children?: React.ReactNode }) => {
+export default ({ children }: { children?: ReactNode }) => {
   return (
     <Grommet theme={customTheme}>{children}</Grommet>
   )

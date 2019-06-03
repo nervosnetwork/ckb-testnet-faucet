@@ -1,5 +1,5 @@
 import { Box, Anchor, Text, TextInput } from 'grommet';
-import * as React from 'react';
+import React from 'react';
 import { Routes } from '../utils/const';
 
 export default (props: any) => {

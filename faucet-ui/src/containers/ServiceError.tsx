@@ -1,10 +1,10 @@
 import fetchJsonp from 'fetch-jsonp';
 import { Box, Text } from 'grommet';
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { Routes } from '../utils/const';
 
 export default (props: any) => {
-  React.useEffect(() => {
+  useEffect(() => {
     fetchJsonp(`${process.env.REACT_APP_API_HOST}/auth/verify`).then((response: any) => {
       return response.json()
     }).then((json: any) => {

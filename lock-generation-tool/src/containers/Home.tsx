@@ -1,11 +1,11 @@
 import { Box, Text, Button, TextInput } from 'grommet';
-import * as React from 'react';
+import React, { useRef, useState } from 'react';
 import { Routes } from '../utils/const';
 import { APIHost } from '../utils/const';
 
 export default (props: any) => {
-  const inputKey = React.useRef(null)
-  const [errorMsg, setErrorMsg] = React.useState(null as String | null)
+  const inputKey = useRef(null)
+  const [errorMsg, setErrorMsg] = useState(null as String | null)
   const onClickGenerateLockAndKey = () => {
     props.history.push({ pathname: Routes.NewKeyLock })
   }

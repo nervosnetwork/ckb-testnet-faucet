@@ -1,10 +1,10 @@
 import { Box, Text } from 'grommet';
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { Routes } from '../utils/const';
 import { APIHost } from '../utils/const';
 
 export default (props: any) => {
-  React.useEffect(() => {
+  useEffect(() => {
     fetch(`${APIHost}`).then((_response) => {
       props.history.push({ pathname: Routes.Home })
     })

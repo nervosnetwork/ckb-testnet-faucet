@@ -1,5 +1,5 @@
 import { Box, Heading, Stack } from 'grommet';
-import * as React from 'react';
+import React from 'react';
 import Router from './components/Router';
 import Theme from './components/Theme';
 

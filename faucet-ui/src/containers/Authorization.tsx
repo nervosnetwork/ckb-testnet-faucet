@@ -1,10 +1,10 @@
 import { Box, Button, CheckBox, Text, Anchor } from 'grommet';
-import * as React from 'react';
+import React, { useState } from 'react';
 import { Loader } from 'rsuite';
 
 export default () => {
-  const [enable, setEnable] = React.useState(false)
-  const [loading, setLoading] = React.useState(false)
+  const [enable, setEnable] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const onChangeEnable = () => {
     setEnable(!enable)
