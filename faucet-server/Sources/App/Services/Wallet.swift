@@ -57,15 +57,15 @@ public class Wallet {
 
     func generateTransaction(targetLock: Script, capacity: Decimal) throws -> Transaction {
         let validInputs = try cellService.gatherInputs(capacity: capacity)
-        var outputs: [CellOutput] = [
-            CellOutput(capacity: "\(capacity)", data: "0x", lock: targetLock, type: nil)
-        ]
+        var witnesses = [Witness()]
+        var outputs: [CellOutput] = [CellOutput(capacity: "\(capacity)", data: "0x", lock: targetLock, type: nil)]
         if validInputs.capacity > capacity {
             outputs.append(CellOutput(capacity: "\(validInputs.capacity - capacity)", data: "0x", lock: lock, type: nil))
+            witnesses.append(Witness())
         }
-        let tx = Transaction(deps: deps, inputs: validInputs.cellInputs, outputs: outputs)
+        let tx = Transaction(deps: deps, inputs: validInputs.cellInputs, outputs: outputs, witnesses: witnesses)
         let txhash = try api.computeTransactionHash(transaction: tx)
-        return Transaction.sign(tx: tx, with: Data(hex: privateKey), txHash: txhash)
+        return try Transaction.sign(tx: tx, with: Data(hex: privateKey), txHash: txhash)
     }
 }
 
