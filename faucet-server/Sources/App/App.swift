@@ -56,9 +56,7 @@ public class App {
 
         /// Configure middleware
         var middlewaresConfig = MiddlewareConfig()
-        middlewaresConfig.use(APIErrorMiddleware(environment: env, specializations: [
-            ModelNotFound()
-        ]))
+        middlewaresConfig.use(APIErrorMiddleware(environment: env, specializations: [ModelNotFound()]))
         services.register(middlewaresConfig)
 
         /// Configure command
