@@ -1,6 +1,6 @@
 import fetchJsonp from 'fetch-jsonp';
 import { Box, Button, Text, TextInput, Anchor } from 'grommet';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ReactNode } from 'react';
 import { Routes } from '../utils/const';
 import 'rsuite/dist/styles/rsuite.min.css';
 import { Loader } from 'rsuite';
@@ -8,14 +8,14 @@ import { Loader } from 'rsuite';
 export default (props: any) => {
   const [enable, setEnable] = useState(false)
   const inputKey = useRef(null)
-  const [errorMessage, setErrorMessage] = useState(null as string | null)
+  const [errorElement, setErrorElement] = useState(null as ReactNode | null)
   const [loading, setLoading] = useState(false)
 
   const onClickGetTestToken = () => {
     const element = inputKey.current! as HTMLInputElement
     const address = element.value.trim()
     if (address.length > 0) {
-      setErrorMessage(null)
+      setErrorElement(null)
       setLoading(true)
 
       fetchJsonp(`${process.env.REACT_APP_API_HOST}/ckb/faucet?address=${address}`, { timeout: 1000 * 60 }).then((response: any) => {
@@ -32,14 +32,18 @@ export default (props: any) => {
             props.history.push({ pathname: Routes.Failure })
             break
           default:
-            setErrorMessage(json.message)
+            setErrorElement(<Text color="red" size="16px">{json.message}</Text>)
             break
         }
       }).finally(() => {
         setLoading(false)
       })
     } else {
-      setErrorMessage("Wrong address format. Please refer to the document for how to generate wallet.")
+      setErrorElement(
+        <Text color="red" size="16px">
+          Wrong address format. Please refer to the <Anchor href='https://docs.nervos.org' color='red' target='_blank'>document</Anchor> for how to generate wallet.
+        </Text>
+      )
     }
   }
 
@@ -73,7 +77,7 @@ export default (props: any) => {
       </ul>
       <Box width="600px" align="start" pad="small" gap="small">
         <TextInput style={{ color: "black" }} width="100%" ref={inputKey} placeholder='Please fill in your address here "ckt......"' />
-        {errorMessage ? <Text color="red" size="16px">Wrong address format. Please refer to the <Anchor href='https://docs.nervos.org' color='red' target='_blank'>document</Anchor> for how to generate wallet.</Text> : <div />}
+        {errorElement ? errorElement : <div />}
       </Box>
       <Button disabled={!enable} primary label="Get Some Testnet Tokens" onClick={onClickGetTestToken} />
       <Text color="text" size="small">If there are any problems, you can find us on <Anchor href='https://t.me/NervosNetwork' color='brand' target='_blank'>Telegram</Anchor>.</Text>
