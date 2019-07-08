@@ -5,6 +5,17 @@ import { Routes } from '../utils/const';
 import 'rsuite/dist/styles/rsuite.min.css';
 import { Loader } from 'rsuite';
 
+const removeHeadAndTailSpace = (string: string) => {
+  if (!string) return ''
+  while (string.startsWith(' ')) {
+    string = string.slice(1)
+  }
+  while (string.endsWith(' ')) {
+    string = string.slice(0, string.length - 1)
+  }
+  return string
+}
+
 export default (props: any) => {
   const [enable, setEnable] = useState(false)
   const inputKey = useRef(null)
@@ -13,7 +24,7 @@ export default (props: any) => {
 
   const onClickGetTestToken = () => {
     const element = inputKey.current! as HTMLInputElement
-    const address = element.value
+    const address = removeHeadAndTailSpace(element.value)
     if (address.length > 0) {
       setErrorMessage(null)
       setLoading(true)
