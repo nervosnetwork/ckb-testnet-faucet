@@ -13,7 +13,7 @@ export default (props: any) => {
 
   const onClickGetTestToken = () => {
     const element = inputKey.current! as HTMLInputElement
-    const address = element.value
+    const address = element.value.trim()
     if (address.length > 0) {
       setErrorMessage(null)
       setLoading(true)
