@@ -8,6 +8,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/vapor/vapor.git", from: "3.0.0"),
         .package(url: "https://github.com/vapor/fluent-mysql.git", from: "3.0.0"),
+        .package(url: "https://github.com/nervosnetwork/ckb-sdk-swift", .revision("8f137dfc572926c4338f4d54f348a78a33a57758"))
     ],
     targets: [
         .target(name: "App", dependencies: [
