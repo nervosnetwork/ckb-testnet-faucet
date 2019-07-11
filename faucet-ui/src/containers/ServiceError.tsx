@@ -20,7 +20,7 @@ export default (props: any) => {
           break
       }
     })
-  }, [])
+  }, [props.history])
 
   return (
     <Box align='center' gap='small' pad={{ "left": "xlarge", "right": "xlarge" }}>
