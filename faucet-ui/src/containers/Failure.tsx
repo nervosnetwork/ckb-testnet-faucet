@@ -17,7 +17,7 @@ export default (props: any) => {
           break
       }
     })
-  }, [])
+  }, [props.history])
 
   return (
     <Box align="center" gap="small">
