@@ -8991,7 +8991,7 @@ request-promise-core@1.1.2:
   resolved "https://registry.yarnpkg.com/request-promise-core/-/request-promise-core-1.1.2.tgz#339f6aababcafdb31c799ff158700336301d3346"
   integrity sha512-UHYyq1MO8GsefGEt7EprS8UrXsm1TxEvFUX1IMTuSLU2Rh7fTIdFtl8xD7JiEYiWU2dl+NYAjCTksTehQUxPag==
   dependencies:
-    lodash "^4.17.13"
+    lodash "^4.17.11"
 
 request-promise-native@^1.0.5:
   version "1.0.7"

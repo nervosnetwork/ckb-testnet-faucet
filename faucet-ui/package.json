@@ -31,7 +31,8 @@
     "@types/react-dom": "^16.8.2",
     "@types/styled-components": "^4.1.12",
     "react-app-rewired": "^2.1.0",
-    "typescript": "^3.3.3333"
+    "typescript": "^3.3.3333",
+    "babel-jest": "^24.8.0"
   },
   "browserslist": [
     ">0.2%",
