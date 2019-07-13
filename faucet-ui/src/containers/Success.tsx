@@ -7,7 +7,7 @@ export default (props: any) => {
   if (props.location.query) {
     txHash = props.location.query.txHash
   }
-  if (txHash == undefined) {
+  if (txHash === undefined) {
     props.history.push({ pathname: Routes.Home })
   }
 

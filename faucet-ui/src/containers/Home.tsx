@@ -67,7 +67,7 @@ export default (props: any) => {
       setEnable(true)
       setLoading(false)
     })
-  }, [])
+  }, [props.history])
 
   return (
     <Box width="100%" align="center" gap="small" pad={{ "left": "xlarge", "right": "xlarge" }}>
