@@ -45,15 +45,6 @@ public class CellService {
         }
         return ValidInputs(cellInputs: inputs, capacity: inputCapacities)
     }
-
-    private func getBlockNumber(for outPoint: OutPoint) -> Int {
-        if let blockHash = outPoint.blockHash {
-            if let block = try? api.getBlock(hash: blockHash) {
-                return Int(block.header.number)!
-            }
-        }
-        return currentBlockNumber
-    }
 }
 
 /// Data store

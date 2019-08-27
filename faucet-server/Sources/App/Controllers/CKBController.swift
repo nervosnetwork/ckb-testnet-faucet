@@ -20,7 +20,7 @@ public class CKBController: RouteCollection {
     public init(nodeUrl: URL) throws {
         self.nodeUrl = nodeUrl
         api = APIClient(url: nodeUrl)
-        systemScript = try SystemScript.loadFromGenesisBlock(nodeUrl: nodeUrl)
+        systemScript = try SystemScript.loadSystemScript(nodeUrl: nodeUrl)
     }
 
     public func boot(router: Router) throws {
@@ -100,7 +100,7 @@ public class CKBController: RouteCollection {
 
     public func sendCapacity(address: String) throws -> H256 {
         guard let publicKeyHash = AddressGenerator(network: .testnet).publicKeyHash(for: address) else { throw Error.invalidAddress }
-        let targetLock = Script(args: [Utils.prefixHex(publicKeyHash)], codeHash: systemScript.codeHash)
+        let targetLock = Script(args: [Utils.prefixHex(publicKeyHash)], codeHash: systemScript.secp256k1TypeHash, hashType: .type)
 
         let wallet = Wallet(api: api, systemScript: systemScript, privateKey: Environment.CKB.walletPrivateKey)
         return try wallet.sendCapacity(targetLock: targetLock, capacity: Environment.CKB.sendCapacityCount)

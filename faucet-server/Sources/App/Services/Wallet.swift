@@ -15,8 +15,8 @@ public class Wallet {
     let privateKey: String
     let systemScript: SystemScript
 
-    var deps: [OutPoint] {
-        return [systemScript.outPoint]
+    var deps: [CellDep] {
+        return [CellDep(outPoint: systemScript.depOutPoint, depType: .depGroup)]
     }
     var publicKey: H256 {
         return "0x" + Utils.privateToPublic(privateKey)
@@ -28,7 +28,7 @@ public class Wallet {
         return "0x" + AddressGenerator(network: .testnet).hash(for: Data(hex: publicKey)).toHexString()
     }
     public var lock: Script {
-        return Script(args: [publicKeyHash], codeHash: systemScript.codeHash)
+        return Script(args: [publicKeyHash], codeHash: systemScript.secp256k1TypeHash, hashType: .type)
     }
     var lockHash: H256 {
         return lock.hash
@@ -58,12 +58,12 @@ public class Wallet {
     func generateTransaction(targetLock: Script, capacity: Decimal) throws -> Transaction {
         let validInputs = try cellService.gatherInputs(capacity: capacity)
         var witnesses = [Witness()]
-        var outputs: [CellOutput] = [CellOutput(capacity: "\(capacity)", data: "0x", lock: targetLock, type: nil)]
+        var outputs: [CellOutput] = [CellOutput(capacity: "\(capacity)", lock: targetLock, type: nil)]
         if validInputs.capacity > capacity {
-            outputs.append(CellOutput(capacity: "\(validInputs.capacity - capacity)", data: "0x", lock: lock, type: nil))
+            outputs.append(CellOutput(capacity: "\(validInputs.capacity - capacity)", lock: lock, type: nil))
             witnesses.append(Witness())
         }
-        let tx = Transaction(deps: deps, inputs: validInputs.cellInputs, outputs: outputs, witnesses: witnesses)
+        let tx = Transaction(cellDeps: deps, inputs: validInputs.cellInputs, outputs: outputs, witnesses: witnesses)
         let txhash = try api.computeTransactionHash(transaction: tx)
         return try Transaction.sign(tx: tx, with: Data(hex: privateKey), txHash: txhash)
     }

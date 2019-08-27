@@ -21,7 +21,7 @@ class WalletTests: XCTestCase {
     func testBalance() throws {
         let nodeUrl = URL(string: "")! // Set a valid ckb node url
         let api = APIClient(url: nodeUrl)
-        let systemScript = try SystemScript.loadFromGenesisBlock(nodeUrl: nodeUrl)
+        let systemScript = try SystemScript.loadSystemScript(nodeUrl: nodeUrl)
 
         let wallet = Wallet(api: api, systemScript: systemScript, privateKey: "") // Set a valid wallet private key
         XCTAssert(try wallet.getBalance() > 0)
@@ -30,7 +30,7 @@ class WalletTests: XCTestCase {
     func testSendCapacity() throws {
         let nodeUrl = URL(string: "")! // Set a valid ckb node url
         let api = APIClient(url: nodeUrl)
-        let systemScript = try SystemScript.loadFromGenesisBlock(nodeUrl: nodeUrl)
+        let systemScript = try SystemScript.loadSystemScript(nodeUrl: nodeUrl)
 
         let wallet = Wallet(api: api, systemScript: systemScript, privateKey: "") // Set a valid wallet private key
 

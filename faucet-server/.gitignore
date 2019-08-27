@@ -4,3 +4,4 @@ xcuserdata
 *.xcodeproj
 DerivedData/
 *.db
+.swiftpm
