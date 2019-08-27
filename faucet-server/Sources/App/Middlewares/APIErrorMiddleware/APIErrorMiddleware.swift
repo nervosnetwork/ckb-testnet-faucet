@@ -1,3 +1,4 @@
+/// Adapted from https://github.com/skelpo/APIErrorMiddleware
 import Vapor
 import Foundation
 
