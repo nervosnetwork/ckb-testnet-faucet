@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/nervosnetwork/ckb-sdk-swift",
         "state": {
           "branch": null,
-          "revision": "f13d2bc91e395892ac9e69d797634d17b2ff11aa",
-          "version": "0.18.0"
+          "revision": "79bee125059692565a63659056d7e54ceca08325",
+          "version": "0.19.0"
         }
       },
       {
@@ -105,8 +105,8 @@
         "repositoryURL": "https://github.com/vapor/mysql.git",
         "state": {
           "branch": null,
-          "revision": "03f97974235bdc7259fc013e0feb963fd322372e",
-          "version": "3.2.5"
+          "revision": "6e86ff53e18f02faf26c2cbea1c1fb466bff6866",
+          "version": "3.2.6"
         }
       },
       {
