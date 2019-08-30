@@ -16,7 +16,7 @@ struct Faucet: Content, MySQLModel, Migration {
     var userId: Int
     var txHash: String
     var date: Date
-    
+
     init(userId: Int, txHash: String) {
         self.userId = userId
         self.txHash = txHash
