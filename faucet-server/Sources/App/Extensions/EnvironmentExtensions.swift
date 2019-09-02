@@ -19,12 +19,12 @@ extension Environment {
     struct CKB {
         private(set) static var nodeURL: String!
         private(set) static var walletPrivateKey: String!
-        private(set) static var sendCapacityCount: Decimal!
+        private(set) static var sendCapacityCount: Decimal = 0
 
         static func configure(_ environment: inout Environment) throws {
-            walletPrivateKey = try environment.commandInput.parse(option: .value(name: "wallet_private_key"))
             nodeURL = try environment.commandInput.parse(option: .value(name: "node_url"))
-            sendCapacityCount = Decimal(string: (try? environment.commandInput.parse(option: .value(name: "send_capacity_count"))) ?? "20000000000")!
+            walletPrivateKey = try environment.commandInput.parse(option: .value(name: "wallet_private_key"))
+            sendCapacityCount = Decimal(string: (try? environment.commandInput.parse(option: .value(name: "send_capacity_count"))) ?? "5000" + "00000000")!
         }
     }
 }

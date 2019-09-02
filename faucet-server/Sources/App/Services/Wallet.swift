@@ -8,63 +8,69 @@
 import Foundation
 import CKB
 
-let minCellCapacity = Decimal(60 * pow(10, 8))
-
 public class Wallet {
     let api: APIClient
     let privateKey: String
     let systemScript: SystemScript
 
-    var deps: [OutPoint] {
-        return [systemScript.outPoint]
-    }
+    private var cellService: CellService!
+
     var publicKey: H256 {
         return "0x" + Utils.privateToPublic(privateKey)
     }
-    var address: String {
-        return AddressGenerator(network: .testnet).address(for: publicKey)
-    }
-    var publicKeyHash: String {
-        return "0x" + AddressGenerator(network: .testnet).hash(for: Data(hex: publicKey)).toHexString()
-    }
+
     public var lock: Script {
-        return Script(args: [publicKeyHash], codeHash: systemScript.codeHash)
-    }
-    var lockHash: H256 {
-        return lock.hash
+        let publicKeyHash = "0x" + AddressGenerator(network: .testnet).hash(for: Data(hex: publicKey)).toHexString()
+        return Script(args: [publicKeyHash], codeHash: systemScript.secp256k1TypeHash, hashType: .type)
     }
 
-    private var cellService: CellService!
-
-    public init(api: APIClient, systemScript: SystemScript, privateKey: H256) {
-        self.api = api
-        self.systemScript = systemScript
+    public init(nodeUrl: URL, privateKey: String) throws {
         self.privateKey = privateKey
-        cellService = CellService(lockHash: lockHash, publicKey: publicKey, api: api)
+        api = APIClient(url: nodeUrl)
+        systemScript = try SystemScript.loadSystemScript(nodeUrl: nodeUrl)
+        cellService = CellService(lock: lock, api: api)
+    }
+
+    public func sendTestTokens(to: String, amount: Decimal) throws -> H256 {
+        let minCellCapacity = Decimal(60 * pow(10, 8))
+        guard amount >= minCellCapacity else {
+            throw Error.tooLowCapacity(min: minCellCapacity.description)
+        }
+
+        guard let publicKeyHash = AddressGenerator(network: .testnet).publicKeyHash(for: to) else {
+             throw Error.invalidAddress
+        }
+        let toLockScript = Script(args: [Utils.prefixHex(publicKeyHash)], codeHash: systemScript.secp256k1TypeHash, hashType: .type)
+        let tx = try generateTransaction(toLockScript: toLockScript, capacity: amount)
+        return try api.sendTransaction(transaction: tx)
     }
 
     public func getBalance() throws -> Decimal {
         return try cellService.getUnspentCells().reduce(0, { $0 + Decimal(string: $1.0.capacity)! })
     }
 
-    public func sendCapacity(targetLock: Script, capacity: Decimal) throws -> H256 {
-        guard capacity >= minCellCapacity else { throw Error.tooLowCapacity(min: minCellCapacity.description) }
-        let tx = try generateTransaction(targetLock: targetLock, capacity: capacity)
-        return try api.sendTransaction(transaction: tx)
-    }
-
     // MARK: Utils
 
-    func generateTransaction(targetLock: Script, capacity: Decimal) throws -> Transaction {
+    func generateTransaction(toLockScript: Script, capacity: Decimal) throws -> Transaction {
+        let deps = [CellDep(outPoint: systemScript.depOutPoint, depType: .depGroup)]
         let validInputs = try cellService.gatherInputs(capacity: capacity)
+        var outputs: [CellOutput] = [CellOutput(capacity: "\(capacity)", lock: toLockScript, type: nil)]
+        var outputsData: [HexString] = ["0x"]
         var witnesses = [Witness()]
-        var outputs: [CellOutput] = [CellOutput(capacity: "\(capacity)", data: "0x", lock: targetLock, type: nil)]
+
         if validInputs.capacity > capacity {
-            outputs.append(CellOutput(capacity: "\(validInputs.capacity - capacity)", data: "0x", lock: lock, type: nil))
+            outputs.append(CellOutput(capacity: "\(validInputs.capacity - capacity)", lock: lock, type: nil))
+            outputsData.append("0x")
             witnesses.append(Witness())
         }
-        let tx = Transaction(deps: deps, inputs: validInputs.cellInputs, outputs: outputs, witnesses: witnesses)
-        let txhash = try api.computeTransactionHash(transaction: tx)
+        let tx = Transaction(
+            cellDeps: deps,
+            inputs: validInputs.cellInputs,
+            outputs: outputs,
+            outputsData: outputsData,
+            witnesses: witnesses
+        )
+        let txhash = try api.computeTransactionHash(transaction: tx) // TODO: change to client side hash computation
         return try Transaction.sign(tx: tx, with: Data(hex: privateKey), txHash: txhash)
     }
 }
@@ -72,14 +78,15 @@ public class Wallet {
 extension Wallet {
     enum Error: LocalizedError {
         case tooLowCapacity(min: Capacity)
+        case invalidAddress
 
         var localizedDescription: String {
             switch self {
             case .tooLowCapacity(let min):
                 return "Capacity cannot less than \(min)"
+            case .invalidAddress:
+                return "Invalid address"
             }
         }
     }
 }
-
-

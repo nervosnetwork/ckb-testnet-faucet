@@ -1,3 +1,4 @@
+/// Adapted from https://github.com/skelpo/APIErrorMiddleware
 import Vapor
 import Foundation
 
@@ -8,29 +9,29 @@ import Foundation
 /// Errors with an identifier of `modelNotFound` get
 /// a 404 status code.
 public final class APIErrorMiddleware: Middleware, Service, ServiceType {
-    
+
     /// Specializations for converting specific errors
     /// to `ErrorResult` objects.
     public var specializations: [ErrorCatchingSpecialization]
-    
+
     /// The current environemnt that the application is in.
     public let environment: Environment
-    
+
     /// Create an instance if `APIErrorMiddleware`.
     public init(environment: Environment, specializations: [ErrorCatchingSpecialization] = []) {
         self.specializations = specializations
         self.environment = environment
     }
-    
+
     /// Creates a service instance. Used by a `ServiceFactory`.
     public static func makeService(for worker: Container) throws -> APIErrorMiddleware {
         #if canImport(Fluent)
-            return APIErrorMiddleware(environment: worker.environment, specializations: [ModelNotFound()])
+        return APIErrorMiddleware(environment: worker.environment, specializations: [ModelNotFound()])
         #else
-            return APIErrorMiddleware(environment: worker.environment, specializations: [])
+        return APIErrorMiddleware(environment: worker.environment, specializations: [])
         #endif
     }
-    
+
     /// Catch all errors thrown by the route handler or
     /// middleware futher down the responder chain and
     /// convert it to a JSON response.
@@ -46,7 +47,7 @@ public final class APIErrorMiddleware: Middleware, Service, ServiceType {
             return self.response(for: error, with: request)
         }
     }
-    
+
     /// Creates a response with a JSON body.
     ///
     /// - Parameters:
@@ -57,7 +58,7 @@ public final class APIErrorMiddleware: Middleware, Service, ServiceType {
     ///
     /// - Returns: A response with a JSON body with a `{"error":<error>}` structure.
     private func response(for error: Error, with request: Request) -> Response {
-        
+
         // The error message and status code
         // for the response returned by the
         // middleware.
@@ -70,7 +71,7 @@ public final class APIErrorMiddleware: Middleware, Service, ServiceType {
         // the error converter on each one.
         for converter in self.specializations {
             if let formatted = converter.convert(error: error, on: request) {
-                
+
                 // Found a non-nil response. Save it and break
                 // from the loop so we don't override it.
                 result = formatted
@@ -122,7 +123,7 @@ public final class APIErrorMiddleware: Middleware, Service, ServiceType {
                 status = result.status != nil ? Int(result.status!.code) : nil
             }
         }
-        
+
         let json: Data
         do {
             // Create JSON with an `error` key with the `message` constant as its value.
@@ -133,7 +134,7 @@ public final class APIErrorMiddleware: Middleware, Service, ServiceType {
             // because we can't have any Swift errors leaving the middleware.
             json = Data("{\"message\": \"Unable to encode error to JSON\", \"status\":10086}".utf8)
         }
-        
+
         // Create an HTTPResponse with
         // - The detected status code, using
         //   400 (Bad Request) if one does not exist.
@@ -144,7 +145,7 @@ public final class APIErrorMiddleware: Middleware, Service, ServiceType {
             headers: headers,
             body: HTTPBody(data: json)
         )
-        
+
         // Create the response and return it.
         return Response(http: httpResponse, using: request.sharedContainer).supportJsonp(on: request)
     }

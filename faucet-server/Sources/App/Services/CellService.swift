@@ -16,13 +16,12 @@ public class CellService {
 
     private var currentBlockNumber: Int = 0
     private var api: APIClient!
-    private var lockHash: H256!
-    private var publicKey: H256!
+    private var lockHash: H256
 
-    init(lockHash: H256, publicKey: H256, api: APIClient) {
-        self.lockHash = lockHash
-        self.publicKey = publicKey
+    init(lock: Script, api: APIClient) {
         self.api = api
+        // TODO: Script#hash not implemented properly yet
+        lockHash = try! api.computeScriptHash(script: lock)
         currentBlockNumber = CellService.readBlockNumber(for: lockHash)
     }
 
@@ -44,15 +43,6 @@ public class CellService {
             throw Error.notEnoughCapacity(required: "\(capacity)", available: "\(inputCapacities)")
         }
         return ValidInputs(cellInputs: inputs, capacity: inputCapacities)
-    }
-
-    private func getBlockNumber(for outPoint: OutPoint) -> Int {
-        if let blockHash = outPoint.blockHash {
-            if let block = try? api.getBlock(hash: blockHash) {
-                return Int(block.header.number)!
-            }
-        }
-        return currentBlockNumber
     }
 }
 
