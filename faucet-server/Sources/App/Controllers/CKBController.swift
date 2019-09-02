@@ -25,7 +25,6 @@ public class CKBController: RouteCollection {
 
     public func boot(router: Router) throws {
         router.get("ckb/faucet", use: faucet)
-        router.get("ckb/address", use: address)
     }
 
     // MARK: - API
@@ -64,28 +63,6 @@ public class CKBController: RouteCollection {
         }.supportJsonp(on: req)
     }
 
-    func address(_ req: Request) throws -> Future<Response> {
-        return try AddressRequestContent.decode(from: req).flatMap { (content) -> EventLoopFuture<Response> in
-            if let privateKey = content.privateKey {
-                do {
-                    let address = try CKBController.privateToAddress(privateKey)
-                    return try AddressResponseContent(address: address).makeJson(for: req)
-                } catch {
-                    throw APIError(code: .invalidPrivateKey)
-                }
-            } else if let publicKey = content.publicKey {
-                do {
-                    let address = try CKBController.publicToAddress(publicKey)
-                    return try AddressResponseContent(address: address).makeJson(for: req)
-                } catch {
-                    throw APIError(code: .invalidPublicKey)
-                }
-            } else {
-                throw APIError(code: .publickeyOrPrivatekeyNotExist)
-            }
-        }
-    }
-
     // MARK: - Utils
 
     public func sendCapacity(address: String) throws -> H256 {
@@ -95,62 +72,10 @@ public class CKBController: RouteCollection {
         let wallet = Wallet(api: api, systemScript: systemScript, privateKey: Environment.CKB.walletPrivateKey)
         return try wallet.sendCapacity(targetLock: targetLock, capacity: Environment.CKB.sendCapacityCount)
     }
-
-    public static func privateToAddress(_ privateKey: String) throws -> String {
-        return try publicToAddress(try privateToPublic(privateKey))
-    }
-
-    public static func publicToAddress(_ publicKey: String) throws -> String {
-        switch validatePublicKey(publicKey) {
-        case .valid(let value):
-            return AddressGenerator(network: .testnet).address(for: value)
-        case .invalid(let error):
-            throw error
-        }
-    }
-
-    public static func privateToPublic(_ privateKey: String) throws -> String {
-        switch validatePrivateKey(privateKey) {
-        case .valid(let value):
-            return Utils.privateToPublic(value)
-        case .invalid(let error):
-            throw error
-        }
-    }
-
-    public static func validatePrivateKey(_ privateKey: String) -> VerifyResult {
-        if privateKey.hasPrefix("0x") {
-            if privateKey.lengthOfBytes(using: .utf8) == 66 {
-                return .valid(value: String(privateKey.dropFirst(2)))
-            } else {
-                return .invalid(error: .invalidPrivateKey)
-            }
-        } else if privateKey.lengthOfBytes(using: .utf8) == 64 {
-            return .valid(value: privateKey)
-        } else {
-            return .invalid(error: .invalidPrivateKey)
-        }
-    }
-
-    public static func validatePublicKey(_ publicKey: String) -> VerifyResult {
-        if publicKey.hasPrefix("0x") {
-            if publicKey.lengthOfBytes(using: .utf8) == 68 {
-                return .valid(value: publicKey)
-            } else {
-                return .invalid(error: .invalidPublicKey)
-            }
-        } else if publicKey.lengthOfBytes(using: .utf8) == 66 {
-            return .valid(value: publicKey)
-        } else {
-            return .invalid(error: .invalidPublicKey)
-        }
-    }
 }
 
 extension CKBController {
     public enum Error: String, Swift.Error {
-        case invalidPrivateKey = "Invalid privateKey"
-        case invalidPublicKey = "Invalid publicKey"
         case invalidAddress = "Invalid address"
     }
 

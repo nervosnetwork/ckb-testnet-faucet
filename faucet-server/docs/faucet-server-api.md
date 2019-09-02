@@ -1,6 +1,6 @@
 # CKB Testnet Faucet Server API
 
-### Verify
+### Auth and Verify by GitHub
 
 `GET /auth/verify`
 
@@ -13,7 +13,7 @@
 }
 ```
 
-### Faucet
+### Claim Testnet Tokens
 
 `GET /ckb/faucet`
 
@@ -35,29 +35,6 @@
 }
 ```
 
-### Generate Address
-
-`GET /ckb/address`
-
-#### Parameters
-
-| Name   |      Type      |  Description |
-|----------|:-------------:|:------|
-| privateKey | string | Only one of the private key or public key is required. |
-| publicKey | string | Only one of the private key or public key is required. |
-
-#### Response
-
-```json
-{
-    "status":0,
-    "message":"Request successful",
-    "data":{
-        "address":"ckt1q9gry5zgua0jse2vljymevpm7gey8pjvrptmslykrdt28k",
-    }
-}
-```
-
 ### Response Status
 
 | Code   |  Message |
@@ -66,7 +43,4 @@
 | -1 | Unauthenticated  |
 | -2 | Received  |
 | -3 | Invalid address  |
-| -4 | Invalid private key  |
-| -5 | Invalid public key  |
 | -6 | Send transaction failed  |
-| -7 | Publickey or privatekey not exist  |

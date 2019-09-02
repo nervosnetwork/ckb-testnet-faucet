@@ -13,10 +13,7 @@ enum ResponseStatus: Int, Content {
     case unauthenticated = -1
     case received = -2
     case invalidAddress = -3
-    case invalidPrivateKey = -4
-    case invalidPublicKey = -5
     case sendTransactionFailed = -6
-    case publickeyOrPrivatekeyNotExist = -7
 }
 
 extension ResponseStatus: CustomStringConvertible {
@@ -30,14 +27,8 @@ extension ResponseStatus: CustomStringConvertible {
             return "Received"
         case .invalidAddress:
             return "Invalid address"
-        case .invalidPrivateKey:
-            return "Invalid private key"
-        case .invalidPublicKey:
-            return "Invalid public key"
         case .sendTransactionFailed:
             return "Send transaction failed"
-        case .publickeyOrPrivatekeyNotExist:
-            return "Publickey or privatekey not exist"
         }
     }
 }
