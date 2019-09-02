@@ -40,9 +40,8 @@ public class Wallet {
         guard let publicKeyHash = AddressGenerator(network: .testnet).publicKeyHash(for: to) else {
              throw Error.invalidAddress
         }
-        let targetLock = Script(args: [Utils.prefixHex(publicKeyHash)], codeHash: systemScript.secp256k1TypeHash, hashType: .type)
-
-        let tx = try generateTransaction(targetLock: targetLock, capacity: amount)
+        let toLockScript = Script(args: [Utils.prefixHex(publicKeyHash)], codeHash: systemScript.secp256k1TypeHash, hashType: .type)
+        let tx = try generateTransaction(toLockScript: toLockScript, capacity: amount)
         return try api.sendTransaction(transaction: tx)
     }
 
@@ -52,10 +51,10 @@ public class Wallet {
 
     // MARK: Utils
 
-    func generateTransaction(targetLock: Script, capacity: Decimal) throws -> Transaction {
+    func generateTransaction(toLockScript: Script, capacity: Decimal) throws -> Transaction {
         let deps = [CellDep(outPoint: systemScript.depOutPoint, depType: .depGroup)]
         let validInputs = try cellService.gatherInputs(capacity: capacity)
-        var outputs: [CellOutput] = [CellOutput(capacity: "\(capacity)", lock: targetLock, type: nil)]
+        var outputs: [CellOutput] = [CellOutput(capacity: "\(capacity)", lock: toLockScript, type: nil)]
         var outputsData: [HexString] = ["0x"]
         var witnesses = [Witness()]
 

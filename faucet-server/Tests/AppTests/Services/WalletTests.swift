@@ -7,7 +7,6 @@
 
 import App
 import XCTest
-import Vapor
 import CKB
 
 class WalletTests: XCTestCase {
