@@ -58,24 +58,6 @@
 }
 ```
 
-### Generate Random Address
-
-`GET /ckb/address/random`
-
-#### Response
-
-```json
-{
-    "status":0,
-    "message":"Request successful",
-    "data":{
-        "address":"ckt1q9gry5zgua0jse2vljymevpm7gey8pjvrptmslykrdt28k",
-        "privateKey":"3e117b5164d1b29ccdab5120d92d805289e242272409194171aa149fe9967eef",
-        "publicKey":"03108a3738adf4241b398410d922c09c8f3545f10a0471f8b6a9c9a467ea21f61e"
-    }
-}
-```
-
 ### Response Status
 
 | Code   |  Message |

@@ -36,17 +36,6 @@ class CKBControllerTests: XCTestCase {
         Thread.sleep(forTimeInterval: 2)
     }
 
-    func testGenerateAddress() throws {
-        let request = URLRequest(url: URL(string: "http://localhost:22333/ckb/address/random")!)
-        let result = try request.load()
-        do {
-            let dict = try JSONSerialization.jsonObject(with: result, options: .allowFragments) as! [String: Any]
-            XCTAssert(dict["address"] != nil && dict["privateKey"] != nil && dict["publicKey"] != nil)
-        } catch {
-            XCTAssert(false, error.localizedDescription)
-        }
-    }
-
     func testValidatePrivateKey() {
         switch CKBController.validatePrivateKey("b7a5e163e4963751ed023acfc2b93deb03169b71a4abe3d44abf4123ff2ce2a3") {
         case .valid:

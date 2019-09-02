@@ -26,7 +26,6 @@ public class CKBController: RouteCollection {
     public func boot(router: Router) throws {
         router.get("ckb/faucet", use: faucet)
         router.get("ckb/address", use: address)
-        router.get("ckb/address/random", use: makeRandomAddress)
     }
 
     // MARK: - API
@@ -87,15 +86,6 @@ public class CKBController: RouteCollection {
         }
     }
 
-    func makeRandomAddress(_ req: Request) throws ->  Future<Response> {
-        let privateKey = CKBController.generatePrivateKey()
-        return try [
-            "privateKey": privateKey,
-            "publicKey": try! CKBController.privateToPublic(privateKey),
-            "address": try! CKBController.privateToAddress(privateKey)
-        ].makeJson(for: req)
-    }
-
     // MARK: - Utils
 
     public func sendCapacity(address: String) throws -> H256 {
@@ -126,18 +116,6 @@ public class CKBController: RouteCollection {
         case .invalid(let error):
             throw error
         }
-    }
-
-    public static func generatePrivateKey() -> String {
-        var data = Data(repeating: 0, count: 32)
-        #if os(OSX)
-            data.withUnsafeMutableBytes({ _ = SecRandomCopyBytes(kSecRandomDefault, 32, $0.baseAddress! ) })
-        #else
-            for idx in 0..<32 {
-                data[idx] = UInt8.random(in: UInt8.min...UInt8.max)
-            }
-        #endif
-        return data.toHexString()
     }
 
     public static func validatePrivateKey(_ privateKey: String) -> VerifyResult {
