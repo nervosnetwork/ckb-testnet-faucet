@@ -49,7 +49,8 @@ public class CKBController: RouteCollection {
 
     private func sendCapacity(address: String) throws -> H256 {
         do {
-            return try Wallet().sendTestTokens(to: address)
+            let wallet = try Wallet(nodeUrl: URL(string: Environment.CKB.nodeURL)!, privateKey: Environment.CKB.walletPrivateKey)
+            return try wallet.sendTestTokens(to: address, amount: Environment.CKB.sendCapacityCount)
         } catch {
             throw APIError(code: .sendTransactionFailed)
         }

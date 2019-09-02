@@ -11,20 +11,21 @@ import Vapor
 import CKB
 
 class WalletTests: XCTestCase {
-    let wallet = try! Wallet(nodeUrl: URL(string: "http://127.0.0.1:8114")!, privateKey: "")
+    let wallet = try! Wallet(nodeUrl: URL(string: "http://127.0.0.1:8114")!, privateKey: "0x")
 
-    func testSendTestTokens() {
+    func x_testSendTestTokens() {
         do {
             let toAddress = "ckt1qyqy0frc0r8kus23ermqkxny662m37yc26fqpcyqky"
-            let txhash = try wallet.sendTestTokens(to: toAddress)
+            let txhash = try wallet.sendTestTokens(to: toAddress, amount: 100 * pow(10, 8))
             XCTAssertFalse(txhash.isEmpty)
         } catch {
-            print(error)
+            XCTFail()
         }
     }
 
-    func testGetBalance() throws {
+    func x_testGetBalance() throws {
         let balance = try wallet.getBalance()
         XCTAssert(balance >= 0)
+        print(balance)
     }
 }

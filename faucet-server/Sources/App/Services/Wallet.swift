@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Vapor
 import CKB
 
 public class Wallet {
@@ -25,21 +24,16 @@ public class Wallet {
         return Script(args: [publicKeyHash], codeHash: systemScript.secp256k1TypeHash, hashType: .type)
     }
 
-    public init(nodeUrl: URL? = nil, privateKey: String? = nil) throws {
-        let url = nodeUrl ?? URL(string: Environment.CKB.nodeURL)!
-        self.privateKey = privateKey ?? Environment.CKB.walletPrivateKey
-        api = APIClient(url: nodeUrl!)
-        systemScript = try SystemScript.loadSystemScript(nodeUrl: url)
+    public init(nodeUrl: URL, privateKey: String) throws {
+        self.privateKey = privateKey
+        api = APIClient(url: nodeUrl)
+        systemScript = try SystemScript.loadSystemScript(nodeUrl: nodeUrl)
         cellService = CellService(lock: lock, api: api)
     }
 
-    public func sendTestTokens(to: String) throws -> H256 {
-        var capacity = Environment.CKB.sendCapacityCount
-        if (capacity <= 0) {
-            capacity = 5000000000000
-        }
+    public func sendTestTokens(to: String, amount: Decimal) throws -> H256 {
         let minCellCapacity = Decimal(60 * pow(10, 8))
-        guard capacity >= minCellCapacity else {
+        guard amount >= minCellCapacity else {
             throw Error.tooLowCapacity(min: minCellCapacity.description)
         }
 
@@ -48,7 +42,7 @@ public class Wallet {
         }
         let targetLock = Script(args: [Utils.prefixHex(publicKeyHash)], codeHash: systemScript.secp256k1TypeHash, hashType: .type)
 
-        let tx = try generateTransaction(targetLock: targetLock, capacity: capacity)
+        let tx = try generateTransaction(targetLock: targetLock, capacity: amount)
         return try api.sendTransaction(transaction: tx)
     }
 
@@ -61,13 +55,22 @@ public class Wallet {
     func generateTransaction(targetLock: Script, capacity: Decimal) throws -> Transaction {
         let deps = [CellDep(outPoint: systemScript.depOutPoint, depType: .depGroup)]
         let validInputs = try cellService.gatherInputs(capacity: capacity)
-        var witnesses = [Witness()]
         var outputs: [CellOutput] = [CellOutput(capacity: "\(capacity)", lock: targetLock, type: nil)]
+        var outputsData: [HexString] = ["0x"]
+        var witnesses = [Witness()]
+
         if validInputs.capacity > capacity {
             outputs.append(CellOutput(capacity: "\(validInputs.capacity - capacity)", lock: lock, type: nil))
+            outputsData.append("0x")
             witnesses.append(Witness())
         }
-        let tx = Transaction(cellDeps: deps, inputs: validInputs.cellInputs, outputs: outputs, witnesses: witnesses)
+        let tx = Transaction(
+            cellDeps: deps,
+            inputs: validInputs.cellInputs,
+            outputs: outputs,
+            outputsData: outputsData,
+            witnesses: witnesses
+        )
         let txhash = try api.computeTransactionHash(transaction: tx) // TODO: change to client side hash computation
         return try Transaction.sign(tx: tx, with: Data(hex: privateKey), txHash: txhash)
     }

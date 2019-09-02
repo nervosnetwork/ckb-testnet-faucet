@@ -24,7 +24,7 @@ extension Environment {
         static func configure(_ environment: inout Environment) throws {
             nodeURL = try environment.commandInput.parse(option: .value(name: "node_url"))
             walletPrivateKey = try environment.commandInput.parse(option: .value(name: "wallet_private_key"))
-            sendCapacityCount = Decimal(string: (try? environment.commandInput.parse(option: .value(name: "send_capacity_count"))) ?? "50000" + "00000000")!
+            sendCapacityCount = Decimal(string: (try? environment.commandInput.parse(option: .value(name: "send_capacity_count"))) ?? "5000" + "00000000")!
         }
     }
 }
