@@ -1,18 +1,17 @@
-## Run faucet-server with Docker
+# Run faucet-server with Docker
 
-### Prerequisite
+## Prerequisite
 - docker
-
 
 `git clone https://github.com/nervosnetwork/ckb-testnet-faucet.git && cd ./ckb-testnet-faucet`
 
-### Build images
+## Build images
 ```
 $ cd ./faucet-server/
 $ sudo docker build -t faucet .
 ```
 
-### Run 
+## Run
 
 ```
 $ sudo docker run -P 80:80 -d faucet \
@@ -28,7 +27,7 @@ $ sudo docker run -P 80:80 -d faucet \
   --db_database <db_database>
 ```
 
-### Stop
+## Stop
 
 ```
 $ sudo docker stop $CONTAINER_ID
