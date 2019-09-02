@@ -25,20 +25,19 @@ public class Wallet {
         return Script(args: [publicKeyHash], codeHash: systemScript.secp256k1TypeHash, hashType: .type)
     }
 
-    public init() throws {
-        let nodeUrl = URL(string: Environment.CKB.nodeURL)!
-        api = APIClient(url: nodeUrl)
-        systemScript = try SystemScript.loadSystemScript(nodeUrl: nodeUrl)
-        privateKey = Environment.CKB.walletPrivateKey
-        cellService = CellService(lockHash: lock.hash, publicKey: publicKey, api: api)
-    }
-
-    public func getBalance() throws -> Decimal {
-        return try cellService.getUnspentCells().reduce(0, { $0 + Decimal(string: $1.0.capacity)! })
+    public init(nodeUrl: URL? = nil, privateKey: String? = nil) throws {
+        let url = nodeUrl ?? URL(string: Environment.CKB.nodeURL)!
+        self.privateKey = privateKey ?? Environment.CKB.walletPrivateKey
+        api = APIClient(url: nodeUrl!)
+        systemScript = try SystemScript.loadSystemScript(nodeUrl: url)
+        cellService = CellService(lock: lock, api: api)
     }
 
     public func sendTestTokens(to: String) throws -> H256 {
-        let capacity = Environment.CKB.sendCapacityCount!
+        var capacity = Environment.CKB.sendCapacityCount
+        if (capacity <= 0) {
+            capacity = 5000000000000
+        }
         let minCellCapacity = Decimal(60 * pow(10, 8))
         guard capacity >= minCellCapacity else {
             throw Error.tooLowCapacity(min: minCellCapacity.description)
@@ -49,9 +48,12 @@ public class Wallet {
         }
         let targetLock = Script(args: [Utils.prefixHex(publicKeyHash)], codeHash: systemScript.secp256k1TypeHash, hashType: .type)
 
-
         let tx = try generateTransaction(targetLock: targetLock, capacity: capacity)
         return try api.sendTransaction(transaction: tx)
+    }
+
+    public func getBalance() throws -> Decimal {
+        return try cellService.getUnspentCells().reduce(0, { $0 + Decimal(string: $1.0.capacity)! })
     }
 
     // MARK: Utils
@@ -66,7 +68,7 @@ public class Wallet {
             witnesses.append(Witness())
         }
         let tx = Transaction(cellDeps: deps, inputs: validInputs.cellInputs, outputs: outputs, witnesses: witnesses)
-        let txhash = try api.computeTransactionHash(transaction: tx)
+        let txhash = try api.computeTransactionHash(transaction: tx) // TODO: change to client side hash computation
         return try Transaction.sign(tx: tx, with: Data(hex: privateKey), txHash: txhash)
     }
 }

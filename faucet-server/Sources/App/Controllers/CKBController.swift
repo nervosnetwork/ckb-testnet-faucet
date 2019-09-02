@@ -17,8 +17,6 @@ public class CKBController: RouteCollection {
         router.get("ckb/faucet", use: faucet)
     }
 
-    // MARK: - API
-
     func faucet(_ req: Request) throws -> Future<Response> {
         return try FaucetRequestContent.decode(from: req).flatMap { (content) -> EventLoopFuture<Response> in
             guard let accessToken = content.accessToken else { throw APIError(code: .unauthenticated) }
@@ -35,11 +33,7 @@ public class CKBController: RouteCollection {
                         throw APIError(code: status)
                     }
                 }.map { _ in
-                    do {
-                        return try self.sendCapacity(address: content.address)
-                    } catch {
-                        throw APIError(code: .sendTransactionFailed)
-                    }
+                    return try self.sendCapacity(address: content.address)
                 }.map { (txHash: H256) -> H256 in
                     _ = Faucet(userId: user.id, txHash: txHash).save(on: req)
                     _ = self.authService.recordReceivedDate(for: user.id, on: req)
@@ -53,9 +47,11 @@ public class CKBController: RouteCollection {
         }.supportJsonp(on: req)
     }
 
-    // MARK: - Utils
-
     private func sendCapacity(address: String) throws -> H256 {
-        return try Wallet().sendTestTokens(to: address)
+        do {
+            return try Wallet().sendTestTokens(to: address)
+        } catch {
+            throw APIError(code: .sendTransactionFailed)
+        }
     }
 }
