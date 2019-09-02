@@ -10,18 +10,8 @@ import Vapor
 import CKB
 
 public class CKBController: RouteCollection {
-    let nodeUrl: URL
-    private let api: APIClient
-    private let systemScript: SystemScript
-
     private var faucetSending = [String]()
     private let authService = AuthenticationService()
-
-    public init(nodeUrl: URL) throws {
-        self.nodeUrl = nodeUrl
-        api = APIClient(url: nodeUrl)
-        systemScript = try SystemScript.loadSystemScript(nodeUrl: nodeUrl)
-    }
 
     public func boot(router: Router) throws {
         router.get("ckb/faucet", use: faucet)
@@ -65,28 +55,7 @@ public class CKBController: RouteCollection {
 
     // MARK: - Utils
 
-    public func sendCapacity(address: String) throws -> H256 {
-        guard let publicKeyHash = AddressGenerator(network: .testnet).publicKeyHash(for: address) else { throw Error.invalidAddress }
-        let targetLock = Script(args: [Utils.prefixHex(publicKeyHash)], codeHash: systemScript.secp256k1TypeHash, hashType: .type)
-
-        let wallet = Wallet(api: api, systemScript: systemScript, privateKey: Environment.CKB.walletPrivateKey)
-        return try wallet.sendCapacity(targetLock: targetLock, capacity: Environment.CKB.sendCapacityCount)
-    }
-}
-
-extension CKBController {
-    public enum Error: String, Swift.Error {
-        case invalidAddress = "Invalid address"
-    }
-
-    public enum VerifyResult {
-        case valid(value: String)
-        case invalid(error: Error)
-    }
-
-    public enum Status: Int {
-        case succeed = 0
-        case failed = -1
-        case verifyFailed = -2
+    private func sendCapacity(address: String) throws -> H256 {
+        return try Wallet().sendTestTokens(to: address)
     }
 }

@@ -53,7 +53,6 @@ public class App {
         migrations.add(model: Faucet.self, database: .mysql)
         services.register(migrations)
 
-
         /// Configure middleware
         var middlewaresConfig = MiddlewareConfig()
         middlewaresConfig.use(APIErrorMiddleware(environment: env, specializations: [ModelNotFound()]))
@@ -67,12 +66,9 @@ public class App {
 
     private func setupRoutes(_ router: Router) throws {
         router.get { req in
-            return "It works!"
-        }
-        router.get("hello") { req in
-            return "Hello, world!"
+            return "Welcome!"
         }
         try router.register(collection: AuthorizationController())
-        try router.register(collection: try CKBController(nodeUrl: URL(string: Environment.CKB.nodeURL)!))
+        try router.register(collection: CKBController())
     }
 }

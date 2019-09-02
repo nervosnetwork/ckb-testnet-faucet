@@ -6,49 +6,50 @@
 //
 
 import Foundation
+import Vapor
 import CKB
-
-let minCellCapacity = Decimal(60 * pow(10, 8))
 
 public class Wallet {
     let api: APIClient
     let privateKey: String
     let systemScript: SystemScript
 
-    var deps: [CellDep] {
-        return [CellDep(outPoint: systemScript.depOutPoint, depType: .depGroup)]
-    }
+    private var cellService: CellService!
+
     var publicKey: H256 {
         return "0x" + Utils.privateToPublic(privateKey)
     }
-    var address: String {
-        return AddressGenerator(network: .testnet).address(for: publicKey)
-    }
-    var publicKeyHash: String {
-        return "0x" + AddressGenerator(network: .testnet).hash(for: Data(hex: publicKey)).toHexString()
-    }
+
     public var lock: Script {
+        let publicKeyHash = "0x" + AddressGenerator(network: .testnet).hash(for: Data(hex: publicKey)).toHexString()
         return Script(args: [publicKeyHash], codeHash: systemScript.secp256k1TypeHash, hashType: .type)
     }
-    var lockHash: H256 {
-        return lock.hash
-    }
 
-    private var cellService: CellService!
-
-    public init(api: APIClient, systemScript: SystemScript, privateKey: H256) {
-        self.api = api
-        self.systemScript = systemScript
-        self.privateKey = privateKey
-        cellService = CellService(lockHash: lockHash, publicKey: publicKey, api: api)
+    public init() throws {
+        let nodeUrl = URL(string: Environment.CKB.nodeURL)!
+        api = APIClient(url: nodeUrl)
+        systemScript = try SystemScript.loadSystemScript(nodeUrl: nodeUrl)
+        privateKey = Environment.CKB.walletPrivateKey
+        cellService = CellService(lockHash: lock.hash, publicKey: publicKey, api: api)
     }
 
     public func getBalance() throws -> Decimal {
         return try cellService.getUnspentCells().reduce(0, { $0 + Decimal(string: $1.0.capacity)! })
     }
 
-    public func sendCapacity(targetLock: Script, capacity: Decimal) throws -> H256 {
-        guard capacity >= minCellCapacity else { throw Error.tooLowCapacity(min: minCellCapacity.description) }
+    public func sendTestTokens(to: String) throws -> H256 {
+        let capacity = Environment.CKB.sendCapacityCount!
+        let minCellCapacity = Decimal(60 * pow(10, 8))
+        guard capacity >= minCellCapacity else {
+            throw Error.tooLowCapacity(min: minCellCapacity.description)
+        }
+
+        guard let publicKeyHash = AddressGenerator(network: .testnet).publicKeyHash(for: to) else {
+             throw Error.invalidAddress
+        }
+        let targetLock = Script(args: [Utils.prefixHex(publicKeyHash)], codeHash: systemScript.secp256k1TypeHash, hashType: .type)
+
+
         let tx = try generateTransaction(targetLock: targetLock, capacity: capacity)
         return try api.sendTransaction(transaction: tx)
     }
@@ -56,6 +57,7 @@ public class Wallet {
     // MARK: Utils
 
     func generateTransaction(targetLock: Script, capacity: Decimal) throws -> Transaction {
+        let deps = [CellDep(outPoint: systemScript.depOutPoint, depType: .depGroup)]
         let validInputs = try cellService.gatherInputs(capacity: capacity)
         var witnesses = [Witness()]
         var outputs: [CellOutput] = [CellOutput(capacity: "\(capacity)", lock: targetLock, type: nil)]
@@ -72,14 +74,15 @@ public class Wallet {
 extension Wallet {
     enum Error: LocalizedError {
         case tooLowCapacity(min: Capacity)
+        case invalidAddress
 
         var localizedDescription: String {
             switch self {
             case .tooLowCapacity(let min):
                 return "Capacity cannot less than \(min)"
+            case .invalidAddress:
+                return "Invalid address"
             }
         }
     }
 }
-
-
