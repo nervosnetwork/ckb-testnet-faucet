@@ -21,7 +21,7 @@ public class Wallet {
 
     public var lock: Script {
         let publicKeyHash = "0x" + AddressGenerator(network: .testnet).hash(for: Data(hex: publicKey)).toHexString()
-        return Script(args: [publicKeyHash], codeHash: systemScript.secp256k1TypeHash, hashType: .type)
+        return systemScript.lock(for: publicKeyHash)
     }
 
     public init(nodeUrl: URL, privateKey: String) throws {
@@ -40,7 +40,7 @@ public class Wallet {
         guard let publicKeyHash = AddressGenerator(network: .testnet).publicKeyHash(for: to) else {
              throw Error.invalidAddress
         }
-        let toLockScript = Script(args: [Utils.prefixHex(publicKeyHash)], codeHash: systemScript.secp256k1TypeHash, hashType: .type)
+        let toLockScript = systemScript.lock(for: Utils.prefixHex(publicKeyHash))
         let tx = try generateTransaction(toLockScript: toLockScript, capacity: amount)
         return try api.sendTransaction(transaction: tx)
     }
@@ -70,8 +70,7 @@ public class Wallet {
             outputsData: outputsData,
             witnesses: witnesses
         )
-        let txhash = try api.computeTransactionHash(transaction: tx) // TODO: change to client side hash computation
-        return try Transaction.sign(tx: tx, with: Data(hex: privateKey), txHash: txhash)
+        return try Transaction.sign(tx: tx, with: Data(hex: privateKey), txHash: tx.computeHash())
     }
 }
 
