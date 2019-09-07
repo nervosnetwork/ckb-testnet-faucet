@@ -20,8 +20,7 @@ public class CellService {
 
     init(lock: Script, api: APIClient) {
         self.api = api
-        // TODO: Script#hash not implemented properly yet
-        lockHash = try! api.computeScriptHash(script: lock)
+        lockHash = lock.hash
         currentBlockNumber = CellService.readBlockNumber(for: lockHash)
     }
 
