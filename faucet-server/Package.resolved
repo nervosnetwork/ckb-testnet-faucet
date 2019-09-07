@@ -5,9 +5,9 @@
         "package": "CKB",
         "repositoryURL": "https://github.com/nervosnetwork/ckb-sdk-swift",
         "state": {
-          "branch": "rc/v0.20.0",
-          "revision": "09bfec1e75637c85b1cab44fd452e7f47ee2f666",
-          "version": null
+          "branch": null,
+          "revision": "746f088e73d348d6e40c594c0f8fd9c4acb3f988",
+          "version": "0.20.0"
         }
       },
       {
