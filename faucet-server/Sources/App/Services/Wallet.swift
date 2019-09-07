@@ -20,8 +20,8 @@ public class Wallet {
     }
 
     public var lock: Script {
-        let publicKeyHash = "0x" + AddressGenerator(network: .testnet).hash(for: Data(hex: publicKey)).toHexString()
-        return systemScript.lock(for: publicKeyHash)
+        let publicKeyHash = AddressGenerator(network: .testnet).hash(for: Data(hex: publicKey)).toHexString()
+        return systemScript.lock(for: Utils.prefixHex(publicKeyHash))
     }
 
     public init(nodeUrl: URL, privateKey: String) throws {
