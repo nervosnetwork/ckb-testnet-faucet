@@ -1,5 +1,7 @@
 # faucet-ui
 
+The React front end app for CKB Testnet Faucet.
+
 ## Quick Start
 
 You need `node >= 11.10` and `yarn >= 1.12` to build and run faucet-ui.
