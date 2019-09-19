@@ -11,10 +11,10 @@ import CKB
 public class CellService {
     public struct ValidInputs {
         let cellInputs: [CellInput]
-        let capacity: Decimal
+        let capacity: Capacity
     }
 
-    private var currentBlockNumber: Int = 0
+    private var currentBlockNumber: UInt64 = 0
     private var api: APIClient!
     private var lockHash: H256
 
@@ -24,14 +24,14 @@ public class CellService {
         currentBlockNumber = CellService.readBlockNumber(for: lockHash)
     }
 
-    public func gatherInputs(capacity: Decimal) throws -> ValidInputs {
+    public func gatherInputs(capacity: Capacity) throws -> ValidInputs {
         let sequence = try getUnspentCells()
-        var inputCapacities: Decimal = 0
+        var inputCapacities: Capacity = 0
         var inputs = [CellInput]()
         for (cell, blockNumber) in sequence {
-            let input = CellInput(previousOutput: cell.outPoint, since: "0")
+            let input = CellInput(previousOutput: cell.outPoint, since: 0)
             inputs.append(input)
-            inputCapacities += Decimal(string: cell.capacity) ?? 0
+            inputCapacities += cell.capacity
             if inputCapacities > capacity {
                 currentBlockNumber = blockNumber
                 CellService.saveBlockNumber(currentBlockNumber, for: lockHash)
@@ -39,7 +39,7 @@ public class CellService {
             }
         }
         guard inputCapacities > capacity else {
-            throw Error.notEnoughCapacity(required: "\(capacity)", available: "\(inputCapacities)")
+            throw Error.notEnoughCapacity(required: capacity, available: inputCapacities)
         }
         return ValidInputs(cellInputs: inputs, capacity: inputCapacities)
     }
@@ -49,11 +49,11 @@ public class CellService {
 extension CellService {
     private static let savePath = URL(fileURLWithPath: FileManager.default.currentDirectoryPath + "/block_number")
 
-    public static func saveBlockNumber(_ blockNumber: Int, for lockHash: H256) {
-        var blockNumberOfLockHash: [String: Int]
+    public static func saveBlockNumber(_ blockNumber: UInt64, for lockHash: H256) {
+        var blockNumberOfLockHash: [String: UInt64]
         do {
             let data = try Data(contentsOf: savePath)
-            blockNumberOfLockHash = try JSONDecoder().decode([String: Int].self, from: data)
+            blockNumberOfLockHash = try JSONDecoder().decode([String: UInt64].self, from: data)
         } catch {
             blockNumberOfLockHash = [:]
         }
@@ -61,10 +61,10 @@ extension CellService {
         try? JSONEncoder().encode(blockNumberOfLockHash).write(to: savePath)
     }
 
-    public static func readBlockNumber(for lockHash: H256) -> Int {
+    public static func readBlockNumber(for lockHash: H256) -> UInt64 {
         do {
             let data = try Data(contentsOf: savePath)
-            let blockNumberOfLockHash = try JSONDecoder().decode([String: Int].self, from: data)
+            let blockNumberOfLockHash = try JSONDecoder().decode([String: UInt64].self, from: data)
             return blockNumberOfLockHash[lockHash] ?? 1
         } catch {
             return 1
@@ -73,21 +73,21 @@ extension CellService {
 }
 
 extension CellService {
-    typealias FromBlockNumber = Int
+    typealias FromBlockNumber = UInt64
     typealias Element = (CellOutputWithOutPoint, FromBlockNumber)
 
     struct UnspentCellsIterator: IteratorProtocol {
         let api: APIClient
         let lockHash: H256
-        var fromBlockNumber: Int
-        let tipBlockNumber: Int
+        var fromBlockNumber: UInt64
+        let tipBlockNumber: UInt64
         var cells = [CellOutputWithOutPoint]()
 
-        public init(api: APIClient, lockHash: H256, fromBlockNumber: Int = 1) throws {
+        public init(api: APIClient, lockHash: H256, fromBlockNumber: UInt64 = 1) throws {
             self.api = api
             self.lockHash = lockHash
             self.fromBlockNumber = fromBlockNumber
-            tipBlockNumber = Int(try api.getTipBlockNumber())!
+            tipBlockNumber = try api.getTipBlockNumber()
         }
 
         mutating public func next() -> Element? {
@@ -99,7 +99,7 @@ extension CellService {
                 defer {
                     fromBlockNumber = toBlockNumber + 1
                 }
-                if var cells = try? api.getCellsByLockHash(lockHash: lockHash, from: "\(fromBlockNumber)", to: "\(toBlockNumber)"), cells.count > 0 {
+                if var cells = try? api.getCellsByLockHash(lockHash: lockHash, from: fromBlockNumber, to: toBlockNumber), cells.count > 0 {
                     defer {
                         self.cells = cells
                     }

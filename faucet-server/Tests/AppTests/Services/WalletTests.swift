@@ -15,7 +15,7 @@ class WalletTests: XCTestCase {
     func x_testSendTestTokens() {
         do {
             let toAddress = "ckt1qyqy0frc0r8kus23ermqkxny662m37yc26fqpcyqky"
-            let txhash = try wallet.sendTestTokens(to: toAddress, amount: 100 * pow(10, 8))
+            let txhash = try wallet.sendTestTokens(to: toAddress, amount: Capacity(100 * 100_000_000))
             XCTAssertFalse(txhash.isEmpty)
         } catch {
             XCTFail()

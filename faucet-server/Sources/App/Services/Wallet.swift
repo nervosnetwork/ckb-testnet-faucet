@@ -20,7 +20,7 @@ public class Wallet {
     }
 
     public var lock: Script {
-        let publicKeyHash = AddressGenerator(network: .testnet).hash(for: Data(hex: publicKey)).toHexString()
+        let publicKeyHash = AddressGenerator.hash(for: Data(hex: publicKey)).toHexString()
         return systemScript.lock(for: Utils.prefixHex(publicKeyHash))
     }
 
@@ -31,13 +31,13 @@ public class Wallet {
         cellService = CellService(lock: lock, api: api)
     }
 
-    public func sendTestTokens(to: String, amount: Decimal) throws -> H256 {
-        let minCellCapacity = Decimal(60 * pow(10, 8))
+    public func sendTestTokens(to: String, amount: Capacity) throws -> H256 {
+        let minCellCapacity = Capacity(61 * 100_000_000)
         guard amount >= minCellCapacity else {
-            throw Error.tooLowCapacity(min: minCellCapacity.description)
+            throw Error.tooLowCapacity(min: minCellCapacity)
         }
 
-        guard let publicKeyHash = AddressGenerator(network: .testnet).publicKeyHash(for: to) else {
+        guard let publicKeyHash = AddressGenerator.publicKeyHash(for: to) else {
              throw Error.invalidAddress
         }
         let toLockScript = systemScript.lock(for: Utils.prefixHex(publicKeyHash))
@@ -45,21 +45,21 @@ public class Wallet {
         return try api.sendTransaction(transaction: tx)
     }
 
-    public func getBalance() throws -> Decimal {
-        return try cellService.getUnspentCells().reduce(0, { $0 + Decimal(string: $1.0.capacity)! })
+    public func getBalance() throws -> Capacity {
+        return try cellService.getUnspentCells().reduce(0, { $0 + $1.0.capacity })
     }
 
     // MARK: Utils
 
-    func generateTransaction(toLockScript: Script, capacity: Decimal) throws -> Transaction {
+    func generateTransaction(toLockScript: Script, capacity: Capacity) throws -> Transaction {
         let deps = [CellDep(outPoint: systemScript.depOutPoint, depType: .depGroup)]
         let validInputs = try cellService.gatherInputs(capacity: capacity)
-        var outputs: [CellOutput] = [CellOutput(capacity: "\(capacity)", lock: toLockScript, type: nil)]
+        var outputs: [CellOutput] = [CellOutput(capacity: capacity, lock: toLockScript, type: nil)]
         var outputsData: [HexString] = ["0x"]
         var witnesses = [Witness()]
 
         if validInputs.capacity > capacity {
-            outputs.append(CellOutput(capacity: "\(validInputs.capacity - capacity)", lock: lock, type: nil))
+            outputs.append(CellOutput(capacity: validInputs.capacity - capacity, lock: lock, type: nil))
             outputsData.append("0x")
             witnesses.append(Witness())
         }
@@ -70,7 +70,7 @@ public class Wallet {
             outputsData: outputsData,
             witnesses: witnesses
         )
-        return try Transaction.sign(tx: tx, with: Data(hex: privateKey), txHash: tx.computeHash())
+        return try Transaction.sign(tx: tx, with: Data(hex: privateKey))
     }
 }
 
