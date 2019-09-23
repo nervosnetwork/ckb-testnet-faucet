@@ -6,6 +6,7 @@
 //
 
 import Vapor
+import CKB
 
 extension Environment {
     mutating func configure() throws {
@@ -19,12 +20,12 @@ extension Environment {
     struct CKB {
         private(set) static var nodeURL: String!
         private(set) static var walletPrivateKey: String!
-        private(set) static var sendCapacityCount: Decimal = 0
+        private(set) static var sendCapacityCount: Capacity = 0
 
         static func configure(_ environment: inout Environment) throws {
             nodeURL = try environment.commandInput.parse(option: .value(name: "node_url"))
             walletPrivateKey = try environment.commandInput.parse(option: .value(name: "wallet_private_key"))
-            sendCapacityCount = Decimal(string: (try? environment.commandInput.parse(option: .value(name: "send_capacity_count"))) ?? "5000" + "00000000")!
+            sendCapacityCount = Capacity((try? environment.commandInput.parse(option: .value(name: "send_capacity_count"))) ?? "5000" + "00000000")!
         }
     }
 }
