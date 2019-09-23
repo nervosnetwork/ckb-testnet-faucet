@@ -5,9 +5,9 @@
 //  Created by 翟泉 on 2019/5/5.
 //
 
-import App
 import XCTest
 import CKB
+@testable import App
 
 class WalletTests: XCTestCase {
     let wallet = try! Wallet(nodeUrl: URL(string: "http://127.0.0.1:8114")!, privateKey: "0x")
@@ -20,11 +20,5 @@ class WalletTests: XCTestCase {
         } catch {
             XCTFail()
         }
-    }
-
-    func x_testGetBalance() throws {
-        let balance = try wallet.getBalance()
-        XCTAssert(balance >= 0)
-        print(balance)
     }
 }

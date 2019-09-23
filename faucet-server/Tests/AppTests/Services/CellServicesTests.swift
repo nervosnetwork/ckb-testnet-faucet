@@ -8,7 +8,7 @@
 import Foundation
 import XCTest
 import Vapor
-import App
+@testable import App
 
 class CellServicesTests: XCTestCase {
     func testSaveAndRead() {
