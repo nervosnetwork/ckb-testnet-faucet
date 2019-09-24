@@ -28,9 +28,10 @@ final class Wallet {
             amount: amount,
             apiClient: api
         )
+        payment.blockToCollectFrom = CellService.readBlockNumber(for: address)
         try payment.sign(privateKey: Data(hex: privateKey))
         let hash = try payment.send()
-        CellService.saveBlockNumber(payment.lastBlockNumber, for: address)
+        CellService.saveBlockNumber(payment.lastBlockScanned, for: address)
         return hash
     }
 }
