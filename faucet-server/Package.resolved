@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/nervosnetwork/ckb-sdk-swift",
         "state": {
           "branch": null,
-          "revision": "2b487a13ec9c194a6890bfd4d434d1373880b323",
-          "version": "0.21.2"
+          "revision": "49a28383f17a3d2969f5c8bb9e1b2c76d8f42334",
+          "version": "0.22.0"
         }
       },
       {
