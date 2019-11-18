@@ -12,7 +12,7 @@ export default (props: any) => {
   }
 
   const transactionDetails = () => {
-    window.open("https://explorer.nervos.org/transaction/" + txHash)
+    window.open("https://explorer.nervos.org/aggron/transaction/" + txHash)
   }
 
   return (
