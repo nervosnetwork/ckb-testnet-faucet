@@ -7,6 +7,7 @@ let package = Package(
     name: "faucet-server",
     dependencies: [
         .package(url: "https://github.com/vapor/vapor.git", from: "3.0.0"),
+        .package(url: "https://github.com/SwiftyBeaver/SwiftyBeaver-Vapor.git", from: "1.1.0"),
         .package(url: "https://github.com/vapor/fluent-mysql.git", from: "3.0.0"),
         .package(url: "https://github.com/nervosnetwork/ckb-sdk-swift", from: "0.25.0")
     ],
@@ -15,6 +16,7 @@ let package = Package(
             "Vapor",
             "CKB",
             "FluentMySQL",
+            "SwiftyBeaverVapor"
             ]),
         .target(name: "Run", dependencies: ["App"]),
         .testTarget(name: "AppTests", dependencies: ["App"])

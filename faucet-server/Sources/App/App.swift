@@ -2,6 +2,8 @@ import Vapor
 import MySQL
 import Fluent
 import FluentMySQL
+import SwiftyBeaverVapor
+import SwiftyBeaver
 
 public class App {
     private var app: Application!
@@ -33,7 +35,7 @@ public class App {
 
         /// Register the configured MySQL database to the database config.
         try services.register(FluentMySQLProvider())
-        let config = MySQLDatabaseConfig(
+        let dbConfig = MySQLDatabaseConfig(
             hostname: Environment.Database.hostname,
             port: Environment.Database.port,
             username: Environment.Database.username,
@@ -41,7 +43,7 @@ public class App {
             database: Environment.Database.database,
             transport: .unverifiedTLS
         )
-        let mysql = MySQLDatabase(config: config)
+        let mysql = MySQLDatabase(config: dbConfig)
         var databases = DatabasesConfig()
         databases.add(database: mysql, as: .mysql)
         services.register(databases)
@@ -53,10 +55,13 @@ public class App {
         migrations.add(model: Faucet.self, database: .mysql)
         services.register(migrations)
 
-        /// Configure middleware
         var middlewaresConfig = MiddlewareConfig()
         middlewaresConfig.use(APIErrorMiddleware(environment: env, specializations: [ModelNotFound()]))
         services.register(middlewaresConfig)
+
+        let consoleDestination = ConsoleDestination()
+        try services.register(SwiftyBeaverProvider(destinations: [consoleDestination]))
+        config.prefer(SwiftyBeaverVapor.self, for: Logger.self)
 
         /// Configure command
         var commandConfig = CommandConfig.default()
