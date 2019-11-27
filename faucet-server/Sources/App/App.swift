@@ -60,7 +60,9 @@ public class App {
         services.register(middlewaresConfig)
 
         let consoleDestination = ConsoleDestination()
-        try services.register(SwiftyBeaverProvider(destinations: [consoleDestination]))
+        let fileDestination = FileDestination()
+        fileDestination.logFileURL = URL(string: "file:///tmp/faucet.log")!
+        try services.register(SwiftyBeaverProvider(destinations: [consoleDestination, fileDestination]))
         config.prefer(SwiftyBeaverVapor.self, for: Logger.self)
 
         /// Configure command
