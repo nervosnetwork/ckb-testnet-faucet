@@ -33,7 +33,7 @@ public class CKBController: RouteCollection {
                         throw APIError(code: status)
                     }
                 }.map { _ in
-                    return try self.sendCapacity(address: content.address)
+                    return try self.sendCapacity(address: content.address, req: req)
                 }.map { (txHash: H256) -> H256 in
                     _ = Faucet(userId: user.id, txHash: txHash).save(on: req)
                     _ = self.authService.recordReceivedDate(for: user.id, on: req)
@@ -47,11 +47,14 @@ public class CKBController: RouteCollection {
         }.supportJsonp(on: req)
     }
 
-    private func sendCapacity(address: String) throws -> H256 {
+    private func sendCapacity(address: String, req: Request) throws -> H256 {
         do {
             let wallet = try Wallet(nodeUrl: URL(string: Environment.CKB.nodeURL)!, privateKey: Environment.CKB.walletPrivateKey)
             return try wallet.sendTestTokens(to: address, amount: Environment.CKB.sendCapacityCount)
         } catch {
+            let logger = try? req.sharedContainer.make(Logger.self)
+            logger?.log(req.description + "\n\t" + error.localizedDescription, at: .verbose, file: #file, function: #function, line: #line, column: #column)
+
             throw APIError(code: .sendTransactionFailed)
         }
     }
