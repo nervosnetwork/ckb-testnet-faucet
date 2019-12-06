@@ -15,4 +15,6 @@ RUN wget https://github.com/jedisct1/libsodium/releases/download/1.0.16/libsodiu
     && tar xf libsodium-1.0.16.tar.gz && cd libsodium-1.0.16 \
     && ./configure && make -j4 && make install \
     && ldconfig
+COPY . /app
 WORKDIR /app
+RUN swift build -c release

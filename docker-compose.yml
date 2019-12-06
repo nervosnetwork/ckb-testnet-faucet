@@ -16,9 +16,7 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - "9001:80"
-    volumes:
-      - ./faucet-server:/app
-    command: /bin/bash -c "swift build -c release && ./.build/release/Run serve 
+    command: /bin/bash -c "./.build/release/Run serve 
              --hostname 0.0.0.0
              --port 80
              --github_oauth_client_id $GITHUB_OAUTH_CLIENT_ID 
