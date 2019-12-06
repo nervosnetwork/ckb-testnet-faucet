@@ -7,6 +7,9 @@
 
 import Foundation
 import Vapor
+#if canImport(FoundationNetworking)
+  import FoundationNetworking
+#endif
 
 struct GithubService {
     struct User: Decodable {
