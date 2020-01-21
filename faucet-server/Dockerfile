@@ -8,7 +8,7 @@ ARG env
 
 RUN apt-get -qq update && apt-get -q -y install \
     pkg-config libssl-dev wget libsodium-dev software-properties-common libsqlite3-dev \
-    tzdata \
+    tzdata zlib1g-dev \
     && apt-get clean \
     && rm -r /var/lib/apt/lists/*
 RUN wget https://github.com/jedisct1/libsodium/releases/download/1.0.16/libsodium-1.0.16.tar.gz \

@@ -15,7 +15,7 @@ public class CKBController: RouteCollection {
 
     public func boot(router: Router) throws {
         router.get("ckb/faucet", use: faucet)
-        router.get("ckb/faucet_min", use: faucet)
+        router.get("ckb/faucet_min", use: faucet_min)
     }
 
     func faucet(_ req: Request) throws -> Future<Response> {
