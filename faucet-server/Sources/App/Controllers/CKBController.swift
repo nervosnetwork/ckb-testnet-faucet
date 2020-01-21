@@ -59,14 +59,10 @@ public class CKBController: RouteCollection {
 
             return GithubService.userInfo(for: accessToken, on: req).unwrap(or: APIError(code: .unauthenticated)).flatMap { (user) -> EventLoopFuture<Response> in
                 return self.authService.verify(userId: user.id, on: req).map { status -> Void in
-                    if status == .ok {
-                        return
-                    } else {
-                        throw APIError(code: status)
-                    }
+                    return
                 }.map { _ in
                     return try self.sendCapacity(address: content.address,
-                                  req: req, amount: Capacity(1))
+                                  req: req, amount: Capacity(6100000001))
                 }.map { (txHash: H256) -> H256 in
                     _ = Faucet(userId: user.id, txHash: txHash).save(on: req)
                     _ = self.authService.recordReceivedDate(for: user.id, on: req)
