@@ -83,7 +83,7 @@ public class CKBController: RouteCollection {
     private func sendCapacity(address: String, req: Request, amount: Capacity) throws -> H256 {
         do {
             let wallet = try Wallet(nodeUrl: URL(string: Environment.CKB.nodeURL)!, privateKey: Environment.CKB.walletPrivateKey)
-            return try wallet.sendTestTokens(to: address, amount: amount 
+            return try wallet.sendTestTokens(to: address, amount: amount)
         } catch {
             let logger = try? req.sharedContainer.make(Logger.self)
             logger?.log(req.description + "\n\t" + error.localizedDescription, at: .verbose, file: #file, function: #function, line: #line, column: #column)
