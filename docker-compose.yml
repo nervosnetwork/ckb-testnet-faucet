@@ -9,11 +9,9 @@ services:
      - ./faucet-ui/build:/usr/share/nginx/html
     command: /bin/bash -c "nginx -g 'daemon off;'"
   faucet:
+    image: faucet-server:latest
     env_file:
       - ./.env # which copy from example.evn and filling parameter by yourself.
-    build:
-      context: ./faucet-server
-      dockerfile: ./Dockerfile
     ports:
       - "9001:80"
     command: /bin/bash -c "./.build/release/Run serve 
