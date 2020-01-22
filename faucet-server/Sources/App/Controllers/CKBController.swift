@@ -51,28 +51,10 @@ public class CKBController: RouteCollection {
 
     func faucet_min(_ req: Request) throws -> Future<Response> {
         return try FaucetRequestContent.decode(from: req).flatMap { (content) -> EventLoopFuture<Response> in
-            guard let accessToken = content.accessToken else { throw APIError(code: .unauthenticated) }
-            guard self.faucetSending.firstIndex(of: accessToken) == nil else {
-                throw Abort(HTTPStatus.badRequest)
-            }
-            self.faucetSending.append(accessToken)
-
-            return GithubService.userInfo(for: accessToken, on: req).unwrap(or: APIError(code: .unauthenticated)).flatMap { (user) -> EventLoopFuture<Response> in
-                return self.authService.verify(userId: user.id, on: req).map { status -> Void in
-                    return
-                }.map { _ in
-                    return try self.sendCapacity(address: content.address,
+            var txHash = try self.sendCapacity(address: content.address,
                                   req: req, amount: Capacity(6100000001))
-                }.map { (txHash: H256) -> H256 in
-                    _ = Faucet(userId: user.id, txHash: txHash).save(on: req)
-                    _ = self.authService.recordReceivedDate(for: user.id, on: req)
-                    return txHash
-                }.flatMap { txHash -> EventLoopFuture<Response> in
-                    return try FaucetResponseContent(txHash: txHash).makeJson(for: req)
-                }
-            }.always {
-                self.faucetSending.remove(at: accessToken)
-            }
+            Faucet(userId: 0, txHash: txHash).save(on: req)
+            return try FaucetResponseContent(txHash: txHash).makeJson(for: req)
         }.supportJsonp(on: req)
     }
 
